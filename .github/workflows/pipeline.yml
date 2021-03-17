@@ -45,6 +45,9 @@ jobs:
     - name: Install Node Modules
       working-directory: ${{ env.working-directory }}
       run: npm ci
+    - name: Test Backend Application
+      working-directory: ${{ env.working-directory }}
+      run: npx jest
 
   verify-fe:
     name: Verify Frontend
@@ -84,6 +87,6 @@ jobs:
     - name: Install Node Modules
       working-directory: ${{ env.working-directory }}
       run: npm ci
-    - name: Build Application
+    - name: Build Frontend Application
       working-directory: ${{ env.working-directory }}
       run: npm run build
