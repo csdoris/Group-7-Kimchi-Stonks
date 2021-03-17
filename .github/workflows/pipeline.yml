@@ -1,0 +1,89 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify-be:
+    name: Verify Backend
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./backend
+    strategy:
+      matrix:
+        node-version: [14.x, 15.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install Node Modules
+      working-directory: ${{ env.working-directory }}
+      run: npm ci
+    - name: Lint
+      working-directory: ${{ env.working-directory }}
+      run: npx eslint .
+
+  build-be:
+    name: Build Backend
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./backend
+    strategy:
+      matrix:
+        node-version: [14.x, 15.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install Node Modules
+      working-directory: ${{ env.working-directory }}
+      run: npm ci
+
+  verify-fe:
+    name: Verify Frontend
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./frontend
+    strategy:
+      matrix:
+        node-version: [14.x, 15.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install Node Modules
+      working-directory: ${{ env.working-directory }}
+      run: npm ci
+    - name: Lint
+      working-directory: ${{ env.working-directory }}
+      run: npx eslint .
+
+  build-fe:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./frontend
+    strategy:
+      matrix:
+        node-version: [14.x, 15.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install Node Modules
+      working-directory: ${{ env.working-directory }}
+      run: npm ci
+    - name: Build Application
+      working-directory: ${{ env.working-directory }}
+      run: npm run build
