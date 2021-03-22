@@ -8,11 +8,13 @@
     "test": "jest",
     "start": "node src/server.js"
   },
-  "author": "",
+  "author": "Group 7",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "jest": "^26.6.3"
+    "jest": "^26.6.3",
+    "mongoose": "^5.12.1"
   },
   "devDependencies": {
     "eslint": "^7.22.0",
