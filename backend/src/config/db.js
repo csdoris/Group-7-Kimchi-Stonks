@@ -4,40 +4,37 @@ let db;
 
 /**
  * Connects to the MongoDB cluster
- *
- * @param  {Object} cb Callback function
- * @return {Object}    Callback function
  */
-function connect (cb) {
+function connect() {
   mongoose.connect(
     process.env.MONGO_DB_URI,
-    { useNewUrlParser: true,
+    {
+      useNewUrlParser: true,
       useUnifiedTopology: true,
       useFindAndModify: false,
-      useCreateIndex: true
+      useCreateIndex: true,
     },
-    (err, client) => {
+    (err) => {
       if (err) throw err;
 
       console.log('Connection to MongoDB successful.');
-      return cb();
     },
   );
-};
+}
 
 /**
  * Returns the currently connect MongoDB cluster
  *
  * @return {Object}  MongoDB cluster
  */
-function get () {
+function get() {
   return db;
-};
+}
 
 /**
  * Closes the MongoDB cluster connection
  */
-function close () {
+function close() {
   db.close();
 }
 

@@ -6,18 +6,17 @@ const db = require('./config/db');
 dotenv.config();
 
 // Connect to MongoDB cluster
-db.connect(() => {
+db.connect();
 
-  // Setup Express
-  const app = express();
+// Setup Express
+const app = express();
 
-  // Setup JSON parsing for the request body
-  app.use(express.json());
+// Setup JSON parsing for the request body
+app.use(express.json());
 
-  // Example route
-  app.use('/', (req, res) => {
-    res.json({ text: 'Hello World!' });
-  });
+// Example route
+app.use('/', (req, res) => {
+  res.json({ text: 'Hello World!' });
 });
 
 module.exports = app;
