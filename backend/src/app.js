@@ -1,6 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const db = require('./config/db');
+const db = require('./mongodb/db');
 
 // Load all environment variables from .env
 dotenv.config();
