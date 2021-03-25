@@ -6,11 +6,10 @@ const User = require('../mongodb/schemas/userSchema');
  * Checks if the user email already exists in the database
  *
  * @param  {String} email User's email
- * @return {boolean}      True OR False
+ * @return {Object}       Potentially a user
  */
 async function isUserUnique(email) {
-  const user = User.findOne({ email });
-  return user ? false : true;
+  return await User.findOne({ email });
 }
 
 /**
