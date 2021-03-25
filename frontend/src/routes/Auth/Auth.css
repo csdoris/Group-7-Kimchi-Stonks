@@ -4,6 +4,18 @@
   width: 100vw;
   justify-content: center;
   align-items: center;
+  background-color: #333333;
+}
+
+.auth-form {
+  border-radius: 10px;
+  padding: 3em 6em;
+  background-color: #3E3E3E;
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.15));
+}
+
+.auth-form .logo {
+  width: 250px;
 }
 
 .auth-form .input-field {

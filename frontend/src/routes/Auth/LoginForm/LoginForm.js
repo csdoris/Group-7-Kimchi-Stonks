@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 
 import InputField from '../../../components/InputField/InputField';
 
+import logo from '../../../assets/logo.png';
+
 function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   return (
     <form className="auth-form">
+      <img className="logo" src={logo} alt="Kimchi Stonks Logo" />
       <InputField
         type="text"
         name="email"
