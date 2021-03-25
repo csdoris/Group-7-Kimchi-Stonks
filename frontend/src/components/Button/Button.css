@@ -1,0 +1,49 @@
+.button,
+.button.contained {
+  border-radius: 5px;
+  border: solid 2px #E56536;
+  background-color: #E56536;
+  text-transform: uppercase;
+  color: #E8E8E8;
+  letter-spacing: 1px;
+  font-weight: bold;
+  width: 100%;
+  padding: 1em;
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.05));
+  transition: 0.5s ease;
+}
+
+.button:hover,
+.button.contained:hover {
+  cursor: pointer;
+  border-color: #D95C2E;
+  background-color: #D95C2E;
+}
+
+.button:focus,
+.button.contained:focus {
+  border-color: #D03800;
+}
+
+.button.text {
+  border-radius: 5px;
+  border: solid 2px transparent;
+  background-color: transparent;
+  text-transform: uppercase;
+  color: #E56536;
+  letter-spacing: 1px;
+  font-weight: bold;
+  width: 100%;
+  padding: 1em;
+  transition: 0.5s ease;
+}
+
+.button.text:hover {
+  cursor: pointer;
+  color: #D95C2E;
+}
+
+.button.text:focus {
+  border-color: #D95C2E;
+  color: #D95C2E;
+}

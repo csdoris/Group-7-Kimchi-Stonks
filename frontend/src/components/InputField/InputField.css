@@ -1,0 +1,27 @@
+.input-field {
+  border-radius: 5px;
+  border: solid 2px #303030;
+  background-color: #303030;
+  padding: 0.8em 1.8em;
+  letter-spacing: 2px;
+  color: #FFDA9F;
+  transition: 0.5s ease;
+}
+
+.input-field::placeholder {
+  color: #666666;
+  text-transform: uppercase;
+}
+
+.input-field:focus {
+  border-color: #E56536;
+}
+
+/* Styling for when a text field is autofilled by the browser. */
+.input-field:-webkit-autofill,
+.input-field:-webkit-autofill:focus,
+.input-field:-webkit-autofill:hover,
+.input-field:-webkit-autofill:active {
+	-webkit-text-fill-color: #FFDA9F;
+	transition: background-color ease 5000s;
+}

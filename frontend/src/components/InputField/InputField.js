@@ -1,5 +1,7 @@
 import React from 'react';
 
+import './InputField.css';
+
 function InputField({
   name,
   value,
