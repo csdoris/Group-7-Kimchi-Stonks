@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 import InputField from '../../../components/InputField/InputField';
 import Button from '../../../components/Button/Button';
@@ -12,6 +13,10 @@ function RegisterForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  function handleRegisterForm() {
+
+  }
 
   return (
     <form className="auth-form">
