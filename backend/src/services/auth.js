@@ -1,4 +1,17 @@
+const bcrypt = require('bcrypt');
+
 const User = require('../mongodb/schemas/userSchema');
+
+/**
+ * Checks if the user email already exists in the database
+ *
+ * @param  {String} email User's email
+ * @return {boolean}      True OR False
+ */
+async function isUserUnique(email) {
+  const user = User.findOne({ email });
+  return user ? false : true;
+}
 
 /**
  * Creates a new user using the user schema and persists it to the database.
@@ -10,9 +23,21 @@ const User = require('../mongodb/schemas/userSchema');
  * @return {Object}           Object containing a status and json response property
  */
 async function createNewUser(firstName, lastName, email, password) {
+  const isValid = await isUserUnique(email);
+
+  if (isValid) {
+    return { status: 400, json: { message: 'Email is already being used.' } };
+  }
+
+  // Hash password
+  const hash = await bcrypt.hash(password, 10);
+
+  // Create new User from user schema
   const newUser = new User({
-    firstName, lastName, email, password,
+    firstName, lastName, email, hash,
   });
+
+  // Persist user to the database
   const { err } = await newUser.save();
 
   if (err) {
