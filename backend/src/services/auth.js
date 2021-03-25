@@ -58,8 +58,11 @@ async function authenticateUser(email, password) {
   const user = await User.findOne({ email });
 
   if (user) {
-    if (user.password === password) {
-      return { status: 200, json: { user } };
+    const isAuth = await bcrypt.compare(password, user.password);
+
+    if (isAuth) {
+      const { password, ...userInfo } = user._doc;
+      return { status: 200, json: { user: userInfo } };
     }
     return { status: 400, json: { message: 'Incorrect user credentials.' } };
   }
