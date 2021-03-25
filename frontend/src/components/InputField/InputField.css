@@ -1,13 +1,18 @@
 .input-field {
   border-radius: 5px;
-  border: solid 1px #303030;
+  border: solid 2px #303030;
   background-color: #303030;
   padding: 0.8em 1.8em;
   text-transform: uppercase;
   letter-spacing: 2px;
   color: #999999;
+  transition: 0.5s ease;
 }
 
 .input-field::placeholder {
   color: #555555;
+}
+
+.input-field:focus {
+  border-color: #E56536;
 }
