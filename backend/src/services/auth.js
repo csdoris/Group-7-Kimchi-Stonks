@@ -9,7 +9,7 @@ const User = require('../mongodb/schemas/userSchema');
  * @return {Object}       Potentially a user
  */
 async function isUserUnique(email) {
-  return await User.findOne({ email });
+  return User.findOne({ email });
 }
 
 /**
