@@ -61,7 +61,7 @@ async function authenticateUser(email, password) {
     const isAuth = await bcrypt.compare(password, user.password);
 
     if (isAuth) {
-      const { password: hashedPassword , ...userInfo } = user._doc;
+      const { password: hashedPassword, ...userInfo } = user._doc;
       return { status: 200, json: { user: userInfo } };
     }
     return { status: 400, json: { message: 'Incorrect user credentials.' } };
