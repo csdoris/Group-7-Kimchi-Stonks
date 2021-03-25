@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import InputField from '../../../components/InputField/InputField';
+import Button from '../../../components/Button/Button';
 
 import logo from '../../../assets/logo.png';
 
@@ -25,7 +26,13 @@ function LoginForm() {
         placeholder="Password"
         onChange={(event) => setPassword(event.target.value)}
       />
-      <InputField type="submit" value="Submit" />
+      <Button
+        type="submit"
+        value="Submit"
+        text="Login"
+        variant="contained"
+        onClick={() => console.log('Submit Button Clicked!')}
+      />
     </form>
   );
 }

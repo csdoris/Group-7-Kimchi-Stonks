@@ -1,7 +1,7 @@
 import React from 'react';
 
 function Button({
-  name,
+  text,
   className,
   onClick,
   type,
@@ -11,13 +11,13 @@ function Button({
 }) {
   return (
     <button
-      className={`button ${styles[variant]} ${className}`}
+      className={`button ${variant} ${className}`}
       type={type === 'submit' ? 'submit' : 'button'}
       value={value}
       onClick={onClick}
       disabled={disabled}
     >
-      {name}
+      {text}
     </button>
   );
 }

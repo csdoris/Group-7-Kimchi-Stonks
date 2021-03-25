@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import InputField from '../../../components/InputField/InputField';
+import Button from '../../../components/Button/Button';
 
 function RegisterForm() {
   const [firstName, setFirstName] = useState('');
@@ -46,7 +47,13 @@ function RegisterForm() {
         placeholder="Confirm Password"
         onChange={(event) => setConfirmPassword(event.target.value)}
       />
-      <InputField type="submit" value="Submit" />
+      <Button
+        type="submit"
+        value="Submit"
+        text="Register"
+        variant="contained"
+        onClick={() => console.log('Submit Button Clicked!')}
+      />
     </form>
   );
 }
