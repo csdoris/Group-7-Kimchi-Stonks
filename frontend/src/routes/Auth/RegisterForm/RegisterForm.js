@@ -58,7 +58,6 @@ function RegisterForm() {
           value="Submit"
           text="Register"
           variant="contained"
-          onClick={() => console.log('Submit Button Clicked!')}
         />
       </div>
       <div className="form-footer">

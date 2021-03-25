@@ -34,7 +34,6 @@ function LoginForm() {
           value="Login"
           text="Login"
           variant="contained"
-          onClick={() => console.log('Login Button Clicked!')}
         />
       </div>
       <div className="form-footer">
