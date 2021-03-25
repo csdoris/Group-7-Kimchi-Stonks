@@ -1,14 +1,18 @@
 import React from 'react';
-import { Switch, Route, Redirect, useRouteMatch } from 'react-router-dom';
+import {
+  Switch, Route, Redirect, useRouteMatch,
+} from 'react-router-dom';
 
 import LoginForm from './LoginForm/LoginForm';
 import RegisterForm from './RegisterForm/RegisterForm';
+
+import './Auth.css';
 
 function Auth() {
   const { path } = useRouteMatch();
 
   return (
-    <div>
+    <div className="auth-container">
       <Switch>
         <Route path={`${path}/login`}>
           <LoginForm />
@@ -16,7 +20,7 @@ function Auth() {
         <Route path={`${path}/register`}>
           <RegisterForm />
         </Route>
-        <Route path={path}}>
+        <Route path={path}>
           <Redirect to={`${path}/login`} />
         </Route>
       </Switch>
