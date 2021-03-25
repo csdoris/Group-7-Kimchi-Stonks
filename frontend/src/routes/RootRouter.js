@@ -1,5 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import {
+  BrowserRouter as Router, Switch, Route, Redirect,
+} from 'react-router-dom';
 
 import Auth from './auth/Auth';
 import Dashboard from './dashboard/Dashboard';
@@ -14,7 +16,7 @@ function RootRouter() {
         <Route path="/auth">
           <Auth />
         </Route>
-        <Route path="/dashboard">
+        <Route path="/">
           <Redirect to="/dashboard" />
         </Route>
       </Switch>
