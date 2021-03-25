@@ -3,8 +3,8 @@ import {
   BrowserRouter as Router, Switch, Route, Redirect,
 } from 'react-router-dom';
 
-import Auth from './auth/Auth';
-import Dashboard from './dashboard/Dashboard';
+import Auth from './Auth/Auth';
+import Dashboard from './Dashboard/Dashboard';
 
 function RootRouter() {
   return (
