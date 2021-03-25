@@ -34,7 +34,7 @@ async function createNewUser(firstName, lastName, email, password) {
 
   // Create new User from user schema
   const newUser = new User({
-    firstName, lastName, email, hash,
+    firstName, lastName, email, password: hash,
   });
 
   // Persist user to the database
