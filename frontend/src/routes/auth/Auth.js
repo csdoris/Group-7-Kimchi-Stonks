@@ -1,13 +1,13 @@
 import React from 'react';
 
-function Dashboard() {
+function Auth() {
   return (
     <div>
       <div>
-        Dashboard Route
+        Authentication Route
       </div>
     </div>
   );
 }
 
-export default Dashboard;
+export default Auth;
