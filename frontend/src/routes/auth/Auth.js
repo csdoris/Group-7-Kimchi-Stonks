@@ -1,10 +1,12 @@
 import React from 'react';
 
+import RegisterForm from './RegisterForm/RegisterForm';
+
 function Auth() {
   return (
     <div>
       <div>
-        Authentication Route
+        <RegisterForm />
       </div>
     </div>
   );

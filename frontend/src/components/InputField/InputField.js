@@ -11,7 +11,7 @@ function InputField({
 }) {
   return (
     <input
-      className={`${styles['input-field']} ${className}`}
+      className={`input-field ${className}`}
       type={type}
       name={name}
       value={value}

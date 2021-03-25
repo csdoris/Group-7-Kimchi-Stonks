@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 
-import InputField from './../../../components/InputField/InputField';
+import InputField from '../../../components/InputField/InputField';
 
 function RegisterForm() {
-
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfrimPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   return (
-    <form>
+    <form className="auth-form">
       <InputField
         type="text"
         name="first-name"
@@ -47,7 +46,7 @@ function RegisterForm() {
         placeholder="Confirm Password"
         onChange={(event) => setConfirmPassword(event.target.value)}
       />
-      <input type="submit" value="Submit" />
+      <InputField type="submit" value="Submit" />
     </form>
   );
 }
