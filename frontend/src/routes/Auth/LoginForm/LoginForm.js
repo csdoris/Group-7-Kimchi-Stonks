@@ -1,14 +1,40 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import axios from 'axios';
 
 import InputField from '../../../components/InputField/InputField';
 import Button from '../../../components/Button/Button';
 
 import logo from '../../../assets/logo.png';
 
+const url = process.env.REACT_APP_API_URL;
+
 function LoginForm() {
+  const history = useHistory();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  function isFormValid() {
+    return ((email !== '') && (password !== ''));
+  }
+
+  function handleLoginForm(event) {
+    event.preventDefault();
+    axios.post(`${url}/auth/login`, {
+      email,
+      password,
+    }).then((res) => {
+      const { status } = res;
+
+      if (status === 200) {
+        // TODO: Set User
+        history.push('/dashboard');
+      }
+
+      // TODO: Error Message
+    });
+  }
 
   return (
     <form className="auth-form">
@@ -34,6 +60,8 @@ function LoginForm() {
           value="Login"
           text="Login"
           variant="contained"
+          disabled={!isFormValid()}
+          onClick={(event) => handleLoginForm(event)}
         />
       </div>
       <div className="form-footer">
