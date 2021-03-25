@@ -12,6 +12,22 @@ db.connect();
 // Setup Express
 const app = express();
 
+// To resolve any Cross Origin Resource Sharing issues
+app.use(
+  cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Origin',
+      'X-Requested-With',
+      'Content-Type',
+      'Accept',
+      'Authorization',
+    ],
+    credentials: true,
+  }),
+);
+
 // Setup JSON parsing for the request body
 app.use(express.json());
 
