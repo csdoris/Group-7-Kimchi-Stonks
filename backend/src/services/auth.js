@@ -22,4 +22,25 @@ async function createNewUser(firstName, lastName, email, password) {
   return { status: 201, json: undefined };
 }
 
-module.exports = { createNewUser };
+/**
+ * Authenticates a user using the supplied credentials and comparing it with
+ * the database.
+ *
+ * @param  {String} email     User's email
+ * @param  {String} password  User's password
+ * @return {Object}           Object containing a status and json response property
+ */
+async function authenticateUser(email, password) {
+  const user = await User.findOne({ email });
+
+  if (user) {
+    if (user.password === password) {
+      return { status: 200, json: { user } };
+    }
+    return { status: 400, json: { message: 'Incorrect user credentials.' } };
+  }
+
+  return { status: 400, json: { message: 'Incorrect user credentials.' } };
+}
+
+module.exports = { createNewUser, authenticateUser };
