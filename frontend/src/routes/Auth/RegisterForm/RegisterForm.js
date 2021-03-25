@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import axios from 'axios';
 
 import InputField from '../../../components/InputField/InputField';
@@ -7,15 +7,45 @@ import Button from '../../../components/Button/Button';
 
 import logo from '../../../assets/logo.png';
 
+const url = process.env.REACT_APP_API_URL;
+
 function RegisterForm() {
+  const history = useHistory();
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  function handleRegisterForm() {
+  function isFormValid() {
+    return (
+      (firstName !== '')
+      && (lastName !== '')
+      && (email !== '')
+      && (password !== '')
+      && (confirmPassword !== '')
+      && (password === confirmPassword)
+    );
+  }
 
+  function handleRegisterForm(event) {
+    event.preventDefault();
+    axios.post(`${url}/auth/register`, {
+      firstName,
+      lastName,
+      email,
+      password,
+    }).then((res) => {
+      const { status } = res;
+
+      if (status === 201) {
+        // TODO: Set User
+        history.push('/dashboard');
+      }
+
+      // TODO: Error Message
+    });
   }
 
   return (
@@ -63,6 +93,8 @@ function RegisterForm() {
           value="Submit"
           text="Register"
           variant="contained"
+          disabled={!isFormValid()}
+          onClick={(event) => handleRegisterForm(event)}
         />
       </div>
       <div className="form-footer">
