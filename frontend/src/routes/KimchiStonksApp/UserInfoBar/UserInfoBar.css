@@ -38,7 +38,7 @@
   font-weight: 500;
   letter-spacing: 1px;
   font-size: 150%;
-  margin-bottom: 0.2em;
+  margin-bottom: 0.25em;
 }
 
 .user-info-bar-container .name-account-container .account {
@@ -50,7 +50,7 @@
   border-radius: 5px;
   background-color: #383838;
   width: 100px;
-  padding: 1.2em 1.5em;
+  padding: 1.25em 1.5em;
   margin-right: 3em;
   display: flex;
   flex-direction: column;
@@ -59,7 +59,7 @@
 
 .user-info-bar-container .info-container .info-title {
   text-transform: uppercase;
-  font-size: 70%;
+  font-size: 75%;
   letter-spacing: 1px;
 }
 
