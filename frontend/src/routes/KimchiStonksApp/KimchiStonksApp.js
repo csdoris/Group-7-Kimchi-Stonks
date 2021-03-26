@@ -1,11 +1,31 @@
 import React from 'react';
+import {
+  Switch, Route, Redirect,
+} from 'react-router-dom';
+
+import NavBar from './NavBar/NavBar';
+import Stock from './Stock/Stock';
+import Dashboard from './Dashboard/Dashboard';
+import Market from './Market/Market';
 
 function KimchiStonksApp() {
   return (
     <div>
-      <div>
-        KimchiStonksApp
-      </div>
+      <NavBar />
+      <Switch>
+        <Route path="/dashboard">
+          <Dashboard />
+        </Route>
+        <Route path="/market">
+          <Market />
+        </Route>
+        <Route path="/stock">
+          <Stock />
+        </Route>
+        <Route path="/">
+          <Redirect to="/dashboard" />
+        </Route>
+      </Switch>
     </div>
   );
 }

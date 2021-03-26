@@ -1,23 +1,20 @@
 import React from 'react';
 import {
-  BrowserRouter as Router, Switch, Route, Redirect,
+  BrowserRouter as Router, Switch, Route,
 } from 'react-router-dom';
 
 import Auth from './Auth/Auth';
-import Dashboard from './Dashboard/Dashboard';
+import KimchiStonksApp from './KimchiStonksApp/KimchiStonksApp';
 
 function RootRouter() {
   return (
     <Router>
       <Switch>
-        <Route path="/dashboard">
-          <Dashboard />
-        </Route>
         <Route path="/auth">
           <Auth />
         </Route>
         <Route path="/">
-          <Redirect to="/dashboard" />
+          <KimchiStonksApp />
         </Route>
       </Switch>
     </Router>
