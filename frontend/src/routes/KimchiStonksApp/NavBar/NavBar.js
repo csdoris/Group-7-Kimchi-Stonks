@@ -6,6 +6,8 @@ import Button from '../../../components/Button/Button';
 
 import logo from '../../../assets/logo.png';
 
+import './NavBar.css';
+
 function NavBar() {
   const [search, setSearch] = useState('');
 
@@ -22,18 +24,20 @@ function NavBar() {
       />
       <ul className="nav-list">
         <li className="nav-item">
-          <NavLink to="/dashboard">Dashboard</NavLink>
+          <NavLink className="nav-link" to="/dashboard">Dashboard</NavLink>
         </li>
         <li className="nav-item">
-          <NavLink to="/market">Wall St</NavLink>
+          <NavLink className="nav-link" to="/market">Wall St</NavLink>
         </li>
-        <Button
-          className="log-out"
-          type="button"
-          value="Log Out"
-          text="Log Out"
-          variant="contained"
-        />
+        <li className="nav-item">
+          <Button
+            className="log-out"
+            type="button"
+            value="Log Out"
+            text="Log Out"
+            variant="contained"
+          />
+        </li>
       </ul>
     </nav>
   );

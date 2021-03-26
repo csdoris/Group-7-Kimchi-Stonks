@@ -1,0 +1,24 @@
+.nav-bar {}
+
+
+.nav-bar .logo {
+  width: 200px;
+}
+
+.nav-bar .nav-list {
+  list-style: none;
+  display: inline-block;
+  padding-left: 0;
+}
+
+.nav-bar .nav-list .nav-item {
+  display: inline-block;
+}
+
+.nav-bar .nav-list .nav-item .nav-link {
+  text-decoration: none;
+  color: #E8E8E8;
+}
+
+.nav-bar .nav-list .nav-item .button.log-out {
+}
