@@ -14,7 +14,7 @@ import './KimchiStonksApp.css';
 function KimchiStonksApp() {
   return (
     <div className="app-container">
-      <div className="row">
+      <div className="main">
         <NavBar />
         <UserInfoBar />
         <Switch>

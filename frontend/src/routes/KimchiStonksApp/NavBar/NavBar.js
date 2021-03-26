@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 import InputField from '../../../components/InputField/InputField';
 import Button from '../../../components/Button/Button';
@@ -13,7 +13,9 @@ function NavBar() {
 
   return (
     <nav className="nav-bar">
-      <img className="logo" src={logo} alt="Kimchi Stonks Logo" />
+      <Link to="/dashboard">
+        <img className="logo" src={logo} alt="Kimchi Stonks Logo" />
+      </Link>
       <InputField
         className="search"
         type="text"
