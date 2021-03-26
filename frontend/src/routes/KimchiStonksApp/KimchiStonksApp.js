@@ -13,6 +13,7 @@ function KimchiStonksApp() {
   return (
     <div>
       <NavBar />
+      <UserInfoBar />
       <Switch>
         <Route path="/dashboard">
           <Dashboard />
