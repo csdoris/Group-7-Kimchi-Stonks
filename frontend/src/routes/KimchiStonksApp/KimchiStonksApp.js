@@ -4,6 +4,7 @@ import {
 } from 'react-router-dom';
 
 import NavBar from './NavBar/NavBar';
+import UserInfoBar from './UserInfoBar/UserInfoBar';
 import Stock from './Stock/Stock';
 import Dashboard from './Dashboard/Dashboard';
 import Market from './Market/Market';
