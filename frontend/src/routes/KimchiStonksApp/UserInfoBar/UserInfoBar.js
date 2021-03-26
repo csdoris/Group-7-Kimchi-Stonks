@@ -8,9 +8,9 @@ function UserInfoBar() {
   const userInfo = {
     firstName: 'Tim',
     lastName: 'Jones',
-    buyingPower: 112.74,
-    equityValue: 224.12,
-    shares: 3.12,
+    buyingPower: 12.74,
+    equityValue: 824.12,
+    shares: 43.12,
   };
 
   return (
@@ -24,11 +24,11 @@ function UserInfoBar() {
       </div>
       <div className="info-container">
         <div className="info-title">Equity Value</div>
-        <div className="info-value">{`$ ${userInfo.equityValue}`}</div>
+        <div className="info-value">{`$${userInfo.equityValue}`}</div>
       </div>
       <div className="info-container">
         <div className="info-title">Buying Power</div>
-        <div className="info-value">{`$ ${userInfo.buyingPower}`}</div>
+        <div className="info-value">{`$${userInfo.buyingPower}`}</div>
       </div>
       <div className="info-container">
         <div className="info-title">Shares</div>
