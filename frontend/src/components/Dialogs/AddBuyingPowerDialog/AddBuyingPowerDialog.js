@@ -19,11 +19,11 @@ function AddBuyingPowerDialog() {
       <div className="modal-header">
         <img className="logo" src={logo} alt="Kimchi Stonks Logo" />
       </div>
-      <div className="model-content">
+      <div className="modal-content">
         <p className="info-title">Need more buying power?</p>
         <p className="info-text">Enter an amount below to add more buying power to your account.</p>
         <InputField
-          type="number"
+          type="text"
           name="amount"
           value={amount}
           placeholder="Amount"

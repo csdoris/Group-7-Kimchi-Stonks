@@ -1,10 +1,14 @@
 import React from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 
 import Button from '../../../components/Button/Button';
 
 import './UserInfoBar.css';
 
 function UserInfoBar() {
+  const history = useHistory();
+  const location = useLocation();
+
   const userInfo = {
     firstName: 'Tim',
     lastName: 'Jones',
@@ -41,6 +45,7 @@ function UserInfoBar() {
           value="Get Buying Power"
           text="Get Buying Power"
           variant="text"
+          onClick={() => history.push(`${location.pathname}/addBuyingPower`)}
         />
       </div>
     </div>
