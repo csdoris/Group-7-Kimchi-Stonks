@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './Stock.css';
+import './Stock.scss';
 
 function Stock() {
   return (

@@ -9,7 +9,7 @@ import Stock from './Stock/Stock';
 import Dashboard from './Dashboard/Dashboard';
 import Market from './Market/Market';
 
-import './KimchiStonksApp.css';
+import './KimchiStonksApp.scss';
 
 function KimchiStonksApp() {
   return (
