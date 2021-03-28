@@ -2,71 +2,71 @@
   display: flex;
   align-items: center;
   margin-bottom: 2em;
+  .logo {
+    width: 200px;
+    margin-right: 4em;
+    
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  
+  
+  .input-field.search {
+    width: 30vw;
+    border-color: #464646;
+    background-color: #464646;
+    color: #FFDA9F;
+  
+    &::placeholder {
+      color: #6E6E6E;
+    }
+  }
+  
+  .nav-list {
+    list-style: none;
+    display: inline-block;
+    padding-left: 0;
+    margin-left: auto;
+    .nav-item {
+      display: inline-block;
+      margin-left: 1em;
+      &:first-child {
+        margin-left: 0;
+      }
+      
+      .nav-link {
+        border-radius: 5px;
+        border: solid 2px transparent;
+        background-color: transparent;
+        text-decoration: none;
+        color: #E8E8E8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: bold;
+        font-size: 100%;
+        padding: 0.8em;
+        transition: 0.3s ease;
+        &:hover {
+          color: #E56536;
+        }
+        
+        &:focus{
+          border-color: #D95C2E;
+        }
+        
+        &.active {
+          color: #E56536;
+        }
+      }
+      
+      .button.log-out {
+        width: 120px;
+        padding: 0.8em;
+      }
+    }
+    
+  }
+  
 }
 
-.nav-bar .logo {
-  width: 200px;
-  margin-right: 4em;
-}
-
-.nav-bar .logo:hover {
-  cursor: pointer;
-}
-
-.nav-bar .input-field.search {
-  width: 30vw;
-  border-color: #464646;
-  background-color: #464646;
-  color: #FFDA9F;
-}
-
-.nav-bar .input-field.search::placeholder {
-  color: #6E6E6E;
-}
-
-.nav-bar .nav-list {
-  list-style: none;
-  display: inline-block;
-  padding-left: 0;
-  margin-left: auto;
-}
-
-.nav-bar .nav-list .nav-item {
-  display: inline-block;
-  margin-left: 1em;
-}
-
-.nav-bar .nav-list .nav-item:first-child {
-  margin-left: 0;
-}
-
-.nav-bar .nav-list .nav-item .nav-link {
-  border-radius: 5px;
-  border: solid 2px transparent;
-  background-color: transparent;
-  text-decoration: none;
-  color: #E8E8E8;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: bold;
-  font-size: 100%;
-  padding: 0.8em;
-  transition: 0.3s ease;
-}
-
-.nav-bar .nav-list .nav-item .nav-link:hover {
-  color: #E56536;
-}
-
-.nav-bar .nav-list .nav-item .nav-link:focus{
-  border-color: #D95C2E;
-}
-
-.nav-bar .nav-list .nav-item .nav-link.active {
-  color: #E56536;
-}
-
-.nav-bar .nav-list .nav-item .button.log-out {
-  width: 120px;
-  padding: 0.8em;
-}
