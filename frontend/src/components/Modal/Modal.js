@@ -7,7 +7,7 @@ import './Modal.css';
 const modalRoot = document.querySelector('#modal-root');
 
 function Modal({
-  dismissOnClickOutside, title, className, children,
+  dismissOnClickOutside, className, children,
 }) {
   const history = useHistory();
 
