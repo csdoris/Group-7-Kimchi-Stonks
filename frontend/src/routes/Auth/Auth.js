@@ -6,7 +6,7 @@ import {
 import LoginForm from './LoginForm/LoginForm';
 import RegisterForm from './RegisterForm/RegisterForm';
 
-import './Auth.css';
+import './Auth.scss';
 
 function Auth() {
   const { path } = useRouteMatch();

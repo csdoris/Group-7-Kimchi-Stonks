@@ -1,0 +1,15 @@
+.market-container {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 2em;
+  
+  .left-container,
+  .right-container {
+    border-radius: 10px;
+    background-color: #3E3E3E;
+    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.15));
+    padding: 2.5em 3em;
+  }
+}
+

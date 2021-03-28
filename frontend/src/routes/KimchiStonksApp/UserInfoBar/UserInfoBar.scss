@@ -1,0 +1,81 @@
+.user-info-bar-container {
+  width: auto;
+  border-radius: 10px;
+  padding: 1.25em 2em;
+  background-color: #3E3E3E;
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.15));
+  margin-bottom: 2em;
+  display: flex;
+  
+  .user-profile-icon {
+    border-radius: 50px;
+    background-color: #E8E8E8;
+    width: 75px;
+    height: 75px;
+    display: flex;
+    margin: 0.25em;
+    justify-content: center;
+    align-items: center;
+    margin-right: 2em;
+
+    .user-letter {
+      font-weight: bold;
+      font-size: 275%;
+      color: #333333;
+    }
+  }
+  
+  
+  .name-account-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-right: 6em;
+
+    .name {
+      text-transform: uppercase;
+      font-weight: 500;
+      letter-spacing: 1px;
+      font-size: 150%;
+      margin-bottom: 0.25em;
+    }
+    
+    .account {
+      font-size: 80%;
+      letter-spacing: 0.5px;
+    }
+  }
+  
+  
+  .info-container {
+    border-radius: 5px;
+    background-color: #383838;
+    width: 100px;
+    padding: 1.25em 1.5em;
+    margin-right: 3em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .info-title {
+      text-transform: uppercase;
+      font-size: 75%;
+      letter-spacing: 1px;
+    }
+    
+    .info-value {
+      font-size: 150%;
+      font-weight: 300;
+      letter-spacing: 2px;
+      color: #FFDA9F;
+    }
+  }
+  
+  
+  .button-container {
+    margin-left: auto;
+    display: flex;
+    align-items: flex-end;
+  }
+}
+

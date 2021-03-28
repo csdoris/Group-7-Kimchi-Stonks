@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './InputField.css';
+import './InputField.scss';
 
 function InputField({
   name,

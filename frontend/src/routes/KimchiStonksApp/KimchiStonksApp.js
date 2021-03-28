@@ -10,7 +10,7 @@ import Market from './Market/Market';
 import Stock from './Stock/Stock';
 import AddBuyingPowerDialog from '../../components/Dialogs/AddBuyingPowerDialog/AddBuyingPowerDialog';
 
-import './KimchiStonksApp.css';
+import './KimchiStonksApp.scss';
 
 function KimchiStonksApp() {
   return (
