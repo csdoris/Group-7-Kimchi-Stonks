@@ -6,7 +6,7 @@ import Button from '../../../components/Button/Button';
 
 import logo from '../../../assets/logo.png';
 
-import './NavBar.css';
+import './NavBar.scss';
 
 function NavBar() {
   const [search, setSearch] = useState('');
