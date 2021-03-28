@@ -3,7 +3,7 @@ import { useLocation, useHistory } from 'react-router-dom';
 
 import Button from '../../../components/Button/Button';
 
-import './UserInfoBar.css';
+import './UserInfoBar.scss';
 
 function UserInfoBar() {
   const history = useHistory();
