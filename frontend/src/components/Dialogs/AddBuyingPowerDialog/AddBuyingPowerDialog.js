@@ -7,7 +7,7 @@ import Button from '../../Button/Button';
 
 import logo from '../../../assets/logo.png';
 
-import './AddBuyingPowerDialog.css';
+import './AddBuyingPowerDialog.scss';
 
 function AddBuyingPowerDialog() {
   const history = useHistory();
