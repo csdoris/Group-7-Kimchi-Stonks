@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './Market.css';
+import './Market.scss';
 
 function Market() {
   return (
