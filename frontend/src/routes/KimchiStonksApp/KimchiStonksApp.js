@@ -5,9 +5,10 @@ import {
 
 import NavBar from './NavBar/NavBar';
 import UserInfoBar from './UserInfoBar/UserInfoBar';
-import Stock from './Stock/Stock';
 import Dashboard from './Dashboard/Dashboard';
 import Market from './Market/Market';
+import Stock from './Stock/Stock';
+import AddBuyingPowerDialog from '../../components/Dialogs/AddBuyingPowerDialog/AddBuyingPowerDialog';
 
 import './KimchiStonksApp.css';
 
@@ -29,6 +30,11 @@ function KimchiStonksApp() {
           </Route>
           <Route path="/">
             <Redirect to="/dashboard" />
+          </Route>
+        </Switch>
+        <Switch>
+          <Route path="/*/addBuyingPower">
+            <AddBuyingPowerDialog />
           </Route>
         </Switch>
       </div>
