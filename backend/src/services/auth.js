@@ -1,6 +1,18 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const User = require('../mongodb/schemas/userSchema');
+
+/**
+ * Generates an access token for the client
+ *
+ * @param  {String} id     User ID
+ * @param  {number} number Access token duration in seconds
+ * @return {Object}        A token object
+ */
+async function generateAccessToken(id, duration) {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: duration });
+}
 
 /**
  * Checks if the user email already exists in the database
@@ -42,8 +54,14 @@ async function createNewUser(firstName, lastName, email, password) {
   if (err) {
     return { status: 400, json: { message: 'Error create new user.' } };
   }
+  const newUserInfo = newUser._doc;
+  const duration = 3600;
+  const token = await generateAccessToken(newUser._id, duration);
 
-  return { status: 201, json: undefined };
+  return {
+    status: 201,
+    json: { user: { ...newUserInfo, accessToken: { token, expiresIn: duration } } },
+  };
 }
 
 /**
@@ -62,7 +80,14 @@ async function authenticateUser(email, password) {
 
     if (isAuth) {
       const { password: hashedPassword, ...userInfo } = user._doc;
-      return { status: 200, json: { user: userInfo } };
+
+      const duration = 3600;
+      const token = await generateAccessToken(user._id, duration);
+
+      return {
+        status: 201,
+        json: { user: { ...userInfo, accessToken: { token, expiresIn: duration } } },
+      };
     }
     return { status: 400, json: { message: 'Incorrect user credentials.' } };
   }
