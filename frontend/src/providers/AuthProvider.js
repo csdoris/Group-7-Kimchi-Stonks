@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 
 const AuthContext = React.createContext();
 
-function AuthProvider ({ children }) {
+function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined);
 
   const context = {
     user,
-    setUser
+    setUser,
   };
 
   return (
