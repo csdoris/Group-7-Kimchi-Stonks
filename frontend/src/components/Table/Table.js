@@ -42,6 +42,9 @@ function TableHeader() {
     },
   ];
 
+  //
+  const handleClick = () => null;
+
   return (
     <div className="table">
       <div className="table-header flex-grid">
@@ -57,6 +60,7 @@ function TableHeader() {
                 holding[keyName][0] === '+' ? 'positive' : ''
               } 
               ${holding[keyName][0] === '-' ? 'negative' : ''}`}
+              onClick={handleClick}
             >
               {holding[keyName]}
             </div>
