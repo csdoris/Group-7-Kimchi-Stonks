@@ -42,7 +42,6 @@ function TableHeader() {
     },
   ];
 
-  //
   const handleClick = () => null;
 
   return (
