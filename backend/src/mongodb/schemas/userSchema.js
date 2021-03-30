@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 
-const userSchema = mongoose.Schema({
+const { Schema } = mongoose;
+
+const userSchema = Schema({
   firstName: {
     type: String,
     required: true,
@@ -28,6 +30,7 @@ const userSchema = mongoose.Schema({
     default: 0,
     required: false,
   },
+  stocks: [{ type: Schema.Types.ObjectId, ref: 'Stock', required: false }],
 });
 
 const User = mongoose.model('User', userSchema);
