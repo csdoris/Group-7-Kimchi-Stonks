@@ -54,11 +54,17 @@ function AuthProvider({ children }) {
     }).then((res) => {
       const { status, data } = res;
       const { user } = data;
+      const { token, expiresIn } = user.accessToken;
 
-      if (status === 201) {
+      if (status === 201 && token) {
         setUser(user);
-      }
+        setAuthTimer(expiresIn);
 
+        const now = new Date();
+        const expirationDate = new Date(now.getTime() + expiresIn * 1000);
+
+        saveAuthData(token, expirationDate);
+      }
       // TODO: Error Message
     });
   }
