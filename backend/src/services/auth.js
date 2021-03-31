@@ -85,7 +85,7 @@ async function authenticateUser(email, password) {
       const token = await generateAccessToken(user._id, duration);
 
       return {
-        status: 201,
+        status: 200,
         json: { user: { ...userInfo, accessToken: { token, expiresIn: duration } } },
       };
     }
@@ -95,4 +95,31 @@ async function authenticateUser(email, password) {
   return { status: 400, json: { message: 'Incorrect user credentials.' } };
 }
 
-module.exports = { createNewUser, authenticateUser };
+/**
+ * Retireves a user from the database.
+ *
+ * @param  {String} id        User's ID
+ * @param  {String} token     User's original token
+ * @return {Object}           Object containing a status and json response property
+ */
+async function retrieveUser(id, token) {
+  console.log(id);
+  console.log(token);
+  const user = await User.findById(id);
+  console.log(user);
+
+  if (user) {
+    const { password: hashedPassword, ...userInfo } = user._doc;
+
+    const duration = 3600;
+
+    return {
+      status: 200,
+      json: { user: { ...userInfo, accessToken: { token, expiresIn: duration } } },
+    };
+  }
+
+  return { status: 400, json: { message: 'Incorrect user credentials.' } };
+}
+
+module.exports = { createNewUser, authenticateUser, retrieveUser };

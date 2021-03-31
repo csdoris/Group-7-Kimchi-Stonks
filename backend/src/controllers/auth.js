@@ -32,4 +32,18 @@ async function loginUser(req, res) {
   res.status(status).json(json);
 }
 
-module.exports = { registerNewUser, loginUser };
+/**
+ * Extracts the user ID and uses it to fetch the user data.
+ *
+ * @param  {Object} req Request object
+ * @param  {Object} res Response object
+ */
+async function autoLoginUser(req, res) {
+  const { id, token } = req.user;
+
+  const { status, json } = await AuthService.retrieveUser(id, token);
+
+  res.status(status).json(json);
+}
+
+module.exports = { registerNewUser, loginUser, autoLoginUser };
