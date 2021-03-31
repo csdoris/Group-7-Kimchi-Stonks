@@ -1,18 +1,16 @@
 import React, { useState, useContext } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 import InputField from '../../../components/InputField/InputField';
 import Button from '../../../components/Button/Button';
-import { AuthContext } from '../../../providers/AuthProvider';
+import { AuthContext } from '../../../contexts/Auth';
 
 import logo from '../../../assets/logo.png';
 
 const url = process.env.REACT_APP_API_URL;
 
 function RegisterForm() {
-  const history = useHistory();
-
   const { setUser } = useContext(AuthContext);
 
   const [firstName, setFirstName] = useState('');
@@ -40,11 +38,11 @@ function RegisterForm() {
       email,
       password,
     }).then((res) => {
-      const { status, user } = res;
+      const { status, data } = res;
+      const { user } = data;
 
       if (status === 201) {
         setUser(user);
-        history.push('/dashboard');
       }
 
       // TODO: Error Message
