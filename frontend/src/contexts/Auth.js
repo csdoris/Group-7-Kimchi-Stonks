@@ -7,7 +7,7 @@ const url = process.env.REACT_APP_API_URL;
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined);
-  const [token, setToken] = useState(undefined);
+  const [timer, setTimer] = useState(undefined);
 
   function saveAuthData(token, expirationDate, userId) {
     localStorage.setItem('token', token);
@@ -21,17 +21,33 @@ function AuthProvider({ children }) {
     localStorage.removeItem('userId');
   }
 
+  function getAuthData() {
+    const token = localStorage.getItem('token');
+    const expirationDate = localStorage.getItem('expiration');
+    const userId = localStorage.getItem('userId');
+
+    if (token && expirationDate) {
+      return {
+        token,
+        expirationDate: new Date(expirationDate),
+        userId,
+      };
+    }
+
+    return undefined;
+  }
+
   function logOut() {
     // TODO: Remove local storage
     setUser(undefined);
+    clearTimeout(timer);
     clearAuthData();
-    console.log(token);
   }
 
   function setAuthTimer(duration) {
-    setTimeout(() => {
+    setTimer(setTimeout(() => {
       logOut();
-    }, duration * 1000);
+    }, duration * 1000));
   }
 
   function register(firstName, lastName, email, password) {
@@ -62,27 +78,39 @@ function AuthProvider({ children }) {
       const { token, expiresIn } = user.accessToken;
 
       if (status === 200 && token) {
-        setToken(token);
-        setAuthTimer(5);
+        setAuthTimer(expiresIn);
         setUser(user);
 
         const now = new Date();
         const expirationDate = new Date(now.getTime() + expiresIn * 1000);
 
         saveAuthData(token, expirationDate, user._id);
-
-        console.log(expiresIn);
       }
 
       // TODO: Error Message
     });
   }
 
+  function autoLogin() {
+    const authInfo = getAuthData();
+
+    if (authInfo) {
+      const now = new Date();
+      const expiresIn = authInfo.expirationDate.getTime() - now.getTime();
+
+      if (expiresIn > 0) {
+        setUser(authInfo.userId);
+        setAuthTimer(expiresIn / 1000);
+      }
+    }
+  }
+
   const context = {
     user,
+    logOut,
     register,
     login,
-    logOut,
+    autoLogin,
   };
 
   return (

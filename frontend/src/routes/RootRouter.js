@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   BrowserRouter as Router, Switch, Route, Redirect,
 } from 'react-router-dom';
@@ -8,7 +8,11 @@ import KimchiStonksApp from './KimchiStonksApp/KimchiStonksApp';
 import { AuthContext } from '../contexts/Auth';
 
 function RootRouter() {
-  const { user } = useContext(AuthContext);
+  const { user, autoLogin } = useContext(AuthContext);
+
+  useEffect(() => {
+    autoLogin();
+  }, []);
 
   return (
     <Router>
