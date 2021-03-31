@@ -9,28 +9,24 @@ function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined);
   const [timer, setTimer] = useState(undefined);
 
-  function saveAuthData(token, expirationDate, userId) {
+  function saveAuthData(token, expirationDate) {
     localStorage.setItem('token', token);
     localStorage.setItem('expiration', expirationDate.toISOString());
-    localStorage.setItem('userId', userId);
   }
 
   function clearAuthData() {
     localStorage.removeItem('token');
     localStorage.removeItem('expiration');
-    localStorage.removeItem('userId');
   }
 
   function getAuthData() {
     const token = localStorage.getItem('token');
     const expirationDate = localStorage.getItem('expiration');
-    const userId = localStorage.getItem('userId');
 
     if (token && expirationDate) {
       return {
         token,
         expirationDate: new Date(expirationDate),
-        userId,
       };
     }
 
@@ -38,7 +34,6 @@ function AuthProvider({ children }) {
   }
 
   function logOut() {
-    // TODO: Remove local storage
     setUser(undefined);
     clearTimeout(timer);
     clearAuthData();
@@ -78,13 +73,13 @@ function AuthProvider({ children }) {
       const { token, expiresIn } = user.accessToken;
 
       if (status === 200 && token) {
-        setAuthTimer(expiresIn);
         setUser(user);
+        setAuthTimer(expiresIn);
 
         const now = new Date();
         const expirationDate = new Date(now.getTime() + expiresIn * 1000);
 
-        saveAuthData(token, expirationDate, user._id);
+        saveAuthData(token, expirationDate);
       }
 
       // TODO: Error Message
@@ -95,12 +90,25 @@ function AuthProvider({ children }) {
     const authInfo = getAuthData();
 
     if (authInfo) {
+      const { token, expirationDate } = authInfo;
+
       const now = new Date();
-      const expiresIn = authInfo.expirationDate.getTime() - now.getTime();
+      const expiresIn = expirationDate.getTime() - now.getTime();
 
       if (expiresIn > 0) {
-        setUser(authInfo.userId);
-        setAuthTimer(expiresIn / 1000);
+        axios.get(`${url}/auth/autoLogin`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }).then((res) => {
+          const { status, data } = res;
+          const { user } = data;
+
+          if (status === 200) {
+            setUser(user);
+            setAuthTimer(expiresIn / 1000);
+          }
+        });
       }
     }
   }
