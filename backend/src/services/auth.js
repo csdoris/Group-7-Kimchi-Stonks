@@ -85,7 +85,7 @@ async function authenticateUser(email, password) {
       const token = await generateAccessToken(user._id, duration);
 
       return {
-        status: 201,
+        status: 200,
         json: { user: { ...userInfo, accessToken: { token, expiresIn: duration } } },
       };
     }
