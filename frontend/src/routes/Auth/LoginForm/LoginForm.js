@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 import InputField from '../../../components/InputField/InputField';
 import Button from '../../../components/Button/Button';
@@ -8,11 +7,8 @@ import { AuthContext } from '../../../contexts/Auth';
 
 import logo from '../../../assets/logo.png';
 
-const url = process.env.REACT_APP_API_URL;
-
 function LoginForm() {
-  const { setUser } = useContext(AuthContext);
-  const history = useHistory();
+  const { login } = useContext(AuthContext);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,22 +19,7 @@ function LoginForm() {
 
   function handleLoginForm(event) {
     event.preventDefault();
-    axios.post(`${url}/auth/login`, {
-      email,
-      password,
-    }).then((res) => {
-      const { status, data } = res;
-      const { user } = data;
-
-      console.log(res);
-
-      if (status === 200) {
-        setUser(user);
-        history.push('/');
-      }
-
-      // TODO: Error Message
-    });
+    login(email, password);
   }
 
   return (
