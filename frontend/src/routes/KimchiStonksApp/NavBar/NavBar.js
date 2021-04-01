@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 
 import InputField from '../../../components/InputField/InputField';
 import Button from '../../../components/Button/Button';
+import { AuthContext } from '../../../contexts/Auth';
 
 import logo from '../../../assets/logo.png';
 
 import './NavBar.scss';
 
 function NavBar() {
+  const { logOut } = useContext(AuthContext);
+
   const [search, setSearch] = useState('');
 
   return (
@@ -38,6 +41,7 @@ function NavBar() {
             value="Log Out"
             text="Log Out"
             variant="contained"
+            onClick={logOut}
           />
         </li>
       </ul>

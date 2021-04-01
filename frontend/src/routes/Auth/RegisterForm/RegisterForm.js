@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
 
 import InputField from '../../../components/InputField/InputField';
 import Button from '../../../components/Button/Button';
+import { AuthContext } from '../../../contexts/Auth';
 
 import logo from '../../../assets/logo.png';
 
-const url = process.env.REACT_APP_API_URL;
-
 function RegisterForm() {
-  const history = useHistory();
+  const { register } = useContext(AuthContext);
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -31,21 +29,7 @@ function RegisterForm() {
 
   function handleRegisterForm(event) {
     event.preventDefault();
-    axios.post(`${url}/auth/register`, {
-      firstName,
-      lastName,
-      email,
-      password,
-    }).then((res) => {
-      const { status } = res;
-
-      if (status === 201) {
-        // TODO: Set User
-        history.push('/dashboard');
-      }
-
-      // TODO: Error Message
-    });
+    register(firstName, lastName, email, password);
   }
 
   return (

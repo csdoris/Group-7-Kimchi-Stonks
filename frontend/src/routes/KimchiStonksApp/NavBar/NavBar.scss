@@ -2,27 +2,28 @@
   display: flex;
   align-items: center;
   margin-bottom: 2em;
+
   .logo {
     width: 200px;
     margin-right: 4em;
-    
+
     &:hover {
       cursor: pointer;
     }
   }
-  
-  
+
+
   .input-field.search {
     width: 30vw;
     border-color: #464646;
     background-color: #464646;
     color: #FFDA9F;
-  
+
     &::placeholder {
       color: #6E6E6E;
     }
   }
-  
+
   .nav-list {
     list-style: none;
     display: inline-block;
@@ -34,7 +35,7 @@
       &:first-child {
         margin-left: 0;
       }
-      
+
       .nav-link {
         border-radius: 5px;
         border: solid 2px transparent;
@@ -50,21 +51,20 @@
         &:hover {
           color: #E56536;
         }
-        
+
         &:focus{
           border-color: #D95C2E;
         }
-        
+
         &.active {
           color: #E56536;
         }
       }
-      
+
     }
     .log-out {
       width: 120px;
       padding: 0.8em;
     }
-  } 
+  }
 }
-
