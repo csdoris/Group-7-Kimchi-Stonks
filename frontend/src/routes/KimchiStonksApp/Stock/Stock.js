@@ -1,5 +1,7 @@
 import React from 'react';
 
+import StockUtility from './StockUtility/StockUtility';
+
 import './Stock.scss';
 
 function Stock() {
@@ -14,7 +16,7 @@ function Stock() {
         </div>
       </div>
       <div className="right-container">
-        <p>Right</p>
+        <StockUtility />
       </div>
     </div>
   );
