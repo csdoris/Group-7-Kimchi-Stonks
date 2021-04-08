@@ -24,6 +24,7 @@
       "react/prop-types": "off",
       "no-shadow": [1, { "hoist": "never", "allow": ["user"] }],
       "linebreak-style": 0,
+      "no-new": 0,
       "no-underscore-dangle": 0,
       "jsx-a11y/label-has-associated-control": 0,
       "jsx-a11y/click-events-have-key-events": 0,
