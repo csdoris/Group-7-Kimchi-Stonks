@@ -30,7 +30,7 @@ function StockUtility() {
         <p className="container-info">Before buying, check out the predicted priced for the future!</p>
         <div className="prediction-table">
           {predictions.map((prediction) => (
-            <div className="prediction-row">
+            <div className="prediction-row" key={prediction.futureTime}>
               <p className="future-time">{prediction.futureTime}</p>
               <p className="predicted-price">{`$${prediction.predictedPrice}`}</p>
             </div>
