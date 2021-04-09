@@ -103,10 +103,7 @@ async function authenticateUser(email, password) {
  * @return {Object}           Object containing a status and json response property
  */
 async function retrieveUser(id, token) {
-  console.log(id);
-  console.log(token);
   const user = await User.findById(id);
-  console.log(user);
 
   if (user) {
     const { password: hashedPassword, ...userInfo } = user._doc;
