@@ -19,7 +19,9 @@ async function getStockData(req, res) {
 async function getTrending(req, res) {
   const url = `https://financialmodelingprep.com/api/v3/stock/gainers?apikey=${process.env.FMP_API_KEY}`;
   axios.get(url).then((resp) => {
-    res.status(200).json(resp.data);
+    res.status(resp.status).json(resp.data);
+  }).catch((err) => {
+    res.status(err.response.status).json(err.response.data);
   });
 }
 
