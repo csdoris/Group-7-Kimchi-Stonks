@@ -9,4 +9,6 @@ router.get('/:id/info', UserController.getUserInformation);
 
 router.post('/:id/add', UserController.addCreditsToUser);
 
+router.post('/sell', UserController.sellStock);
+
 module.exports = router;

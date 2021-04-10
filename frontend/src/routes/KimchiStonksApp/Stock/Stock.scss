@@ -3,10 +3,12 @@
   display: grid;
   grid-template-columns: 7fr 3fr;
   grid-gap: 2em;
+
   .left-container {
     display: grid;
     grid-template-rows: 7fr 3fr;
     row-gap: 2em;
+
     .graph-container,
     .overview-container {
       border-radius: 10px;
@@ -14,7 +16,38 @@
       filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.15));
       padding: 2.5em 3em;
     }
-    
+
+    .graph-container {
+      display: flex;
+
+      .inner-graph-container {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+
+        .graph-header-container {
+
+          .container-title {
+            text-transform: uppercase;
+            font-weight: 500;
+            letter-spacing: 1px;
+            font-size: 150%;
+            margin-bottom: 1em;
+          }
+        }
+
+        .stock-graph-container {
+          flex: 1 1 auto;
+
+          .stock-graph {
+            height: 0%;
+          }
+        }
+
+      }
+
+    }
+
   }
   .right-container {
     border-radius: 10px;
@@ -22,6 +55,5 @@
     filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.15));
     padding: 2.5em 3em;
   }
-  
-}
 
+}
