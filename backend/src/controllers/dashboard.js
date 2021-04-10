@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 /**
  * Gets the stock data for the stock ticker passed as the path param.
  *
@@ -15,7 +17,10 @@ async function getStockData(req, res) {
  * @param  {Object} res Response object
  */
 async function getTrending(req, res) {
-  res.status(status).json(json);
+    const url = 'https://financialmodelingprep.com/api/v3/stock/gainers?apikey=' + process.env.FMP_API_KEY
+    axios.get(url).then(resp => {
+        res.status(200).json(resp.data);
+    });
 }
 
 /**
