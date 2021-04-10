@@ -1,9 +1,5 @@
 const axios = require('axios');
 
-function isEmpty(obj) {
-  return Object.keys(obj).length === 0;
-}
-
 /**
  * Gets the stock overview for the stock symbol passed as the path param.
  *
@@ -13,12 +9,7 @@ function isEmpty(obj) {
 async function getStockOverview(req, res) {
   const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
   axios.get(url).then((resp) => {
-    if (isEmpty(resp.data)) {
-      const msg = { error: `${req.params.id} is not a valid symbol` };
-      res.status(400).json(msg);
-    } else {
-      res.status(resp.status).json(resp.data);
-    }
+    res.status(resp.status).json(resp.data);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
   });
