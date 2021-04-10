@@ -7,7 +7,7 @@ const axios = require('axios');
  * @param  {Object} res Response object
  */
 async function getStockData(req, res) {
-  res.status(status).json(json);
+  res.json(req);
 }
 
 /**
@@ -17,10 +17,10 @@ async function getStockData(req, res) {
  * @param  {Object} res Response object
  */
 async function getTrending(req, res) {
-    const url = 'https://financialmodelingprep.com/api/v3/stock/gainers?apikey=' + process.env.FMP_API_KEY
-    axios.get(url).then(resp => {
-        res.status(200).json(resp.data);
-    });
+  const url = `https://financialmodelingprep.com/api/v3/stock/gainers?apikey=${process.env.FMP_API_KEY}`;
+  axios.get(url).then((resp) => {
+    res.status(200).json(resp.data);
+  });
 }
 
 /**
@@ -30,7 +30,7 @@ async function getTrending(req, res) {
  * @param  {Object} res Response object
  */
 async function predictPrice(req, res) {
-  res.status(status).json(json);
+  res.json(req);
 }
 
 module.exports = { getStockData, getTrending, predictPrice };
