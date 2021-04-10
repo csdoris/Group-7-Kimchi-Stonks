@@ -71,13 +71,29 @@ async function getTrending(req, res) {
 }
 
 /**
- * Calculates a price prediction for the stock symbol passed as the path param.
+ * Uses the analyst price target as a prediction for the stock price in 12 months
+ * for the symbol passed as the path param. Optional query param 'days' to
+ * calculate the predicted price for x days in the future.
  *
  * @param  {Object} req Request object
  * @param  {Object} res Response object
  */
 async function predictPrice(req, res) {
-  res.json(req);
+  const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
+  axios.get(url).then((resp) => {
+    const days = parseInt(req.query.days, 10);
+    const currentPrice = parseFloat(resp.data.MarketCapitalization) / parseFloat(resp.data.SharesOutstanding);
+    let prediction = resp.data.AnalystTargetPrice;
+
+    if (days >= 0) {
+      prediction = currentPrice + (prediction - currentPrice) * days / 365;
+    }
+
+    const predictionJSON = { prediction: Math.round(prediction * 100) / 100 };
+    res.status(resp.status).json(predictionJSON);
+  }).catch((err) => {
+    res.status(err.response.status).json(err.response.data);
+  });
 }
 
 module.exports = {
