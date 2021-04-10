@@ -1,17 +1,71 @@
 const axios = require('axios');
 
+function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}
+
 /**
- * Gets the stock data for the stock ticker passed as the path param.
+ * Gets the stock overview for the stock symbol passed as the path param.
  *
  * @param  {Object} req Request object
  * @param  {Object} res Response object
  */
-async function getStockData(req, res) {
+async function getStockOverview(req, res) {
+  const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
+  axios.get(url).then((resp) => {
+    if (isEmpty(resp.data)) {
+      const msg = { error: `${req.params.id} is not a valid symbol` };
+      res.status(400).json(msg);
+    } else {
+      res.status(resp.status).json(resp.data);
+    }
+  }).catch((err) => {
+    res.status(err.response.status).json(err.response.data);
+  });
+}
+
+/**
+ * Gets the intraday (5 min resolution) stock time series for the symbol passed as the path param.
+ *
+ * @param  {Object} req Request object
+ * @param  {Object} res Response object
+ */
+async function getTimeSeriesIntraday(req, res) {
   res.json(req);
 }
 
 /**
- * Gets a list of the top 10 trending stock tickers.
+ * Gets the daily stock time series for the symbol passed as the path param.
+ *
+ * @param  {Object} req Request object
+ * @param  {Object} res Response object
+ */
+async function getTimeSeriesDaily(req, res) {
+  res.json(req);
+}
+
+/**
+ * Gets the weekly stock time series for the symbol passed as the path param.
+ *
+ * @param  {Object} req Request object
+ * @param  {Object} res Response object
+ */
+async function getTimeSeriesWeekly(req, res) {
+  res.json(req);
+}
+
+/**
+ * Gets the monthly stock time series for the symbol passed as the path param.
+ *
+ * @param  {Object} req Request object
+ * @param  {Object} res Response object
+ */
+async function getTimeSeriesMonthly(req, res) {
+  res.json(req);
+}
+
+/**
+ * Gets a list of the top trending stock symbols.
  *
  * @param  {Object} req Request object
  * @param  {Object} res Response object
@@ -26,7 +80,7 @@ async function getTrending(req, res) {
 }
 
 /**
- * Calculates a price prediction for the stock ticker passed as the path param.
+ * Calculates a price prediction for the stock symbol passed as the path param.
  *
  * @param  {Object} req Request object
  * @param  {Object} res Response object
@@ -35,4 +89,12 @@ async function predictPrice(req, res) {
   res.json(req);
 }
 
-module.exports = { getStockData, getTrending, predictPrice };
+module.exports = {
+  getStockOverview,
+  getTimeSeriesIntraday,
+  getTimeSeriesDaily,
+  getTimeSeriesWeekly,
+  getTimeSeriesMonthly,
+  getTrending,
+  predictPrice,
+};
