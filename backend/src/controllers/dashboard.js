@@ -22,7 +22,12 @@ async function getStockOverview(req, res) {
  * @param  {Object} res Response object
  */
 async function getTimeSeriesIntraday(req, res) {
-  res.json(req);
+  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${req.params.id}&interval=5min&apikey=${process.env.AV_API_KEY}`;
+  axios.get(url).then((resp) => {
+    res.status(resp.status).json(resp.data);
+  }).catch((err) => {
+    res.status(err.response.status).json(err.response.data);
+  });
 }
 
 /**
