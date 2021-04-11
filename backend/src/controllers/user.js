@@ -8,14 +8,14 @@ async function buyStock(req, res) {
   const { id } = req.query;
 
   const { status, json } = await userService
-    .addStock(stockSymbol, sharesBought, price, id);
+    .buyStock(stockSymbol, sharesBought, price, id);
 
   res.status(status).json(json);
 }
 
 async function sellStock(req, res) {
   const {
-    stockSymbol, sellingAmount, price
+    stockSymbol, sellingAmount, price,
   } = req.query;
 
   const { id } = req.query;
