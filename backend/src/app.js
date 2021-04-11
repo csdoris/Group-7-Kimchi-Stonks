@@ -4,6 +4,8 @@ const cors = require('cors');
 const db = require('./mongodb/db');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const dashboardRoutes = require('./routes/dashboard');
+
 
 // Load all environment variables from .env
 dotenv.config();
@@ -38,6 +40,7 @@ app.use(express.json());
 
 // Expose routes to the server
 app.use('/auth', authRoutes);
+app.use('/dashboard', dashboardRoutes);
 
 app.use('/user', userRoutes);
 
