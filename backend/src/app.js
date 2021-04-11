@@ -6,7 +6,6 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const dashboardRoutes = require('./routes/dashboard');
 
-
 // Load all environment variables from .env
 dotenv.config();
 

@@ -1,7 +1,6 @@
 const Stock = require('../mongodb/schemas/stockSchema');
 const User = require('../mongodb/schemas/userSchema');
 
-
 /**
  * The calculateAveragePrice function calculates the average price of each unit of stock/share
  * the user has purchased.
@@ -9,7 +8,8 @@ const User = require('../mongodb/schemas/userSchema');
  * The average is calculated by finding out the total price every unit the user has in possession
  * and dividing that by how many units the user has.
  * @param {*} currentShares The current total number of shares the user has in possession
- * @param {*} averagePrice The average price of each share/unit that the user possesses before buying more.
+ * @param {*} averagePrice The average price of each share/unit that the user possesses
+ *                         before buying more.
  * @param {*} additionalShares The number of shares/units the user is trying to buy
  * @param {*} currentPrice The price of each share/unit that the user is trying to buy.
  * @returns The average price of shares that the user owns after purchasing the shares/units.
@@ -21,38 +21,37 @@ function calculateAveragePrice(currentShares, averagePrice, additionalShares, cu
 }
 
 /**
- * The createNewStock function creates a new stock purchase into the mongoDB and also creates a refernce
- * of the stock into the user's "stock" field. This function also sets the updated buying power that
- * they user has after purchasing the stock into the user entry.
+ * The createNewStock function creates a new stock purchase into the mongoDB and also creates a
+ * refernce of the stock into the user's "stock" field. This function also sets the updated
+ * buying power that they user has after purchasing the stock into the user entry.
  * This is called if the user is trying to buy a stock that they have not currently have shares of.
  * @param {*} stockSymbol The unique identifying symbol for the stock the user is purchasing
  * @param {*} totalShares The total number of shares the user to buying
  * @param {*} averagePrice The average price of each unit bought
  * @param {*} owner The user's ID
  * @param {*} buyingPowerLeft The amount of buying power the user has left
- * @returns 
+ * @returns
  */
 async function createNewStock(stockSymbol, totalShares, averagePrice, owner, buyingPowerLeft) {
-  
   const newStock = new Stock({
     stockSymbol, totalShares, averagePrice, owner,
   });
-  
+
   const { err } = await newStock.save();
-  
+
   if (err) {
     return undefined;
   }
 
   const newStockInfo = newStock._doc;
-  
+
   await User.findByIdAndUpdate({ _id: owner },
     {
       $push: { stocks: newStockInfo._id },
       $set: { buyingPower: buyingPowerLeft },
     });
-  
-    return newStockInfo;
+
+  return newStockInfo;
 }
 
 /**
@@ -63,11 +62,12 @@ async function createNewStock(stockSymbol, totalShares, averagePrice, owner, buy
  * @param {*} stockSymbol The unique identifying symbol for the stock the user is purchasing
  * @param {*} currentShareHoldings The amount of shares/units the user currently holds
  * @param {*} sharesBought The number of shares/units bought by the user
- * @param {*} avgPriceOfHoldings The average price of each unit which the user is holding prior to purchase
+ * @param {*} avgPriceOfHoldings The average price of each unit which the user is
+ *                                holding prior to purchase
  * @param {*} price The price of each share/unit the user buys at
  * @param {*} owner The user's ID
  * @param {*} buyingPowerLeft The amount of buying power the user has left after the purchase
- * @returns 
+ * @returns
  */
 async function addOntoStock(stockSymbol, currentShareHoldings, sharesBought,
   avgPriceOfHoldings, price, owner, buyingPowerLeft) {
@@ -101,7 +101,6 @@ async function sellAllStock(stock, sellingPrice) {
     { $pull: { stocks: stock._id }, $inc: { buyingPower: sellingPrice } });
 }
 
-
 /**
  * The sellPartialStock function sells a partial amount of a specifc stock the user owns.
  * This is done by changing the amount of shares/units the user is holding and updating
@@ -125,7 +124,8 @@ async function sellPartialStock(stock, sellingAmount, sellingPrice) {
  * @param {*} sharesBought The number of shares/units bought by the user
  * @param {*} price The price of each share/unit which the user bought
  * @param {*} owner The user's ID
- * @returns A status 201 with the stock purchased as json within the body if the purchase was successful.
+ * @returns A status 201 with the stock purchased as json within the body
+ *          if the purchase was successful.
  *          A status 400 with a relevant error message if the purchase was unsuccessful.
  */
 async function buyStock(stockSymbol, sharesBought, price, owner) {
@@ -171,7 +171,8 @@ async function buyStock(stockSymbol, sharesBought, price, owner) {
 /**
  * The sellStock function is the main function called upon for a user to sell their stocks.
  * This function checks whether the user has/ has enough of the stock they want to sell. and then
- * goes ahead and either sells a portion of their stock or sells all shares/units which the user owns.
+ * goes ahead and either sells a portion of their stock or sells all shares/units which the
+ * user owns.
  * @param {*} stockSymbol The unique identifying symbol for the stock the user is purchasing
  * @param {*} sellingAmount The number of units/shares the user is selling
  * @param {*} price The price of each share/unit which the user bought
