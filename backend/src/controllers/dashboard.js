@@ -91,8 +91,9 @@ async function getTimeSeriesIntraday(req, res) {
  */
 async function getTimeSeriesDaily(req, res) {
   const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
-  axios.get(url).then((resp) => {
-    res.status(resp.status).json(resp.data);
+  axios.get(url).then((response) => {
+    const returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
+    res.status(response.status).json(returnObject);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
   });
