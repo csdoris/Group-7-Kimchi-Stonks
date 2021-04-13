@@ -31,7 +31,6 @@ function formatReturnData(data, interval) {
   const metaData = {
     symbol: data['Meta Data']['2. Symbol'].toUpperCase(),
     interval: intervalText,
-    timeZone: data['Meta Data']['6. Time Zone'],
   };
 
   const timeSeriesData = [];
@@ -101,7 +100,13 @@ async function getTimeSeriesDaily(req, res) {
  * @param  {Object} res Response object
  */
 async function getTimeSeriesWeekly(req, res) {
-  res.json(req);
+  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
+  axios.get(url).then((response) => {
+    const returnObject = formatReturnData(response.data, TIME_SERIES_WEEKLY);
+    res.status(response.status).json(returnObject);
+  }).catch((err) => {
+    res.status(err.response.status).json(err.response.data);
+  });
 }
 
 /**
