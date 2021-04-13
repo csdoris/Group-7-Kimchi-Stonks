@@ -8,8 +8,8 @@ const axios = require('axios');
  */
 async function getStockOverview(req, res) {
   const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
-  axios.get(url).then((resp) => {
-    res.status(resp.status).json(resp.data);
+  axios.get(url).then((response) => {
+    res.status(response.status).json(response.data);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
   });
@@ -21,11 +21,39 @@ async function getStockOverview(req, res) {
  * @param  {Object} req Request object
  * @param  {Object} res Response object
  */
-async function getTimeSeriesIntraday(req, res) {
-  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${req.params.id}&interval=5min&apikey=${process.env.AV_API_KEY}`;
-  axios.get(url).then((resp) => {
-    res.status(resp.status).json(resp.data);
+ async function getTimeSeriesIntraday(req, res) {
+  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${req.params.id}&interval=60min&apikey=${process.env.AV_API_KEY}`;
+  axios.get(url).then((response) => {
+    const metaData = {
+      symbol: response.data['Meta Data']['2. Symbol'].toUpperCase(),
+      interval: response.data['Meta Data']['4. Interval'],
+      timeZone: response.data['Meta Data']['6. Time Zone'],
+    };
+
+    const timeSeries = response.data['Time Series (60min)']
+    let timeSeriesData = [];
+    
+    for (let k in timeSeries) {
+      const data = {
+        dateTime: k,
+        open: timeSeries[k]['1. open'],
+        high: timeSeries[k]['2. high'],
+        low: timeSeries[k]['3. low'],
+        close: timeSeries[k]['4. close'],
+        volume: timeSeries[k]['5. volume'],
+      };
+      timeSeriesData.push(data);
+    }
+
+    const returnObject = {
+      metaData,
+      timeSeriesData,
+    }
+
+    res.status(response.status).json(returnObject);
+
   }).catch((err) => {
+    console.log(err);
     res.status(err.response.status).json(err.response.data);
   });
 }
