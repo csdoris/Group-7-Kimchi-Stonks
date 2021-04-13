@@ -124,7 +124,8 @@ async function getTimeSeriesWeekly(req, res) {
 async function getTimeSeriesMonthly(req, res) {
   const url = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
   axios.get(url).then((response) => {
-    res.status(response.status).json(response.data);
+    const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
+    res.status(response.status).json(returnObject);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
   });
