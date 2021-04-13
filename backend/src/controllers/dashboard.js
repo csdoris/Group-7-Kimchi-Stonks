@@ -1,5 +1,58 @@
 const axios = require('axios');
 
+const TIME_SERIES_INTRADAY = 0;
+const TIME_SERIES_DAILY = 1;
+const TIME_SERIES_WEEKLY = 2;
+const TIME_SERIES_MONTHLY = 3;
+
+function formatReturnData(data, interval) {
+  let intervalText;
+  let timeSeries;
+  switch (interval) {
+    case TIME_SERIES_INTRADAY:
+      intervalText = data['Meta Data']['4. Interval'];
+      timeSeries = data['Time Series (60min)'];
+      break;
+    case TIME_SERIES_DAILY:
+      intervalText = 'Daily';
+      timeSeries = data['Time Series (Daily)'];
+      break;
+    case TIME_SERIES_WEEKLY:
+      intervalText = 'Weekly';
+      timeSeries = data['Weekly Time Series'];
+      break;
+    case TIME_SERIES_MONTHLY:
+      intervalText = 'Monthly';
+      timeSeries = data['Monthly Time Series'];
+      break;
+    default:
+  }
+
+  const metaData = {
+    symbol: data['Meta Data']['2. Symbol'].toUpperCase(),
+    interval: intervalText,
+    timeZone: data['Meta Data']['6. Time Zone'],
+  };
+
+  const timeSeriesData = [];
+  Object.keys(timeSeries).forEach((key) => {
+    const dataPoint = {
+      dateTime: key,
+      open: timeSeries[key]['1. open'],
+      high: timeSeries[key]['2. high'],
+      low: timeSeries[key]['3. low'],
+      close: timeSeries[key]['4. close'],
+      volume: timeSeries[key]['5. volume'],
+    };
+    timeSeriesData.push(dataPoint);
+  });
+
+  return {
+    metaData,
+    timeSeriesData,
+  };
+}
+
 /**
  * Gets the stock overview for the stock symbol passed as the path param.
  *
@@ -8,8 +61,8 @@ const axios = require('axios');
  */
 async function getStockOverview(req, res) {
   const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
-  axios.get(url).then((resp) => {
-    res.status(resp.status).json(resp.data);
+  axios.get(url).then((response) => {
+    res.status(response.status).json(response.data);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
   });
@@ -22,7 +75,13 @@ async function getStockOverview(req, res) {
  * @param  {Object} res Response object
  */
 async function getTimeSeriesIntraday(req, res) {
-  res.json(req);
+  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${req.params.id}&interval=60min&apikey=${process.env.AV_API_KEY}`;
+  axios.get(url).then((response) => {
+    const returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
+    res.status(response.status).json(returnObject);
+  }).catch((err) => {
+    res.status(err.response.status).json(err.response.data);
+  });
 }
 
 /**
