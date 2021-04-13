@@ -53,8 +53,8 @@ async function getTimeSeriesWeekly(req, res) {
  */
 async function getTimeSeriesMonthly(req, res) {
   const url = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
-  axios.get(url).then((resp) => {
-    res.status(resp.status).json(resp.data);
+  axios.get(url).then((response) => {
+    res.status(response.status).json(response.data);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
   });
