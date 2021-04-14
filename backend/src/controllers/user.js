@@ -3,9 +3,9 @@ const userService = require('../services/user');
 async function buyStock(req, res) {
   const {
     stockSymbol, sharesBought, price,
-  } = req.query;
+  } = req.body;
 
-  const { id } = req.query;
+  const { id } = req.user;
 
   const { status, json } = await userService
     .buyStock(stockSymbol, sharesBought, price, id);
@@ -16,9 +16,9 @@ async function buyStock(req, res) {
 async function sellStock(req, res) {
   const {
     stockSymbol, sellingAmount, price,
-  } = req.query;
+  } = req.body;
 
-  const { id } = req.query;
+  const { id } = req.user;
 
   const { status, json } = await userService
     .sellStock(stockSymbol, sellingAmount, price, id);
@@ -27,8 +27,7 @@ async function sellStock(req, res) {
 }
 
 async function getUserInformation(req, res) {
-  const { id } = req.params;
-  // const { id } = req.user;
+  const { id } = req.user;
 
   const { status, json } = await userService.retrieveUserInformation(id);
 
@@ -36,8 +35,8 @@ async function getUserInformation(req, res) {
 }
 
 async function addCreditsToUser(req, res) {
-  const { id } = req.params;
-  const { amount } = req.query;
+  const { id } = req.user;
+  const { amount } = req.body;
 
   const { status, json } = await userService.updateUserBuyingPower(id, amount);
 

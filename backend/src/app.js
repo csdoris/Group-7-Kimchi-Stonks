@@ -31,9 +31,6 @@ app.use(
   }),
 );
 
-app.get('/', (req, res) => {
-  res.status(200).send('Hello World');
-});
 // Setup JSON parsing for the request body
 app.use(express.json());
 
