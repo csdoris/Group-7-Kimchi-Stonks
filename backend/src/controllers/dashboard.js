@@ -180,7 +180,7 @@ async function predictPrice(req, res) {
   const { symbol } = req.params;
 
   const url = `${process.env.AV_DOMAIN}/query?function=OVERVIEW&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
-  
+
   axios.get(url).then((response) => {
     const days = parseInt(req.query.days, 10);
     const currentPrice = parseFloat(response.data.MarketCapitalization) / parseFloat(response.data.SharesOutstanding);
