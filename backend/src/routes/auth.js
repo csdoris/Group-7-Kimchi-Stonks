@@ -9,6 +9,6 @@ router.post('/register', AuthController.registerNewUser);
 
 router.post('/login', AuthController.loginUser);
 
-router.get('/autoLogin', validateUser, AuthController.autoLoginUser);
+router.get('/auto-login', validateUser, AuthController.autoLoginUser);
 
 module.exports = router;
