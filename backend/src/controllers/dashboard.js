@@ -5,6 +5,12 @@ const TIME_SERIES_DAILY = 1;
 const TIME_SERIES_WEEKLY = 2;
 const TIME_SERIES_MONTHLY = 3;
 
+/**
+ * Formats response from Alpha Vantage in format more useful for client.
+ *
+ * @param  {Object} data     Alpha Vantage API repsonse data
+ * @param  {Object} interval Data interval
+ */
 function formatReturnData(data, interval) {
   let intervalText;
   let timeSeries;
@@ -59,7 +65,10 @@ function formatReturnData(data, interval) {
  * @param  {Object} res Response object
  */
 async function getStockOverview(req, res) {
-  const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
+  const { symbol } = req.params;
+
+  const url = `${process.env.AV_DOMAIN}/query?function=OVERVIEW&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+
   axios.get(url).then((response) => {
     res.status(response.status).json(response.data);
   }).catch((err) => {
@@ -74,7 +83,10 @@ async function getStockOverview(req, res) {
  * @param  {Object} res Response object
  */
 async function getTimeSeriesIntraday(req, res) {
-  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${req.params.id}&interval=60min&apikey=${process.env.AV_API_KEY}`;
+  const { symbol } = req.params;
+
+  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=60min&apikey=${process.env.AV_API_KEY}`;
+
   axios.get(url).then((response) => {
     const returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
     res.status(response.status).json(returnObject);
@@ -90,7 +102,10 @@ async function getTimeSeriesIntraday(req, res) {
  * @param  {Object} res Response object
  */
 async function getTimeSeriesDaily(req, res) {
-  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
+  const { symbol } = req.params;
+
+  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+
   axios.get(url).then((response) => {
     const returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
     res.status(response.status).json(returnObject);
@@ -106,7 +121,10 @@ async function getTimeSeriesDaily(req, res) {
  * @param  {Object} res Response object
  */
 async function getTimeSeriesWeekly(req, res) {
-  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_WEEKLY&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
+  const { symbol } = req.params;
+
+  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_WEEKLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+
   axios.get(url).then((response) => {
     const returnObject = formatReturnData(response.data, TIME_SERIES_WEEKLY);
     res.status(response.status).json(returnObject);
@@ -122,7 +140,10 @@ async function getTimeSeriesWeekly(req, res) {
  * @param  {Object} res Response object
  */
 async function getTimeSeriesMonthly(req, res) {
-  const url = `https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
+  const { symbol } = req.params;
+
+  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+
   axios.get(url).then((response) => {
     const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
     res.status(response.status).json(returnObject);
@@ -138,7 +159,8 @@ async function getTimeSeriesMonthly(req, res) {
  * @param  {Object} res Response object
  */
 async function getTrending(req, res) {
-  const url = `https://financialmodelingprep.com/api/v3/stock/gainers?apikey=${process.env.FMP_API_KEY}`;
+  const url = `${process.env.FMP_DOMAIN}/api/v3/stock/gainers?apikey=${process.env.FMP_API_KEY}`;
+
   axios.get(url).then((response) => {
     res.status(response.status).json(response.data);
   }).catch((err) => {
@@ -155,7 +177,10 @@ async function getTrending(req, res) {
  * @param  {Object} res Response object
  */
 async function predictPrice(req, res) {
-  const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${req.params.id}&apikey=${process.env.AV_API_KEY}`;
+  const { symbol } = req.params;
+
+  const url = `${process.env.AV_DOMAIN}/query?function=OVERVIEW&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+
   axios.get(url).then((response) => {
     const days = parseInt(req.query.days, 10);
     const currentPrice = parseFloat(response.data.MarketCapitalization) / parseFloat(response.data.SharesOutstanding);
