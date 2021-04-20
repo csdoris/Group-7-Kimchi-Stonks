@@ -3,10 +3,6 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const stockSchema = Schema({
-  stockName: {
-    type: String,
-    required: true,
-  },
   stockSymbol: {
     type: String,
     required: true,
