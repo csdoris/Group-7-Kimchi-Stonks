@@ -102,7 +102,7 @@ function AuthProvider({ children }) {
       const expiresIn = expirationDate.getTime() - now.getTime();
 
       if (expiresIn > 0) {
-        axios.get(`${url}/auth/autoLogin`, {
+        axios.get(`${url}/auth/auto-login`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
