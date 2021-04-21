@@ -121,7 +121,10 @@ async function getTimeSeriesDaily(req, res) {
   const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
-    const returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
+    let returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
+
+    returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0,7);
+
     res.status(response.status).json(returnObject);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
