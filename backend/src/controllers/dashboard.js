@@ -88,7 +88,23 @@ async function getTimeSeriesIntraday(req, res) {
   const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=60min&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
-    const returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
+    let returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
+
+    const { timeSeriesData } = returnObject;
+    const todayDate = timeSeriesData[0].dateTime.substr(0,10);
+    const start = new Date(`${todayDate} 10:00:00`);
+    const end = new Date(`${todayDate} 16:00:00`);
+
+    const validObjects = [];
+    timeSeriesData.forEach((el) => {
+      const date = new Date(el.dateTime);
+      if (date >= start && date <= end) {
+        validObjects.push(el);
+      }
+    });
+
+    returnObject.timeSeriesData = validObjects;
+
     res.status(response.status).json(returnObject);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
