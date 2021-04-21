@@ -1,0 +1,45 @@
+.stock-search-container {
+
+  .suggestion-list {
+    list-style: none;
+    padding: 0;
+
+    li {
+
+      &:first-child {
+
+        .suggestion-item {
+          border-radius: 5px 5px 0px 0px;
+        }
+      }
+
+      &:last-child {
+
+        .suggestion-item {
+          border-radius: 0px 0px 5px 5px;
+        }
+      }
+
+      .suggestion-item {
+        padding: 0.8em 1.8em;
+        background-color: #606060;
+        transition: 0.5s ease;
+
+        &:hover {
+          cursor: pointer;
+          background-color: #535353;
+
+          .suggestion-text {
+            color: #FFDA9F;
+          }
+        }
+
+        .suggestion-text {
+          color: #FFEED2;
+          letter-spacing: 1px;
+          font-size: 100%;
+        }
+      }
+    }
+  }
+}

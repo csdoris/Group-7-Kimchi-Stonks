@@ -32,12 +32,13 @@ function StockSearch() {
   }, [search]);
 
   function handleSuggestionSelection() {
-    retrieveStockData('WEEK', 'IBM');
+    retrieveStockData('IBM', 'WEEK');
   }
 
   return (
-    <div>
+    <div className="stock-search-container">
       <InputField
+        autoComplete="off"
         className="search"
         type="text"
         name="search"
@@ -45,17 +46,21 @@ function StockSearch() {
         placeholder="Search Stonks"
         onChange={(event) => setSearch(event.target.value)}
       />
-      <ul className="suggestion-list">
-        {suggestions.map((suggestion) => (
-          <li className="suggestion-item" key={suggestion.symbol}>
-            <div onClick={handleSuggestionSelection}>
-              <p className="suggestion-text">
-                {`${suggestion.name} | ${suggestion.symbol}`}
-              </p>
-            </div>
-          </li>
-        ))}
-      </ul>
+      { suggestions.length !== 0
+        ? (
+          <ul className="suggestion-list">
+            {suggestions.map((suggestion) => (
+              <li key={suggestion.symbol}>
+                <div className="suggestion-item" onClick={handleSuggestionSelection}>
+                  <p className="suggestion-text">
+                    {`${suggestion.name} | ${suggestion.symbol}`}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )
+        : null }
     </div>
   );
 }
