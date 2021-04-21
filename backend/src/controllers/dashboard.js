@@ -158,10 +158,15 @@ async function getTimeSeriesWeekly(req, res) {
   const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_WEEKLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
-    const returnObject = formatReturnData(response.data, TIME_SERIES_WEEKLY);
-    res.status(response.status).json(returnObject);
+    // AV API returns object with 'Error Message' property if symbol is invalid
+    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
+      res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
+    } else {
+      const returnObject = formatReturnData(response.data, TIME_SERIES_WEEKLY);
+      res.status(response.status).json(returnObject);
+    }
   }).catch((err) => {
-    res.status(err.response.status).json(err.response.data);
+    res.status(500).json(err);
   });
 }
 
@@ -177,13 +182,18 @@ async function getTimeSeriesMonthly(req, res) {
   const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
-    const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
-    if (returnObject.timeSeriesData.length > 13) {
-      returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 13);
+    // AV API returns object with 'Error Message' property if symbol is invalid
+    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
+      res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
+    } else {
+      const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
+      if (returnObject.timeSeriesData.length > 13) {
+        returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 13);
+      }
+      res.status(response.status).json(returnObject);
     }
-    res.status(response.status).json(returnObject);
   }).catch((err) => {
-    res.status(err.response.status).json(err.response.data);
+    res.status(500).json(err);
   });
 }
 
@@ -199,19 +209,24 @@ async function getTimeSeriesYearly(req, res) {
   const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
+    // AV API returns object with 'Error Message' property if symbol is invalid
+    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
+      res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
+    } else {
     // AV API does not have yearly interval, need to hack monthly data
-    const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
-    returnObject.metaData.interval = 'Yearly';
+      const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
+      returnObject.metaData.interval = 'Yearly';
 
-    const validTimeSeries = [];
-    for (let i = 0; i < returnObject.timeSeriesData.length && validTimeSeries.length < 10; i += 12) {
-      validTimeSeries.push(returnObject.timeSeriesData[i]);
+      const validTimeSeries = [];
+      for (let i = 0; i < returnObject.timeSeriesData.length && validTimeSeries.length < 10; i += 12) {
+        validTimeSeries.push(returnObject.timeSeriesData[i]);
+      }
+      returnObject.timeSeriesData = validTimeSeries;
+
+      res.status(response.status).json(returnObject);
     }
-    returnObject.timeSeriesData = validTimeSeries;
-
-    res.status(response.status).json(returnObject);
   }).catch((err) => {
-    res.status(err.response.status).json(err.response.data);
+    res.status(500).json(err);
   });
 }
 
