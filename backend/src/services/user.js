@@ -8,8 +8,7 @@ const User = require('../mongodb/schemas/userSchema');
  * The average is calculated by finding out the total price every unit the user has in possession
  * and dividing that by how many units the user has.
  * @param {*} currentShares The current total number of shares the user has in possession
- * @param {*} averagePrice The average price of each share/unit that the user possesses
- *                         before buying more.
+ * @param {*} averagePrice The average price of each share/unit that the user possesses before buying more.
  * @param {*} additionalShares The number of shares/units the user is trying to buy
  * @param {*} currentPrice The price of each share/unit that the user is trying to buy.
  * @returns The average price of shares that the user owns after purchasing the shares/units.
@@ -62,8 +61,7 @@ async function createNewStock(stockSymbol, totalShares, averagePrice, owner, buy
  * @param {*} stockSymbol The unique identifying symbol for the stock the user is purchasing
  * @param {*} currentShareHoldings The amount of shares/units the user currently holds
  * @param {*} sharesBought The number of shares/units bought by the user
- * @param {*} avgPriceOfHoldings The average price of each unit which the user is
- *                                holding prior to purchase
+ * @param {*} avgPriceOfHoldings The average price of each unit which the user is holding prior to purchase
  * @param {*} price The price of each share/unit the user buys at
  * @param {*} owner The user's ID
  * @param {*} buyingPowerLeft The amount of buying power the user has left after the purchase
@@ -251,8 +249,6 @@ async function updateUserBuyingPower(id, amount) {
 
   return { status: 400, json: { message: 'User does not exist' } };
 }
-
-// only need symbol
 
 module.exports = {
   buyStock, sellStock, retrieveUserInformation, updateUserBuyingPower,
