@@ -122,9 +122,7 @@ async function getTimeSeriesDaily(req, res) {
 
   axios.get(url).then((response) => {
     let returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
-
     returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0,7);
-
     res.status(response.status).json(returnObject);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
@@ -162,7 +160,8 @@ async function getTimeSeriesMonthly(req, res) {
   const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
-    const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
+    let returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
+    returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0,13);
     res.status(response.status).json(returnObject);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
