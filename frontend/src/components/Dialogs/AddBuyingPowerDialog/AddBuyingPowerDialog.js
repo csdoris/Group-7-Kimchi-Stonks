@@ -16,19 +16,21 @@ const url = process.env.REACT_APP_API_URL;
 function AddBuyingPowerDialog() {
   const history = useHistory();
 
-  const { updateUser } = useContext(AuthContext);
+  const { user, updateUser } = useContext(AuthContext);
 
   const [amount, setAmount] = useState(undefined);
 
   function handleAddBuyingPower() {
-    axios.post(`${url}/user/add`, { amount }).then((res) => {
+    axios.post(`${url}/user/add`, { amount }, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken.token}`,
+      },
+    }).then((res) => {
       const { status, data } = res;
-      const { user } = data;
-
-      console.log(res);
+      const { user: updatedUser } = data;
 
       if (status === 200) {
-        updateUser(user);
+        updateUser(updatedUser);
         history.goBack();
       }
 
