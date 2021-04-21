@@ -203,7 +203,7 @@ async function predictPrice(req, res) {
  * @param  {Object} req Request object
  * @param  {Object} res Response object
  */
-async function searchSymbols(req, res) {
+async function searchStocks(req, res) {
   const { query } = req.params;
   const url = `${process.env.AV_DOMAIN}/query?function=SYMBOL_SEARCH&keywords=${query}&apikey=${process.env.FMP_API_KEY}`;
 
@@ -221,7 +221,7 @@ async function searchSymbols(req, res) {
       matches.push(data);
     });
 
-    res.status(response.status).json({matches});
+    res.status(response.status).json({ matches });
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
   });
@@ -235,5 +235,5 @@ module.exports = {
   getTimeSeriesMonthly,
   getTrending,
   predictPrice,
-  searchSymbols,
+  searchStocks,
 };
