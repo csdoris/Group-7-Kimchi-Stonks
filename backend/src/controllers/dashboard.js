@@ -77,7 +77,7 @@ async function getStockOverview(req, res) {
 }
 
 /**
- * Gets the intraday (60 min resolution) stock time series for the symbol passed as the path param.
+ * Gets the intraday (60 min resolution, 10:00-16:00) stock time series for the symbol passed as the path param.
  *
  * @param  {Object} req Request object
  * @param  {Object} res Response object
@@ -110,7 +110,7 @@ async function getTimeSeriesIntraday(req, res) {
 }
 
 /**
- * Gets the daily stock time series for the symbol passed as the path param.
+ * Gets the daily stock time series (7 days) for the symbol passed as the path param.
  *
  * @param  {Object} req Request object
  * @param  {Object} res Response object
@@ -122,7 +122,9 @@ async function getTimeSeriesDaily(req, res) {
 
   axios.get(url).then((response) => {
     let returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
+    if (returnObject.timeSeriesData.length > 7) {
     returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0,7);
+    }
     res.status(response.status).json(returnObject);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
@@ -149,7 +151,7 @@ async function getTimeSeriesWeekly(req, res) {
 }
 
 /**
- * Gets the monthly stock time series for the symbol passed as the path param.
+ * Gets the monthly stock time series (13 months) for the symbol passed as the path param.
  *
  * @param  {Object} req Request object
  * @param  {Object} res Response object
@@ -161,7 +163,37 @@ async function getTimeSeriesMonthly(req, res) {
 
   axios.get(url).then((response) => {
     let returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
+    if (returnObject.timeSeriesData.length > 13) {
     returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0,13);
+    }
+    res.status(response.status).json(returnObject);
+  }).catch((err) => {
+    res.status(err.response.status).json(err.response.data);
+  });
+}
+
+/**
+ * Gets the yearly stock time series (up to 10y) for the symbol passed as the path param.
+ *
+ * @param  {Object} req Request object
+ * @param  {Object} res Response object
+ */
+ async function getTimeSeriesYearly(req, res) {
+  const { symbol } = req.params;
+
+  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+
+  axios.get(url).then((response) => {
+    // AV API does not have yearly interval, need to hack monthly data
+    let returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
+    returnObject.metaData.interval = 'Yearly';
+
+    let validTimeSeries = [];
+    for (i = 0; i < returnObject.timeSeriesData.length && validTimeSeries.length < 10; i += 12) {
+      validTimeSeries.push(returnObject.timeSeriesData[i]);
+    }
+    returnObject.timeSeriesData = validTimeSeries;
+
     res.status(response.status).json(returnObject);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
@@ -206,8 +238,8 @@ async function predictPrice(req, res) {
       prediction = currentPrice + (prediction - currentPrice) * days / 365;
     }
 
-    const predictionJSON = { prediction: Math.round(prediction * 100) / 100 };
-    res.status(response.status).json(predictionJSON);
+    const predictionObject = { prediction: Math.round(prediction * 100) / 100 };
+    res.status(response.status).json(predictionObject);
   }).catch((err) => {
     res.status(err.response.status).json(err.response.data);
   });
@@ -249,6 +281,7 @@ module.exports = {
   getTimeSeriesDaily,
   getTimeSeriesWeekly,
   getTimeSeriesMonthly,
+  getTimeSeriesYearly,
   getTrending,
   predictPrice,
   searchStocks,
