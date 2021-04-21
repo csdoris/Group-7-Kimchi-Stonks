@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.post('/buy', UserController.buyStock);
 
-router.get('/:id/info', UserController.getUserInformation);
+router.get('/info', UserController.getUserInformation);
 
-router.post('/:id/add', UserController.addCreditsToUser);
+router.post('/add', UserController.addCreditsToUser);
 
 router.post('/sell', UserController.sellStock);
 
