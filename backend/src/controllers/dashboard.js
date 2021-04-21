@@ -171,7 +171,7 @@ async function getTimeSeriesWeekly(req, res) {
 }
 
 /**
- * Gets the monthly stock time series (13 months) for the symbol passed as the path param.
+ * Gets the monthly stock time series (12 months) for the symbol passed as the path param.
  *
  * @param  {Object} req Request object
  * @param  {Object} res Response object
@@ -187,8 +187,8 @@ async function getTimeSeriesMonthly(req, res) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
       const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
-      if (returnObject.timeSeriesData.length > 13) {
-        returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 13);
+      if (returnObject.timeSeriesData.length > 12) {
+        returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 12);
       }
       res.status(response.status).json(returnObject);
     }
@@ -206,6 +206,7 @@ async function getTimeSeriesMonthly(req, res) {
 async function getTimeSeriesYearly(req, res) {
   const { symbol } = req.params;
 
+  // AV API does not have yearly interval, need to hack monthly data
   const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
@@ -213,7 +214,6 @@ async function getTimeSeriesYearly(req, res) {
     if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-    // AV API does not have yearly interval, need to hack monthly data
       const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
       returnObject.metaData.interval = 'Yearly';
 
