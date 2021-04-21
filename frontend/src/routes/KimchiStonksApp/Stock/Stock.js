@@ -5,12 +5,12 @@ import StockUtility from './StockUtility/StockUtility';
 
 import './Stock.scss';
 
-function Stock() {
+function Stock({ stockSymbol }) {
   return (
     <div className="stock-container">
       <div className="left-container">
         <div className="graph-container">
-          <StockGraph />
+          <StockGraph stockSymbol={stockSymbol} />
         </div>
         <div className="overview-container">
           <p>Bottom</p>
