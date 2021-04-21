@@ -72,8 +72,8 @@ async function getStockOverview(req, res) {
   axios.get(url).then((response) => {
     // AV API returns empty object if stock symbol is invalid
     if (!Object.keys(response.data).length) {
-      res.status(404).json({error: `${symbol.toUpperCase()} is not a valid stock symbol` });
-    } else {     
+      res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
+    } else {
       res.status(response.status).json(response.data);
     }
   }).catch((err) => {
@@ -94,26 +94,26 @@ async function getTimeSeriesIntraday(req, res) {
 
   axios.get(url).then((response) => {
     // AV API returns object with 'Error Message' property if symbol is invalid
-    if (response.data.hasOwnProperty('Error Message')) {
-      res.status(404).json({error: `${symbol.toUpperCase()} is not a valid stock symbol` });
+    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
+      res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-    const returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
+      const returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
 
-    const todayDate = returnObject.timeSeriesData[0].dateTime.substr(0, 10);
-    const start = `${todayDate} 10:00:00`;
-    const end = `${todayDate} 16:00:00`;
+      const todayDate = returnObject.timeSeriesData[0].dateTime.substr(0, 10);
+      const start = `${todayDate} 10:00:00`;
+      const end = `${todayDate} 16:00:00`;
 
-    const validObjects = [];
-    returnObject.timeSeriesData.forEach((el) => {
-      if (el.dateTime >= start && el.dateTime <= end) {
-        validObjects.push(el);
-      }
-    });
+      const validObjects = [];
+      returnObject.timeSeriesData.forEach((el) => {
+        if (el.dateTime >= start && el.dateTime <= end) {
+          validObjects.push(el);
+        }
+      });
 
-    returnObject.timeSeriesData = validObjects;
+      returnObject.timeSeriesData = validObjects;
 
-    res.status(response.status).json(returnObject);
-  }
+      res.status(response.status).json(returnObject);
+    }
   }).catch((err) => {
     res.status(500).json(err);
   });
@@ -131,13 +131,18 @@ async function getTimeSeriesDaily(req, res) {
   const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
-    let returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
-    if (returnObject.timeSeriesData.length > 7) {
-    returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0,7);
+    // AV API returns object with 'Error Message' property if symbol is invalid
+    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
+      res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
+    } else {
+      const returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
+      if (returnObject.timeSeriesData.length > 7) {
+        returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 7);
+      }
+      res.status(response.status).json(returnObject);
     }
-    res.status(response.status).json(returnObject);
   }).catch((err) => {
-    res.status(err.response.status).json(err.response.data);
+    res.status(500).json(err);
   });
 }
 
@@ -172,9 +177,9 @@ async function getTimeSeriesMonthly(req, res) {
   const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
-    let returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
+    const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
     if (returnObject.timeSeriesData.length > 13) {
-    returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0,13);
+      returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 13);
     }
     res.status(response.status).json(returnObject);
   }).catch((err) => {
@@ -188,18 +193,18 @@ async function getTimeSeriesMonthly(req, res) {
  * @param  {Object} req Request object
  * @param  {Object} res Response object
  */
- async function getTimeSeriesYearly(req, res) {
+async function getTimeSeriesYearly(req, res) {
   const { symbol } = req.params;
 
   const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
     // AV API does not have yearly interval, need to hack monthly data
-    let returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
+    const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
     returnObject.metaData.interval = 'Yearly';
 
-    let validTimeSeries = [];
-    for (i = 0; i < returnObject.timeSeriesData.length && validTimeSeries.length < 10; i += 12) {
+    const validTimeSeries = [];
+    for (let i = 0; i < returnObject.timeSeriesData.length && validTimeSeries.length < 10; i += 12) {
       validTimeSeries.push(returnObject.timeSeriesData[i]);
     }
     returnObject.timeSeriesData = validTimeSeries;
