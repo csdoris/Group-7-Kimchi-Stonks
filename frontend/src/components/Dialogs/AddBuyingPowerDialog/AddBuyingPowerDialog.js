@@ -1,18 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
+import axios from 'axios';
 
 import Modal from '../../Modal/Modal';
 import InputField from '../../InputField/InputField';
 import Button from '../../Button/Button';
+import { AuthContext } from '../../../contexts/Auth';
 
 import logo from '../../../assets/logo.png';
 
 import './AddBuyingPowerDialog.scss';
 
+const url = process.env.REACT_APP_API_URL;
+
 function AddBuyingPowerDialog() {
   const history = useHistory();
 
+  const { updateUser } = useContext(AuthContext);
+
   const [amount, setAmount] = useState(undefined);
+
+  function handleAddBuyingPower() {
+    axios.post(`${url}/user/add`, { amount }).then((res) => {
+      const { status, data } = res;
+      const { user } = data;
+
+      console.log(res);
+
+      if (status === 200) {
+        updateUser(user);
+        history.goBack();
+      }
+
+      // TODO: Error Message
+    });
+  }
 
   return (
     <Modal dismissOnClickOutside>
@@ -35,7 +57,7 @@ function AddBuyingPowerDialog() {
           value="Add Buying Power"
           text="Add Buying Power"
           variant="contained"
-          onClick={history.goBack}
+          onClick={handleAddBuyingPower}
         />
       </div>
     </Modal>
