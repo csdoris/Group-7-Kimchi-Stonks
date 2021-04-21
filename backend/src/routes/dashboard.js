@@ -15,6 +15,8 @@ router.get('/time-series/weekly/:symbol', validateUser, DashboardController.getT
 
 router.get('/time-series/monthly/:symbol', validateUser, DashboardController.getTimeSeriesMonthly);
 
+router.get('/time-series/yearly/:symbol', validateUser, DashboardController.getTimeSeriesYearly);
+
 router.get('/trending-stocks', validateUser, DashboardController.getTrending);
 
 router.get('/predict-price/:symbol', validateUser, DashboardController.predictPrice);
