@@ -70,9 +70,14 @@ async function getStockOverview(req, res) {
   const url = `${process.env.AV_DOMAIN}/query?function=OVERVIEW&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
-    res.status(response.status).json(response.data);
+    // AV API returns empty object if stock symbol is invalid
+    if (!Object.keys(response.data).length) {
+      res.status(404).json({error: `${symbol.toUpperCase()} is not a valid stock symbol` });
+    } else {     
+      res.status(response.status).json(response.data);
+    }
   }).catch((err) => {
-    res.status(err.response.status).json(err.response.data);
+    res.status(500).json(err);
   });
 }
 
@@ -88,6 +93,10 @@ async function getTimeSeriesIntraday(req, res) {
   const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=60min&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
+    // AV API returns object with 'Error Message' property if symbol is invalid
+    if (response.data.hasOwnProperty('Error Message')) {
+      res.status(404).json({error: `${symbol.toUpperCase()} is not a valid stock symbol` });
+    } else {
     const returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
 
     const todayDate = returnObject.timeSeriesData[0].dateTime.substr(0, 10);
@@ -104,8 +113,9 @@ async function getTimeSeriesIntraday(req, res) {
     returnObject.timeSeriesData = validObjects;
 
     res.status(response.status).json(returnObject);
+  }
   }).catch((err) => {
-    res.status(err.response.status).json(err.response.data);
+    res.status(500).json(err);
   });
 }
 
