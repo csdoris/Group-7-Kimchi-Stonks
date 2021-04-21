@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 
-import { AuthContext } from 'Auth';
+import { AuthContext } from './Auth';
 
 const StockContext = React.createContext();
 
-const url = process.env.REACT_APP_API_URL;
+const URL = process.env.REACT_APP_API_URL;
 
-function AuthProvider({ children }) {
+const TIME_PERIOD_MAP = {
+  DAY: 'intraday',
+  WEEK: 'daily',
+  MONTH: 'monthly',
+  YEAR: 'yearly',
+};
+
+function StockProvider({ children }) {
   const { user } = useContext(AuthContext);
 
   const [stockData, setStockData] = useState(undefined);
@@ -15,8 +22,8 @@ function AuthProvider({ children }) {
   function retrieveStockData(stockSymbol, period) {
     // Get stock overview
 
-    const timePeriod = [period];
-    axios.get(`${url}/dashboard/time-series/${timePeriod}/${stockSymbol}`, {
+    const timePeriod = TIME_PERIOD_MAP[period];
+    axios.get(`${URL}/dashboard/time-series/${timePeriod}/${stockSymbol}`, {
       headers: {
         Authorization: `Bearer ${user.accessToken.token}`,
       },
@@ -24,6 +31,7 @@ function AuthProvider({ children }) {
       const { status, data } = res;
 
       if (status === 200) {
+        setStockData(data);
         console.log(data);
       }
     });
