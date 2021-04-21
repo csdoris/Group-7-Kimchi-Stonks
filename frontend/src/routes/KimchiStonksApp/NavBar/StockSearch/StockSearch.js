@@ -17,18 +17,23 @@ function StockSearch() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    axios.get(`${URL}/dashboard/search?keyword=${search}`, {
-      headers: {
-        Authorization: `Bearer ${user.accessToken.token}`,
-      },
-    }).then((res) => {
-      const { status, data } = res;
+    if (search === '') {
+      setSuggestions([]);
+    } else {
+      console.log('Searching ...');
+      axios.get(`${URL}/dashboard/search?keyword=${search}`, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken.token}`,
+        },
+      }).then((res) => {
+        const { status, data } = res;
 
-      if (status === 200) {
-        console.log(data);
-        setSuggestions(data.matches);
-      }
-    });
+        if (status === 200) {
+          console.log(data);
+          setSuggestions(data.matches);
+        }
+      });
+    }
   }, [search]);
 
   function handleSuggestionSelection() {
@@ -46,7 +51,7 @@ function StockSearch() {
         placeholder="Search Stonks"
         onChange={(event) => setSearch(event.target.value)}
       />
-      { suggestions.length !== 0
+      { suggestions.length !== 0 && search !== ''
         ? (
           <ul className="suggestion-list">
             {suggestions.map((suggestion) => (
