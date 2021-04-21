@@ -197,6 +197,36 @@ async function predictPrice(req, res) {
   });
 }
 
+/**
+ * Gets a list of matching symbols for a search query.
+ *
+ * @param  {Object} req Request object
+ * @param  {Object} res Response object
+ */
+async function searchSymbols(req, res) {
+  const { query } = req.params;
+  const url = `${process.env.AV_DOMAIN}/query?function=SYMBOL_SEARCH&keywords=${query}&apikey=${process.env.FMP_API_KEY}`;
+
+  axios.get(url).then((response) => {
+    const matches = [];
+    response.data.bestMatches.forEach((el) => {
+      const data = {
+        symbol: el['1. symbol'],
+        name: el['2. name'],
+        type: el['3. type'],
+        region: el['4. region'],
+        currency: el['8. currency'],
+        matchScore: el['9. matchScore'],
+      };
+      matches.push(data);
+    });
+
+    res.status(response.status).json({matches});
+  }).catch((err) => {
+    res.status(err.response.status).json(err.response.data);
+  });
+}
+
 module.exports = {
   getStockOverview,
   getTimeSeriesIntraday,
@@ -205,4 +235,5 @@ module.exports = {
   getTimeSeriesMonthly,
   getTrending,
   predictPrice,
+  searchSymbols,
 };

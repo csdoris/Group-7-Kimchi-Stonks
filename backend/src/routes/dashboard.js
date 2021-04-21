@@ -19,4 +19,6 @@ router.get('/trending-stocks', validateUser, DashboardController.getTrending);
 
 router.get('/predict-price/:symbol', validateUser, DashboardController.predictPrice);
 
+router.get('/search-symbols/:query', validateUser, DashboardController.searchSymbols);
+
 module.exports = router;
