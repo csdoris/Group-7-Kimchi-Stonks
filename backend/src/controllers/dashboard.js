@@ -204,8 +204,8 @@ async function predictPrice(req, res) {
  * @param  {Object} res Response object
  */
 async function searchStocks(req, res) {
-  const { query } = req.params;
-  const url = `${process.env.AV_DOMAIN}/query?function=SYMBOL_SEARCH&keywords=${query}&apikey=${process.env.FMP_API_KEY}`;
+  const { keyword } = req.query;
+  const url = `${process.env.AV_DOMAIN}/query?function=SYMBOL_SEARCH&keywords=${keyword}&apikey=${process.env.FMP_API_KEY}`;
 
   axios.get(url).then((response) => {
     const matches = [];
