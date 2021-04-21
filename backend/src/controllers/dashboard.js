@@ -242,7 +242,7 @@ async function getTrending(req, res) {
   axios.get(url).then((response) => {
     res.status(response.status).json(response.data);
   }).catch((err) => {
-    res.status(err.response.status).json(err.response.data);
+    res.status(500).json(err);
   });
 }
 
@@ -260,18 +260,23 @@ async function predictPrice(req, res) {
   const url = `${process.env.AV_DOMAIN}/query?function=OVERVIEW&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
-    const days = parseInt(req.query.days, 10);
-    const currentPrice = parseFloat(response.data.MarketCapitalization) / parseFloat(response.data.SharesOutstanding);
-    let prediction = response.data.AnalystTargetPrice;
+    // AV API returns empty object if stock symbol is invalid
+    if (!Object.keys(response.data).length) {
+      res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
+    } else {
+      const days = parseInt(req.query.days, 10);
+      const currentPrice = parseFloat(response.data.MarketCapitalization) / parseFloat(response.data.SharesOutstanding);
+      let prediction = response.data.AnalystTargetPrice;
 
-    if (days >= 0) {
-      prediction = currentPrice + (prediction - currentPrice) * days / 365;
+      if (days >= 0) {
+        prediction = currentPrice + (prediction - currentPrice) * days / 365;
+      }
+
+      const predictionObject = { prediction: Math.round(prediction * 100) / 100 };
+      res.status(response.status).json(predictionObject);
     }
-
-    const predictionObject = { prediction: Math.round(prediction * 100) / 100 };
-    res.status(response.status).json(predictionObject);
   }).catch((err) => {
-    res.status(err.response.status).json(err.response.data);
+    res.status(500).json(err);
   });
 }
 
