@@ -90,15 +90,13 @@ async function getTimeSeriesIntraday(req, res) {
   axios.get(url).then((response) => {
     let returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
 
-    const { timeSeriesData } = returnObject;
-    const todayDate = timeSeriesData[0].dateTime.substr(0,10);
-    const start = new Date(`${todayDate} 10:00:00`);
-    const end = new Date(`${todayDate} 16:00:00`);
+    const todayDate = returnObject.timeSeriesData[0].dateTime.substr(0,10);
+    const start = `${todayDate} 10:00:00`;
+    const end = `${todayDate} 16:00:00`;
 
     const validObjects = [];
-    timeSeriesData.forEach((el) => {
-      const date = new Date(el.dateTime);
-      if (date >= start && date <= end) {
+    returnObject.timeSeriesData.forEach((el) => {
+      if (el.dateTime >= start && el.dateTime <= end) {
         validObjects.push(el);
       }
     });
