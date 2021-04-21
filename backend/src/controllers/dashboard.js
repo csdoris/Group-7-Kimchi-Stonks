@@ -77,7 +77,7 @@ async function getStockOverview(req, res) {
 }
 
 /**
- * Gets the intraday (5 min resolution) stock time series for the symbol passed as the path param.
+ * Gets the intraday (60 min resolution) stock time series for the symbol passed as the path param.
  *
  * @param  {Object} req Request object
  * @param  {Object} res Response object
@@ -88,9 +88,9 @@ async function getTimeSeriesIntraday(req, res) {
   const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=60min&apikey=${process.env.AV_API_KEY}`;
 
   axios.get(url).then((response) => {
-    let returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
+    const returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
 
-    const todayDate = returnObject.timeSeriesData[0].dateTime.substr(0,10);
+    const todayDate = returnObject.timeSeriesData[0].dateTime.substr(0, 10);
     const start = `${todayDate} 10:00:00`;
     const end = `${todayDate} 16:00:00`;
 
@@ -224,15 +224,15 @@ async function searchStocks(req, res) {
   axios.get(url).then((response) => {
     const matches = [];
     response.data.bestMatches.forEach((el) => {
-      const data = {
-        symbol: el['1. symbol'],
-        name: el['2. name'],
-        type: el['3. type'],
-        region: el['4. region'],
-        currency: el['8. currency'],
-        matchScore: el['9. matchScore'],
-      };
-      matches.push(data);
+      if (el['4. region'] === 'United States') {
+        const data = {
+          symbol: el['1. symbol'],
+          name: el['2. name'],
+          type: el['3. type'],
+          matchScore: el['9. matchScore'],
+        };
+        matches.push(data);
+      }
     });
 
     res.status(response.status).json({ matches });
