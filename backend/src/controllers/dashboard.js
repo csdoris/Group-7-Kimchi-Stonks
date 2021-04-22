@@ -43,12 +43,30 @@ function formatReturnData(data, interval) {
   Object.keys(timeSeries).forEach((key) => {
     const dataPoint = {
       dateTime: key,
+      xAxis: '',
       open: timeSeries[key]['1. open'],
       high: timeSeries[key]['2. high'],
       low: timeSeries[key]['3. low'],
       close: timeSeries[key]['4. close'],
       volume: timeSeries[key]['5. volume'],
     };
+
+    switch (interval) {
+      case TIME_SERIES_INTRADAY:
+        dataPoint.xAxis = key.substr(11);
+        break;
+      case TIME_SERIES_DAILY:
+        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { weekday: 'long' });
+        break;
+      case TIME_SERIES_WEEKLY:
+        dataPoint.xAxis = key;
+        break;
+      case TIME_SERIES_MONTHLY:
+        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { month: 'long' });
+        break;
+      default:
+    }
+
     timeSeriesData.push(dataPoint);
   });
 
@@ -110,7 +128,7 @@ async function getTimeSeriesIntraday(req, res) {
         }
       });
 
-      returnObject.timeSeriesData = validObjects;
+      returnObject.timeSeriesData = validObjects.reverse();
 
       res.status(response.status).json(returnObject);
     }
@@ -120,7 +138,7 @@ async function getTimeSeriesIntraday(req, res) {
 }
 
 /**
- * Gets the daily stock time series (7 days) for the symbol passed as the path param.
+ * Gets the daily stock time series (5 days) for the symbol passed as the path param.
  *
  * @param  {Object} req Request object
  * @param  {Object} res Response object
@@ -136,9 +154,10 @@ async function getTimeSeriesDaily(req, res) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
       const returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
-      if (returnObject.timeSeriesData.length > 7) {
-        returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 7);
+      if (returnObject.timeSeriesData.length > 5) {
+        returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 5);
       }
+      returnObject.timeSeriesData.reverse();
       res.status(response.status).json(returnObject);
     }
   }).catch((err) => {
@@ -163,6 +182,7 @@ async function getTimeSeriesWeekly(req, res) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
       const returnObject = formatReturnData(response.data, TIME_SERIES_WEEKLY);
+      returnObject.timeSeriesData.reverse();
       res.status(response.status).json(returnObject);
     }
   }).catch((err) => {
@@ -190,6 +210,7 @@ async function getTimeSeriesMonthly(req, res) {
       if (returnObject.timeSeriesData.length > 12) {
         returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 12);
       }
+      returnObject.timeSeriesData.reverse();
       res.status(response.status).json(returnObject);
     }
   }).catch((err) => {
@@ -219,9 +240,11 @@ async function getTimeSeriesYearly(req, res) {
 
       const validTimeSeries = [];
       for (let i = 0; i < returnObject.timeSeriesData.length && validTimeSeries.length < 10; i += 12) {
-        validTimeSeries.push(returnObject.timeSeriesData[i]);
+        const temp = returnObject.timeSeriesData[i];
+        temp.xAxis = temp.dateTime.substr(0, 4);
+        validTimeSeries.push(temp);
       }
-      returnObject.timeSeriesData = validTimeSeries;
+      returnObject.timeSeriesData = validTimeSeries.reverse();
 
       res.status(response.status).json(returnObject);
     }
