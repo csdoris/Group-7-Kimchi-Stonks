@@ -1,14 +1,16 @@
 const express = require('express');
+
+const validateUser = require('../middleware/validateUser');
 const UserController = require('../controllers/user');
 
 const router = express.Router();
 
-router.post('/buy', UserController.buyStock);
+router.get('/info', validateUser, UserController.getUserInformation);
 
-router.get('/:id/info', UserController.getUserInformation);
+router.post('/add', validateUser, UserController.addBuyingPower);
 
-router.post('/:id/add', UserController.addCreditsToUser);
+router.post('/buy', validateUser, UserController.buyStock);
 
-router.post('/sell', UserController.sellStock);
+router.post('/sell', validateUser, UserController.sellStock);
 
 module.exports = router;
