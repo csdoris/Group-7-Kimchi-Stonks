@@ -53,9 +53,7 @@ function formatReturnData(data, interval) {
 
     switch (interval) {
       case TIME_SERIES_INTRADAY:
-        console.log(key);
         dataPoint.xAxis = key.substr(11, 5);
-        console.log(dataPoint.xAxis);
         break;
       case TIME_SERIES_DAILY:
         dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { weekday: 'long' });
