@@ -337,7 +337,7 @@ async function searchStocks(req, res) {
 
     res.status(response.status).json({ matches });
   }).catch((err) => {
-    res.status(err.response.status).json(err.response.data);
+    res.status(500).json(err);
   });
 }
 
