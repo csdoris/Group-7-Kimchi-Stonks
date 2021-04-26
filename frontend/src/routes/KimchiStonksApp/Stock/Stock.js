@@ -2,6 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 
 import StockGraph from './StockGraph/StockGraph';
+import StockOverview from './StockOverview/StockOverview';
 import StockUtility from './StockUtility/StockUtility';
 import { StockContext } from '../../../contexts/Stock';
 
@@ -25,7 +26,7 @@ function Stock({ stockSymbol }) {
               <StockGraph stockSymbol={stockSymbol} />
             </div>
             <div className="overview-container">
-              <p>Bottom</p>
+              <StockOverview />
             </div>
           </div>
           <div className="right-container">
