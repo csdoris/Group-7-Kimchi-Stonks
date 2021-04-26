@@ -23,7 +23,6 @@ function StockSearch() {
     if (search === '') {
       setSuggestions([]);
     } else {
-      console.log('Searching ...');
       axios.get(`${URL}/dashboard/search?keyword=${search}`, {
         headers: {
           Authorization: `Bearer ${user.accessToken.token}`,

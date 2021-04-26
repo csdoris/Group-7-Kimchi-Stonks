@@ -49,7 +49,6 @@ function StockProvider({ children }) {
 
       if (status === 200) {
         setStockData(data);
-        console.log(data);
       }
     });
   }

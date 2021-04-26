@@ -24,7 +24,7 @@ function StockGraph() {
       },
       options: {
         parsing: {
-          xAxisKey: 'dateTime',
+          xAxisKey: 'xAxis',
           yAxisKey: 'open',
         },
         plugins: {
