@@ -5,8 +5,6 @@ import { StockContext } from '../../../../contexts/Stock';
 
 function StockGraph() {
   const { stock, stockData } = useContext(StockContext);
-  console.log(stock);
-  console.log(stockData);
 
   useEffect(() => {
     const graphCanvas = document.getElementById('stock-graph');
