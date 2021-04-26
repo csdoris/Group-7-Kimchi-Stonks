@@ -57,7 +57,7 @@ function TableHeader() {
             <div
               className={`col ${keyName} ${
                 holding[keyName][0] === '+' ? 'positive' : ''
-              } 
+              }
               ${holding[keyName][0] === '-' ? 'negative' : ''}`}
               onClick={handleClick}
             >

@@ -9,6 +9,10 @@ function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined);
   const [timer, setTimer] = useState(undefined);
 
+  function updateUser(updatedUser) {
+    setUser({ ...updatedUser, accessToken: user.accessToken });
+  }
+
   function saveAuthData(token, expirationDate) {
     localStorage.setItem('token', token);
     localStorage.setItem('expiration', expirationDate.toISOString());
@@ -121,6 +125,7 @@ function AuthProvider({ children }) {
 
   const context = {
     user,
+    updateUser,
     logOut,
     register,
     login,
