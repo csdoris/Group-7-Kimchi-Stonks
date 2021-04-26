@@ -17,10 +17,27 @@ const TIME_PERIOD_MAP = {
 function StockProvider({ children }) {
   const { user } = useContext(AuthContext);
 
+  const [stock, setStock] = useState(undefined);
   const [stockData, setStockData] = useState(undefined);
+
+  function clearStock() {
+    setStock(undefined);
+    setStockData(undefined);
+  }
 
   function retrieveStockData(stockSymbol, period) {
     // Get stock overview
+    axios.get(`${URL}/dashboard/stock-overview/${stockSymbol}`, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken.token}`,
+      },
+    }).then((res) => {
+      const { status, data } = res;
+
+      if (status === 200) {
+        setStock(data);
+      }
+    });
 
     const timePeriod = TIME_PERIOD_MAP[period];
     axios.get(`${URL}/dashboard/time-series/${timePeriod}/${stockSymbol}`, {
@@ -38,7 +55,9 @@ function StockProvider({ children }) {
   }
 
   const context = {
+    stock,
     stockData,
+    clearStock,
     retrieveStockData,
   };
 

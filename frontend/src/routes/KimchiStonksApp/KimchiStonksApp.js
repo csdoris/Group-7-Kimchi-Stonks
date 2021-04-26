@@ -27,11 +27,11 @@ function KimchiStonksApp() {
             <Route path="/market">
               <Market />
             </Route>
-            <Route path="/stock">
+            <Route path="/stock/:symbol">
               <Stock />
             </Route>
             <Route path="/">
-              <Redirect to="/stock" />
+              <Redirect to="/dashboard" />
             </Route>
           </Switch>
           <Switch>

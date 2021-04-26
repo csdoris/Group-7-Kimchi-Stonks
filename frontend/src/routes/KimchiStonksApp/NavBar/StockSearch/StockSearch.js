@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 
 import InputField from '../../../../components/InputField/InputField';
@@ -10,8 +11,10 @@ import './StockSearch.scss';
 const URL = process.env.REACT_APP_API_URL;
 
 function StockSearch() {
+  const history = useHistory();
+
   const { user } = useContext(AuthContext);
-  const { retrieveStockData } = useContext(StockContext);
+  const { clearStock } = useContext(StockContext);
 
   const [suggestions, setSuggestions] = useState([]);
   const [search, setSearch] = useState('');
@@ -29,15 +32,18 @@ function StockSearch() {
         const { status, data } = res;
 
         if (status === 200) {
-          console.log(data);
           setSuggestions(data.matches);
         }
       });
     }
   }, [search]);
 
-  function handleSuggestionSelection() {
-    retrieveStockData('IBM', 'WEEK');
+  function handleSuggestionSelection(symbol) {
+    setSearch('');
+    setSuggestions([]);
+    clearStock();
+
+    history.push(`/stock/${symbol}`);
   }
 
   return (
@@ -56,7 +62,7 @@ function StockSearch() {
           <ul className="suggestion-list">
             {suggestions.map((suggestion) => (
               <li key={suggestion.symbol}>
-                <div className="suggestion-item" onClick={handleSuggestionSelection}>
+                <div className="suggestion-item" onClick={() => handleSuggestionSelection(suggestion.symbol)}>
                   <p className="suggestion-text">
                     {`${suggestion.name} | ${suggestion.symbol}`}
                   </p>

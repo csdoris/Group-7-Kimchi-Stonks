@@ -1,25 +1,39 @@
-import React from 'react';
+import React, { useEffect, useContext } from 'react';
+import { useParams } from 'react-router-dom';
 
 import StockGraph from './StockGraph/StockGraph';
 import StockUtility from './StockUtility/StockUtility';
+import { StockContext } from '../../../contexts/Stock';
 
 import './Stock.scss';
 
 function Stock({ stockSymbol }) {
+  const { stock, stockData, retrieveStockData } = useContext(StockContext);
+
+  const { symbol } = useParams();
+
+  useEffect(() => {
+    retrieveStockData(symbol, 'DAY');
+  }, [symbol]);
+
   return (
-    <div className="stock-container">
-      <div className="left-container">
-        <div className="graph-container">
-          <StockGraph stockSymbol={stockSymbol} />
+    stock && stockData
+      ? (
+        <div className="stock-container">
+          <div className="left-container">
+            <div className="graph-container">
+              <StockGraph stockSymbol={stockSymbol} />
+            </div>
+            <div className="overview-container">
+              <p>Bottom</p>
+            </div>
+          </div>
+          <div className="right-container">
+            <StockUtility />
+          </div>
         </div>
-        <div className="overview-container">
-          <p>Bottom</p>
-        </div>
-      </div>
-      <div className="right-container">
-        <StockUtility />
-      </div>
-    </div>
+      )
+      : null
   );
 }
 
