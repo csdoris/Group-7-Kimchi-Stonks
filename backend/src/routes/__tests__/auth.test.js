@@ -80,7 +80,7 @@ it('tries to create an account with an email that is already used', async () => 
       email: 'test@test.com',
       password: 'password',
     }).then(() => {
-      fail('should have raised a status 400');
+      expect(false).toBeTruthy();
     });
   } catch (error) {
     expect(error.response.status).toBe(400);
@@ -112,7 +112,7 @@ it('tries to login with invalid email', async () => {
       email: 'notEmail@test.com',
       password: 'password',
     }).then(() => {
-      fail('should have raised a status 400');
+      expect(false).toBeTruthy();
     });
   } catch (error) {
     expect(error.response.status).toBe(400);
@@ -126,7 +126,7 @@ it('tries to login with invalid password', async () => {
       email: 'test@test.com',
       password: 'notPassword',
     }).then(() => {
-      fail('should have raised a status 400');
+      expect(false).toBeTruthy();
     });
   } catch (error) {
     expect(error.response.status).toBe(400);
@@ -158,7 +158,7 @@ it('tries to auto-login without a token', async () => {
         Authorization: `Bearer ${token}`,
       },
     }).then(() => {
-      fail('should have raised a status 400');
+      expect(false).toBeTruthy();
     });
   } catch (error) {
     expect(error.response.status).toBe(401);
