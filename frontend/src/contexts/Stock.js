@@ -19,10 +19,72 @@ function StockProvider({ children }) {
 
   const [stock, setStock] = useState(undefined);
   const [stockData, setStockData] = useState(undefined);
+  const [stockDayPrediction, setDayPrediction] = useState(undefined);
+  const [stockMonthPrediction, setMonthPrediction] = useState(undefined);
+  const [stockYearPrediction, setYearPrediction] = useState(undefined);
 
   function clearStock() {
     setStock(undefined);
     setStockData(undefined);
+  }
+
+  function predictStock(stockSymbol) {
+    // Day price prediction
+    axios.get(`${URL}/dashboard/predict-price/${stockSymbol}?days=0`, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken.token}`,
+      },
+    }).then((res) => {
+      const { status, data } = res;
+
+      if (status === 200) {
+        if (data.prediction == null) {
+          setDayPrediction('N/A');
+        } else {
+          setDayPrediction(data.prediction);
+        }
+      } else {
+        setDayPrediction('N/A');
+      }
+    });
+
+    // One week price prediction
+    axios.get(`${URL}/dashboard/predict-price/${stockSymbol}?days=30`, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken.token}`,
+      },
+    }).then((res) => {
+      const { status, data } = res;
+
+      if (status === 200) {
+        if (data.prediction == null) {
+          setMonthPrediction('N/A');
+        } else {
+          setMonthPrediction(data.prediction);
+        }
+      } else {
+        setMonthPrediction('N/A');
+      }
+    });
+
+    // One year price prediction
+    axios.get(`${URL}/dashboard/predict-price/${stockSymbol}?days=365`, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken.token}`,
+      },
+    }).then((res) => {
+      const { status, data } = res;
+
+      if (status === 200) {
+        if (data.prediction == null) {
+          setYearPrediction('N/A');
+        } else {
+          setYearPrediction(data.prediction);
+        }
+      } else {
+        setYearPrediction('N/A');
+      }
+    });
   }
 
   function retrieveStockData(stockSymbol, period) {
@@ -35,6 +97,7 @@ function StockProvider({ children }) {
       const { status, data } = res;
 
       if (status === 200) {
+        predictStock(stockSymbol);
         setStock(data);
       }
     });
@@ -75,6 +138,9 @@ function StockProvider({ children }) {
   const context = {
     stock,
     stockData,
+    stockDayPrediction,
+    stockMonthPrediction,
+    stockYearPrediction,
     clearStock,
     retrieveStockData,
     buyStocks,
