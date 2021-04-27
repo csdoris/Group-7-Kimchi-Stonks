@@ -212,11 +212,11 @@ async function retrieveUserInformation(id) {
   const user = await User.findById(id);
 
   if (user) {
-    const userInfo = user._doc;
+    const { password: hashedPassword, ...userInfo } = user._doc;
     const stock = await Stock.find({ owner: id });
     return {
       status: 200,
-      json: { user: { ...userInfo }, stocks: stock },
+      json: { user: { ...userInfo } },
     };
   }
 
