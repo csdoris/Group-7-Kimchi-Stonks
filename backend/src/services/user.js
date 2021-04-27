@@ -31,9 +31,9 @@ function calculateAveragePrice(currentShares, averagePrice, additionalShares, cu
  * @param {*} buyingPowerLeft The amount of buying power the user has left
  * @returns
  */
-async function createNewStock(stockSymbol, totalShares, averagePrice, owner, buyingPowerLeft) {
+async function createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft) {
   const newStock = new Stock({
-    stockSymbol, totalShares, averagePrice, owner,
+    stockSymbol: symbol, totalShares: shares, averagePrice: stockPrice, owner,
   });
 
   const { err } = await newStock.save();
@@ -67,15 +67,15 @@ async function createNewStock(stockSymbol, totalShares, averagePrice, owner, buy
  * @param {*} buyingPowerLeft The amount of buying power the user has left after the purchase
  * @returns
  */
-async function addOntoStock(stockSymbol, currentShareHoldings, sharesBought,
-  avgPriceOfHoldings, price, owner, buyingPowerLeft) {
+async function addOntoStock(symbol, currentShareHoldings, shares,
+  avgPriceOfHoldings, stockPrice, owner, buyingPowerLeft) {
   const stock = await Stock
-    .findOneAndUpdate({ stockSymbol, owner },
+    .findOneAndUpdate({ stockSymbol: symbol, owner },
       {
-        $inc: { totalShares: sharesBought },
+        $inc: { totalShares: shares },
         $set: {
           averagePrice: calculateAveragePrice(
-            currentShareHoldings, avgPriceOfHoldings, sharesBought, price,
+            currentShareHoldings, avgPriceOfHoldings, shares, stockPrice,
           ),
         },
       },
@@ -126,44 +126,45 @@ async function sellPartialStock(stock, sellingAmount, sellingPrice) {
  *          if the purchase was successful.
  *          A status 400 with a relevant error message if the purchase was unsuccessful.
  */
-async function buyStock(stockSymbol, sharesBought, price, owner) {
+async function buyStock(symbol, shares, stockPrice, totalSpent, owner) {
   // retrieve user information
   const user = await User.findById(owner).populate('stocks');
   if (user === undefined) {
-    return { status: 400, json: { message: 'User could not be found' } };
+    return { status: 400, json: { message: 'User could not be found.' } };
   }
   const userStocks = user._doc.stocks;
 
   // If the user doesn't have enough funds to buy the stock, their purchase is terminated
-  const buyingPowerLeft = user._doc.buyingPower - (sharesBought * price);
+  const buyingPowerLeft = user._doc.buyingPower - totalSpent;
   if (buyingPowerLeft < 0) {
-    return { status: 400, json: { message: 'purchase exceeds buying power' } };
+    return { status: 400, json: { message: 'Purchase exceeds buying power.' } };
   }
-  const stock = userStocks.find((stocks) => stocks.stockSymbol === stockSymbol);
+  const stock = userStocks.find((stocks) => stocks.stockSymbol === symbol);
 
   if (stock) {
     const stockBought = await
-    addOntoStock(stockSymbol, stock.totalShares, sharesBought,
-      stock.averagePrice, price, owner, buyingPowerLeft);
+    addOntoStock(symbol, stock.totalShares, shares,
+      stock.averagePrice, stockPrice, owner, buyingPowerLeft);
     if (stockBought) {
       return {
-        status: 201,
+        status: 200,
         json: { stock_purchase: stockBought },
       };
     }
 
-    return { status: 400, json: { message: 'could not finish purchase' } };
+    return { status: 400, json: { message: 'Could not finish purchase.' } };
   }
+
   const newStockInfo = await
-  createNewStock(stockSymbol, sharesBought, price, owner, buyingPowerLeft);
+  createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft);
 
   if (newStockInfo) {
     return {
-      status: 201,
+      status: 200,
       json: { stock_purchase: { newStockInfo } },
     };
   }
-  return { status: 400, json: { message: 'could not finish purchase' } };
+  return { status: 400, json: { message: 'Could not finish purchase.' } };
 }
 
 /**
