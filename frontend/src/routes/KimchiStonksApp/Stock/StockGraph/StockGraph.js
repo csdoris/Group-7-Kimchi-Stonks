@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from 'react';
 import Chart from 'chart.js/auto';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import Button from '../../../../components/Button/Button';
 import { StockContext } from '../../../../contexts/Stock';
@@ -8,7 +8,9 @@ import { StockContext } from '../../../../contexts/Stock';
 const TIME_PERIOD = ['Day', 'Week', 'Month', 'Year'];
 
 function StockGraph() {
+  const history = useHistory();
   const { stock, stockData } = useContext(StockContext);
+  const { pathname } = useLocation();
   const queryPeriod = new URLSearchParams(useLocation().search).get('period');
 
   useEffect(() => {
@@ -68,6 +70,10 @@ function StockGraph() {
     };
   }, [stockData]);
 
+  function handleTimePeriodButtonClick(period) {
+    history.replace(`${pathname}?period=${period}`);
+  }
+
   return (
     <div className="inner-graph-container">
       <div className="graph-header-container">
@@ -77,11 +83,13 @@ function StockGraph() {
         <div className="time-period-container">
           {TIME_PERIOD.map((period) => (
             <Button
+              key={period}
               className={`time-period-button ${queryPeriod === period.toLowerCase() ? 'active' : ''}`}
               type="button"
               value={period}
               text={period}
               variant="text"
+              onClick={() => handleTimePeriodButtonClick(period.toLowerCase())}
             />
           ))}
         </div>
