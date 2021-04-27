@@ -215,7 +215,6 @@ async function retrieveUserInformation(id) {
   if (user) {
     await User.populate(user, 'stocks');
     const { password: hashedPassword, ...userInfo } = user._doc;
-    const stock = await Stock.find({ owner: id });
     return {
       status: 200,
       json: { user: { ...userInfo } },

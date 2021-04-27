@@ -37,7 +37,9 @@ async function addBuyingPower(req, res) {
  */
 async function buyStock(req, res) {
   const { id } = req.user;
-  const { symbol, shares, stockPrice, totalSpent } = req.body;
+  const {
+    symbol, shares, stockPrice, totalSpent,
+  } = req.body;
 
   const { status, json } = await userService
     .buyStock(symbol, shares, stockPrice, totalSpent, id);
