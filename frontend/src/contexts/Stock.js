@@ -64,11 +64,10 @@ function StockProvider({ children }) {
         Authorization: `Bearer ${user.accessToken.token}`,
       },
     }).then((res) => {
-      const { status, data } = res;
+      const { status } = res;
 
       if (status === 200) {
-        console.log(res);
-        console.log(data);
+        // Show dialog confirming buy was successful.
       }
     });
   }

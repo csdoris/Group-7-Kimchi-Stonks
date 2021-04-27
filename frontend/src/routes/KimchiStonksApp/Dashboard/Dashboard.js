@@ -18,8 +18,6 @@ const headers = [
 function Dashboard() {
   const { user, retrieveUserInfo } = useContext(AuthContext);
 
-  console.log(user);
-
   // const data = [
   //   {
   //     stock: 'AMD',
