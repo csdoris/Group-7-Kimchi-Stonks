@@ -41,10 +41,15 @@
         }
 
         .action {
+          text-transform: uppercase;
+          font-weight: 600;
             color: #F3D098;
+            transition: 0.5s ease;
+            z-index: 100;
 
             &:hover {
                 cursor: pointer;
+                color: #F2B95E;
             }
 
         }

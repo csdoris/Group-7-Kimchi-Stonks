@@ -179,7 +179,7 @@ async function buyStock(symbol, shares, stockPrice, totalSpent, owner) {
  * @returns A status 201 with a relevant message if the purchase was successful.
  *          A status 400 with a relevant error message if the purchase was unsuccessful.
  */
-async function sellStock(stockSymbol, sellingAmount, stockPrice, owner) {
+async function sellStock(symbol, sellingAmount, stockPrice, owner) {
   const sellingPrice = sellingAmount * stockPrice;
   const user = await User.findById(owner).populate('stocks');
   if (user === undefined) {
@@ -187,7 +187,7 @@ async function sellStock(stockSymbol, sellingAmount, stockPrice, owner) {
   }
   const userStocks = user._doc.stocks;
 
-  const stock = userStocks.find((stocks) => stocks.symbol === stockSymbol);
+  const stock = userStocks.find((stocks) => stocks.symbol === symbol);
 
   if (stock === undefined) {
     return { status: 400, json: { message: 'could not find stock' } };
@@ -241,6 +241,7 @@ async function updateUserBuyingPower(id, amount) {
     { $inc: { buyingPower: amount } }, { returnOriginal: false });
 
   if (user) {
+    await User.populate(user, 'stocks');
     const userInfo = user._doc;
     return {
       status: 200,

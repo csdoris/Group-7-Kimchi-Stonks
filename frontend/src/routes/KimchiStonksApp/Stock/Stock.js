@@ -9,12 +9,15 @@ import { StockContext } from '../../../contexts/Stock';
 import './Stock.scss';
 
 function Stock({ stockSymbol }) {
-  const { stock, stockData, retrieveStockData } = useContext(StockContext);
+  const {
+    stock, stockData, retrieveStockOverview, retrieveStockData,
+  } = useContext(StockContext);
   const period = new URLSearchParams(useLocation().search).get('period');
 
   const { symbol } = useParams();
 
   useEffect(() => {
+    retrieveStockOverview(symbol);
     retrieveStockData(symbol, period);
   }, [symbol, period]);
 
