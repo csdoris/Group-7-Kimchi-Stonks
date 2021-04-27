@@ -23,18 +23,18 @@ function TableHeader({ headers, data }) {
               <div className="header" key={header}>{header}</div>
             ))}
           </div>
-          {data.map((el) => (
-            <div className="table-row" key={el.stock} onClick={() => handleRowClick(el.stock)}>
-              {Object.keys(el).map((keyName) => (
+          {data.map((stock) => (
+            <div className="table-row" key={stock.symbol} onClick={() => handleRowClick(stock.symbol)}>
+              {Object.keys(stock).map((keyName) => (
                 <div
                   className={`table-value ${keyName} ${
-                    el[keyName][0] === '+' ? 'positive' : ''
+                    stock[keyName][0] === '+' ? 'positive' : ''
                   }
-                  ${el[keyName][0] === '-' ? 'negative' : ''}`}
-                  key={`${el.stock}-${keyName}`}
+                  ${stock[keyName][0] === '-' ? 'negative' : ''}`}
+                  key={`${stock.symbol}-${keyName}`}
                   onClick={handleSellButtonClick}
                 >
-                  {el[keyName]}
+                  {stock[keyName]}
                 </div>
               ))}
             </div>

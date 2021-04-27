@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const stockSchema = Schema({
-  stockSymbol: {
+  symbol: {
     type: String,
     required: true,
   },
-  totalShares: {
+  shares: {
     type: Number,
     required: true,
     default: 0,

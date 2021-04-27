@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import InputField from '../../../../components/InputField/InputField';
 import Button from '../../../../components/Button/Button';
+import { StockContext } from '../../../../contexts/Stock';
 
 import './StockUtility.scss';
 
 function StockUtility() {
+  const { stock, buyStocks } = useContext(StockContext);
+
   const [amount, setAmount] = useState(undefined);
+  const [shares, setShares] = useState(0.00);
 
   const predictions = [
     {
@@ -22,6 +26,14 @@ function StockUtility() {
       predictedPrice: 178.51,
     },
   ];
+
+  function handleAmountChange(event) {
+    const buyingAmount = event.target.value;
+    setAmount(buyingAmount);
+
+    const calculatedShares = buyingAmount / stock['50DayMovingAverage'];
+    setShares(calculatedShares);
+  }
 
   return (
     <div className="prediction-purchase-container">
@@ -46,11 +58,11 @@ function StockUtility() {
           name="amount"
           value={amount}
           placeholder="Amount ($)"
-          onChange={(event) => setAmount(event.target.value)}
+          onChange={(event) => handleAmountChange(event)}
         />
         <div className="estimation-row">
           <p className="key">Estimated shares</p>
-          <p className="value">0.00</p>
+          <p className="value">{shares.toFixed(2)}</p>
         </div>
         <Button
           className="buy"
@@ -58,6 +70,7 @@ function StockUtility() {
           value="Buy"
           text="Buy"
           variant="contained"
+          onClick={() => buyStocks(shares, stock['50DayMovingAverage'], amount)}
         />
       </div>
     </div>
