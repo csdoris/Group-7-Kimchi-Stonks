@@ -32,7 +32,7 @@ function Market() {
         const trendingStocks = data.mostGainerStock.slice(0, 10);
 
         setMarketData(trendingStocks.map((stock) => ({
-          stock: stock.ticker,
+          symbol: stock.ticker,
           organisation: stock.companyName,
           price: stock.price,
           percentageChange: `${stock.changesPercentage.substring(1, stock.changesPercentage.length - 1)}`,
