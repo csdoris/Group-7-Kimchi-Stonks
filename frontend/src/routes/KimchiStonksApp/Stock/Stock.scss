@@ -40,9 +40,18 @@
 
           .time-period-container {
             display: flex;
-            
+
             .time-period-button {
               font-size: 80%;
+              margin-right: 0.5em;
+
+              &:last-child {
+                margin-right: 0;
+              }
+            }
+
+            .time-period-button.active {
+              color: #FFDA9F;
             }
           }
         }

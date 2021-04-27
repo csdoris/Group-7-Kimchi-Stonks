@@ -1,11 +1,15 @@
 import React, { useEffect, useContext } from 'react';
 import Chart from 'chart.js/auto';
+import { useLocation } from 'react-router-dom';
 
 import Button from '../../../../components/Button/Button';
 import { StockContext } from '../../../../contexts/Stock';
 
+const TIME_PERIOD = ['Day', 'Week', 'Month', 'Year'];
+
 function StockGraph() {
   const { stock, stockData } = useContext(StockContext);
+  const queryPeriod = new URLSearchParams(useLocation().search).get('period');
 
   useEffect(() => {
     const graphCanvas = document.getElementById('stock-graph');
@@ -71,34 +75,15 @@ function StockGraph() {
           {`${stock.Symbol} | ${stock.Name}`}
         </div>
         <div className="time-period-container">
-          <Button
-            className="time-period-button"
-            type="button"
-            value="Day"
-            text="Day"
-            variant="text"
-          />
-          <Button
-            className="time-period-button"
-            type="button"
-            value="Week"
-            text="Week"
-            variant="text"
-          />
-          <Button
-            className="time-period-button"
-            type="button"
-            value="Month"
-            text="Month"
-            variant="text"
-          />
-          <Button
-            className="time-period-button"
-            type="button"
-            value="Year"
-            text="Year"
-            variant="text"
-          />
+          {TIME_PERIOD.map((period) => (
+            <Button
+              className={`time-period-button ${queryPeriod === period.toLowerCase() ? 'active' : ''}`}
+              type="button"
+              value={period}
+              text={period}
+              variant="text"
+            />
+          ))}
         </div>
       </div>
       <div className="stock-graph-container">
