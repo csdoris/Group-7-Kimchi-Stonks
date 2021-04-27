@@ -39,6 +39,4 @@ app.use('/auth', authRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/user', userRoutes);
 
-app.use('/user', userRoutes);
-
 module.exports = app;
