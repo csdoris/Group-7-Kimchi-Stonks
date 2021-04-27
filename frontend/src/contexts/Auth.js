@@ -123,6 +123,21 @@ function AuthProvider({ children }) {
     }
   }
 
+  function retrieveUserInfo() {
+    axios.get(`${url}/user/info`, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken.token}`,
+      },
+    }).then((res) => {
+      const { status, data } = res;
+      const { user } = data;
+
+      if (status === 200) {
+        setUser(user);
+      }
+    });
+  }
+
   const context = {
     user,
     updateUser,
@@ -130,6 +145,7 @@ function AuthProvider({ children }) {
     register,
     login,
     autoLogin,
+    retrieveUserInfo,
   };
 
   return (

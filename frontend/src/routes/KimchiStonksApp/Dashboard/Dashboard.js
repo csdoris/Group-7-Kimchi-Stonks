@@ -1,22 +1,22 @@
-import React, { useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 
 import Table from '../../../components/Table/Table';
 import { AuthContext } from '../../../contexts/Auth';
 
 import './Dashboard.scss';
 
-function Dashboard() {
-  const { user } = useContext(AuthContext);
+const headers = [
+  'Stock',
+  'Shares',
+  'Avg. Price',
+  'Value',
+  'Day Change',
+  'Total Change',
+  '',
+];
 
-  const headers = [
-    'Stock',
-    'Shares',
-    'Avg. Price',
-    'Value',
-    'Day Change',
-    'Total Change',
-    '',
-  ];
+function Dashboard() {
+  const { user, retrieveUserInfo } = useContext(AuthContext);
 
   // const data = [
   //   {
@@ -47,6 +47,11 @@ function Dashboard() {
   //     action: 'SELL',
   //   },
   // ];
+  //
+
+  useEffect(() => {
+    retrieveUserInfo();
+  }, []);
 
   return (
     <div className="dashboard-container">
