@@ -1,48 +1,47 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 
 import './Table.scss';
 
-function TableHeader({ headers, data }) {
-  const history = useHistory();
+function Table({ children }) {
+  return <div className="table">{children}</div>;
+}
 
-  function handleRowClick(symbol) {
-    history.push(`/stock/${symbol}?period=day`);
-  }
-
-  function handleSellButtonClick() {
-
-  }
-
+function TableHeader({ headers }) {
   return (
-    data.length > 0
-      ? (
-        <div className="table">
-          <div className="header-container">
-            {headers.map((header) => (
-              <div className="header" key={header}>{header}</div>
-            ))}
-          </div>
-          {data.map((stock) => (
-            <div className="table-row" key={stock.symbol} onClick={() => handleRowClick(stock.symbol)}>
-              {Object.keys(stock).map((keyName) => (
-                <div
-                  className={`table-value ${keyName} ${
-                    stock[keyName][0] === '+' ? 'positive' : ''
-                  }
-                  ${stock[keyName][0] === '-' ? 'negative' : ''}`}
-                  key={`${stock.symbol}-${keyName}`}
-                  onClick={handleSellButtonClick}
-                >
-                  {stock[keyName]}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      )
-      : <p>No Data</p>
+    <div className="table">
+      <div className="header-container">
+        {headers.map((header) => (
+          <div className="header" key={header}>{header}</div>
+        ))}
+      </div>
+    </div>
   );
 }
 
-export default TableHeader;
+function TableRow({ rowData, onClick }) {
+  function handleSellButtonClick(event) {
+    event.stopPropagation();
+    console.log('Sold');
+  }
+
+  return (
+    <div className="table-row" key={rowData.symbol} onClick={onClick}>
+      {Object.keys(rowData).map((key) => (
+        <div
+          className={`table-value ${key} ${
+            rowData[key][0] === '+' ? 'positive' : ''
+          }
+          ${rowData[key][0] === '-' ? 'negative' : ''}`}
+          key={`${rowData.symbol}-${key}`}
+          onClick={key === 'action' ? (event) => handleSellButtonClick(event) : null}
+        >
+          {rowData[key]}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default Table;
+
+export { Table, TableHeader, TableRow };

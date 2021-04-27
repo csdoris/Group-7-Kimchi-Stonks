@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 
-import Table from '../../../components/Table/Table';
+import { Table, TableHeader, TableRow } from '../../../components/Table/Table';
 import { AuthContext } from '../../../contexts/Auth';
 
 import './Market.scss';
@@ -16,6 +17,7 @@ const headers = [
 ];
 
 function Market() {
+  const history = useHistory();
   const { user } = useContext(AuthContext);
 
   const [marketData, setMarketData] = useState([]);
@@ -29,7 +31,7 @@ function Market() {
       const { status, data } = res;
 
       if (status === 200) {
-        const trendingStocks = data.mostGainerStock.slice(0, 10);
+        const trendingStocks = data.mostGainerStock.slice(0, 9);
 
         setMarketData(trendingStocks.map((stock) => ({
           symbol: stock.ticker,
@@ -44,7 +46,18 @@ function Market() {
   return (
     <div className="market-container">
       <p className="container-title">Trending Stocks</p>
-      <Table headers={headers} data={marketData} />
+      <Table>
+        <TableHeader
+          headers={headers}
+        />
+        {marketData.map((stock) => (
+          <TableRow
+            key={`trending-${stock.symbol}`}
+            rowData={stock}
+            onClick={() => history.push(`/stock/${stock.symbol}?period=day`)}
+          />
+        ))}
+      </Table>
     </div>
   );
 }
