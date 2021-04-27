@@ -1,72 +1,47 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
+
 import './Table.scss';
 
-function TableHeader() {
-  const titles = [
-    'STOCK',
-    'SHARES',
-    'AVG PRICE',
-    'VALUE',
-    'DAY CHANGE',
-    'TOTAL CHANGE',
-    'ACTION',
-  ];
+function TableHeader({ headers, data }) {
+  const history = useHistory();
 
-  const holdingsList = [
-    {
-      stock: 'AMD',
-      shares: '1.00',
-      avgPrice: '$95.50',
-      value: '$76.27',
-      dayChange: '-$0.26 (-0.34%)',
-      totalChange: '-$18.99 (-19.93%)',
-      action: 'SELL',
-    },
-    {
-      stock: 'DBX',
-      shares: '1.00',
-      avgPrice: '$95.50',
-      value: '$76.27',
-      dayChange: '+$0.26 (-0.34%)',
-      totalChange: '+$18.99 (-19.93%)',
-      action: 'SELL',
-    },
-    {
-      stock: 'TSLA',
-      shares: '1.00',
-      avgPrice: '$595.50',
-      value: '$76.27',
-      dayChange: '+$0.26 (-0.34%)',
-      totalChange: '+$18.99 (-19.93%)',
-      action: 'SELL',
-    },
-  ];
+  function handleRowClick(symbol) {
+    history.push(`/stock/${symbol}?period=day`);
+  }
 
-  const handleClick = () => null;
+  function handleSellButtonClick() {
+
+  }
 
   return (
-    <div className="table">
-      <div className="table-header flex-grid">
-        {titles.map((title) => (
-          <div className="col">{title}</div>
-        ))}
-      </div>
-      {holdingsList.map((holding) => (
-        <div className="table-row flex-grid">
-          {Object.keys(holding).map((keyName) => (
-            <div
-              className={`col ${keyName} ${
-                holding[keyName][0] === '+' ? 'positive' : ''
-              }
-              ${holding[keyName][0] === '-' ? 'negative' : ''}`}
-              onClick={handleClick}
-            >
-              {holding[keyName]}
+    data.length > 0
+      ? (
+        <div className="table">
+          <div className="header-container">
+            {headers.map((header) => (
+              <div className="header" key={header}>{header}</div>
+            ))}
+          </div>
+          {data.map((el) => (
+            <div className="table-row" key={el.stock} onClick={() => handleRowClick(el.stock)}>
+              {Object.keys(el).map((keyName) => (
+                <div
+                  className={`table-value ${keyName} ${
+                    el[keyName][0] === '+' ? 'positive' : ''
+                  }
+                  ${el[keyName][0] === '-' ? 'negative' : ''}`}
+                  key={`${el.stock}-${keyName}`}
+                  onClick={handleSellButtonClick}
+                >
+                  {el[keyName]}
+                </div>
+              ))}
             </div>
           ))}
         </div>
-      ))}
-    </div>
+      )
+      : <p>No Data</p>
   );
 }
 
