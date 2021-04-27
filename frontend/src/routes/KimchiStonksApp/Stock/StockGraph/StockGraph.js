@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import Chart from 'chart.js/auto';
 
+import Button from '../../../../components/Button/Button';
 import { StockContext } from '../../../../contexts/Stock';
 
 function StockGraph() {
@@ -68,6 +69,36 @@ function StockGraph() {
       <div className="graph-header-container">
         <div className="container-title">
           {`${stock.Symbol} | ${stock.Name}`}
+        </div>
+        <div className="time-period-container">
+          <Button
+            className="time-period-button"
+            type="button"
+            value="Day"
+            text="Day"
+            variant="text"
+          />
+          <Button
+            className="time-period-button"
+            type="button"
+            value="Week"
+            text="Week"
+            variant="text"
+          />
+          <Button
+            className="time-period-button"
+            type="button"
+            value="Month"
+            text="Month"
+            variant="text"
+          />
+          <Button
+            className="time-period-button"
+            type="button"
+            value="Year"
+            text="Year"
+            variant="text"
+          />
         </div>
       </div>
       <div className="stock-graph-container">
