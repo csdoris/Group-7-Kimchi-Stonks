@@ -1,67 +1,28 @@
 import React from 'react';
 import './Table.scss';
 
-function TableHeader() {
-  const titles = [
-    'STOCK',
-    'SHARES',
-    'AVG PRICE',
-    'VALUE',
-    'DAY CHANGE',
-    'TOTAL CHANGE',
-    'ACTION',
-  ];
-
-  const holdingsList = [
-    {
-      stock: 'AMD',
-      shares: '1.00',
-      avgPrice: '$95.50',
-      value: '$76.27',
-      dayChange: '-$0.26 (-0.34%)',
-      totalChange: '-$18.99 (-19.93%)',
-      action: 'SELL',
-    },
-    {
-      stock: 'DBX',
-      shares: '1.00',
-      avgPrice: '$95.50',
-      value: '$76.27',
-      dayChange: '+$0.26 (-0.34%)',
-      totalChange: '+$18.99 (-19.93%)',
-      action: 'SELL',
-    },
-    {
-      stock: 'TSLA',
-      shares: '1.00',
-      avgPrice: '$595.50',
-      value: '$76.27',
-      dayChange: '+$0.26 (-0.34%)',
-      totalChange: '+$18.99 (-19.93%)',
-      action: 'SELL',
-    },
-  ];
-
-  const handleClick = () => null;
+function TableHeader({ headers, data }) {
+  function handleClick() {}
 
   return (
     <div className="table">
       <div className="table-header flex-grid">
-        {titles.map((title) => (
-          <div className="col">{title}</div>
+        {headers.map((header) => (
+          <div className="col" key={header}>{header}</div>
         ))}
       </div>
-      {holdingsList.map((holding) => (
-        <div className="table-row flex-grid">
-          {Object.keys(holding).map((keyName) => (
+      {data.map((el) => (
+        <div className="table-row flex-grid" key={el.stock}>
+          {Object.keys(el).map((keyName) => (
             <div
               className={`col ${keyName} ${
-                holding[keyName][0] === '+' ? 'positive' : ''
+                el[keyName][0] === '+' ? 'positive' : ''
               }
-              ${holding[keyName][0] === '-' ? 'negative' : ''}`}
+              ${el[keyName][0] === '-' ? 'negative' : ''}`}
+              key={`${el.stock}-${keyName}`}
               onClick={handleClick}
             >
-              {holding[keyName]}
+              {el[keyName]}
             </div>
           ))}
         </div>
