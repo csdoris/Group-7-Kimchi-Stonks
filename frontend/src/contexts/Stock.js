@@ -75,12 +75,32 @@ function StockProvider({ children }) {
     });
   }
 
+  function buyStocks(shares, stockPrice, totalSpent) {
+    axios.post(`${URL}/user/buy`, {
+      symbol: stock.Symbol,
+      shares,
+      stockPrice,
+      totalSpent,
+    }, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken.token}`,
+      },
+    }).then((res) => {
+      const { status } = res;
+
+      if (status === 200) {
+        // Show dialog confirming buy was successful.
+      }
+    });
+  }
+
   const context = {
     stock,
     stockData,
     stockPrediction,
     clearStock,
     retrieveStockData,
+    buyStocks,
   };
 
   return (
