@@ -55,10 +55,10 @@ async function buyStock(req, res) {
  */
 async function sellStock(req, res) {
   const { id } = req.user;
-  const { stockSymbol, sellingAmount, price } = req.body;
+  const { symbol, sellingAmount, stockPrice } = req.body;
 
   const { status, json } = await userService
-    .sellStock(stockSymbol, sellingAmount, price, id);
+    .sellStock(symbol, sellingAmount, stockPrice, id);
 
   res.status(status).json(json);
 }
