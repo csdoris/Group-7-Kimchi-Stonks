@@ -8,8 +8,6 @@ import './Dashboard.scss';
 function Dashboard() {
   const { user } = useContext(AuthContext);
 
-  console.log(user);
-
   const headers = [
     'Stock',
     'Shares',
