@@ -1,82 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import Chart from 'chart.js/auto';
+import { useHistory, useLocation } from 'react-router-dom';
+
+import Button from '../../../../components/Button/Button';
+import { StockContext } from '../../../../contexts/Stock';
+
+const TIME_PERIOD = ['Day', 'Week', 'Month', 'Year'];
 
 function StockGraph() {
-  const graphData = {
-    metaData: {
-      symbol: 'IBM',
-      date: '2021-04-07',
-      interval: 'Day',
-      timeZone: 'US/Eastern',
-    },
-    timeSeriesData: [
-      {
-        time: '10:00',
-        open: '134.5100',
-        high: '134.6100',
-        low: '134.3700',
-        close: '134.4800',
-        volume: '26486',
-      },
-      {
-        time: '11:00',
-        open: '134.6100',
-        high: '134.6400',
-        low: '134.5501',
-        close: '134.5802',
-        volume: '22378',
-      },
-      {
-        time: '12:00',
-        open: '134.1000',
-        high: '134.2900',
-        low: '134.0848',
-        close: '134.2800',
-        volume: '21261',
-      },
-      {
-        time: '13:00',
-        open: '134.2538',
-        high: '134.3400',
-        low: '134.2400',
-        close: '134.3200',
-        volume: '19299',
-      },
-      {
-        time: '14:00',
-        open: '134.3300',
-        high: '134.4300',
-        low: '134.3300',
-        close: '134.4300',
-        volume: '19473',
-      },
-      {
-        time: '15:00',
-        open: '134.5300',
-        high: '134.5900',
-        low: '134.4750',
-        close: '134.4800',
-        volume: '18010',
-      },
-      {
-        time: '16:00',
-        open: '134.7000',
-        high: '134.9400',
-        low: '134.6900',
-        close: '134.9300',
-        volume: '154917',
-      },
-    ],
-  };
+  const history = useHistory();
+  const { stock, stockData } = useContext(StockContext);
+  const { pathname } = useLocation();
+  const queryPeriod = new URLSearchParams(useLocation().search).get('period');
 
   useEffect(() => {
     const graphCanvas = document.getElementById('stock-graph');
-    new Chart(graphCanvas, {
+    const stockChart = new Chart(graphCanvas, {
       type: 'line',
       data: {
         datasets: [
           {
-            data: graphData.timeSeriesData,
+            data: stockData.timeSeriesData,
             fill: false,
             borderColor: '#E56536',
             tension: 0.3,
@@ -85,7 +29,7 @@ function StockGraph() {
       },
       options: {
         parsing: {
-          xAxisKey: 'time',
+          xAxisKey: 'xAxis',
           yAxisKey: 'open',
         },
         plugins: {
@@ -120,13 +64,34 @@ function StockGraph() {
         },
       },
     });
-  }, []);
+
+    return () => {
+      stockChart.destroy();
+    };
+  }, [stockData]);
+
+  function handleTimePeriodButtonClick(period) {
+    history.replace(`${pathname}?period=${period}`);
+  }
 
   return (
     <div className="inner-graph-container">
       <div className="graph-header-container">
         <div className="container-title">
-          AAPL | Apple, inc.
+          {`${stock.Symbol} | ${stock.Name}`}
+        </div>
+        <div className="time-period-container">
+          {TIME_PERIOD.map((period) => (
+            <Button
+              key={period}
+              className={`time-period-button ${queryPeriod === period.toLowerCase() ? 'active' : ''}`}
+              type="button"
+              value={period}
+              text={period}
+              variant="text"
+              onClick={() => handleTimePeriodButtonClick(period.toLowerCase())}
+            />
+          ))}
         </div>
       </div>
       <div className="stock-graph-container">

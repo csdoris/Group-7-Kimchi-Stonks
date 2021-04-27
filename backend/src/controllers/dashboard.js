@@ -53,16 +53,16 @@ function formatReturnData(data, interval) {
 
     switch (interval) {
       case TIME_SERIES_INTRADAY:
-        dataPoint.xAxis = key.substr(11);
+        dataPoint.xAxis = key.substr(11, 5);
         break;
       case TIME_SERIES_DAILY:
-        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { weekday: 'long' });
+        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { weekday: 'long' }).substr(0, 3);
         break;
       case TIME_SERIES_WEEKLY:
         dataPoint.xAxis = key;
         break;
       case TIME_SERIES_MONTHLY:
-        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { month: 'long' });
+        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { month: 'long' }).substr(0, 3);
         break;
       default:
     }
@@ -311,17 +311,25 @@ async function predictPrice(req, res) {
  */
 async function searchStocks(req, res) {
   const { keyword } = req.query;
-  const url = `${process.env.AV_DOMAIN}/query?function=SYMBOL_SEARCH&keywords=${keyword}&apikey=${process.env.FMP_API_KEY}`;
+
+  // use YAHOO FINANCE API for non-rate-limited searching
+  let url = `${process.env.YAHOO_DOMAIN}/v1/finance/search`;
+  url += `?q=${keyword}`;
+  url += '&lang=en-US';
+  url += '&region=US';
+  url += '&quotesCount=10';
+  url += '&newsCount=0';
+  url += '&quotesQueryId=tss_match_phrase_query';
+  url += '&multiQuoteQueryId=multi_quote_single_token_query';
 
   axios.get(url).then((response) => {
     const matches = [];
-    response.data.bestMatches.forEach((el) => {
-      if (el['4. region'] === 'United States') {
+    response.data.quotes.forEach((el) => {
+      // only include equities listed on US exchanges to keep consistent with AV API data
+      if (el.isYahooFinance && el.quoteType === 'EQUITY' && el.exchange !== 'PNK' && !el.symbol.includes('.')) {
         const data = {
-          symbol: el['1. symbol'],
-          name: el['2. name'],
-          type: el['3. type'],
-          matchScore: el['9. matchScore'],
+          symbol: el.symbol,
+          name: el.longname,
         };
         matches.push(data);
       }
@@ -329,7 +337,7 @@ async function searchStocks(req, res) {
 
     res.status(response.status).json({ matches });
   }).catch((err) => {
-    res.status(err.response.status).json(err.response.data);
+    res.status(500).json(err);
   });
 }
 

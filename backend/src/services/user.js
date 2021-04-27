@@ -24,16 +24,16 @@ function calculateAveragePrice(currentShares, averagePrice, additionalShares, cu
  * refernce of the stock into the user's "stock" field. This function also sets the updated
  * buying power that they user has after purchasing the stock into the user entry.
  * This is called if the user is trying to buy a stock that they have not currently have shares of.
- * @param {*} stockSymbol The unique identifying symbol for the stock the user is purchasing
- * @param {*} totalShares The total number of shares the user to buying
- * @param {*} averagePrice The average price of each unit bought
+ * @param {*} symbol The unique identifying symbol for the stock the user is purchasing
+ * @param {*} shares The total number of shares the user to buying
+ * @param {*} stockPrice The average price of each unit bought
  * @param {*} owner The user's ID
  * @param {*} buyingPowerLeft The amount of buying power the user has left
  * @returns
  */
-async function createNewStock(stockSymbol, totalShares, averagePrice, owner, buyingPowerLeft) {
+async function createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft) {
   const newStock = new Stock({
-    stockSymbol, totalShares, averagePrice, owner,
+    symbol, shares, averagePrice: stockPrice, owner,
   });
 
   const { err } = await newStock.save();
@@ -58,24 +58,24 @@ async function createNewStock(stockSymbol, totalShares, averagePrice, owner, buy
  * This is called if the user purchases a stock which they have already invested in.
  * This function also calls upon the calculateAveragePrice function in order to calculate the new
  * average price
- * @param {*} stockSymbol The unique identifying symbol for the stock the user is purchasing
+ * @param {*} symbol The unique identifying symbol for the stock the user is purchasing
  * @param {*} currentShareHoldings The amount of shares/units the user currently holds
- * @param {*} sharesBought The number of shares/units bought by the user
+ * @param {*} shares The number of shares/units bought by the user
  * @param {*} avgPriceOfHoldings The average price of each unit which the user is holding prior to purchase
- * @param {*} price The price of each share/unit the user buys at
+ * @param {*} stockPrice The price of each share/unit the user buys at
  * @param {*} owner The user's ID
  * @param {*} buyingPowerLeft The amount of buying power the user has left after the purchase
  * @returns
  */
-async function addOntoStock(stockSymbol, currentShareHoldings, sharesBought,
-  avgPriceOfHoldings, price, owner, buyingPowerLeft) {
+async function addOntoStock(symbol, currentShareHoldings, shares,
+  avgPriceOfHoldings, stockPrice, owner, buyingPowerLeft) {
   const stock = await Stock
-    .findOneAndUpdate({ stockSymbol, owner },
+    .findOneAndUpdate({ symbol, owner },
       {
-        $inc: { totalShares: sharesBought },
+        $inc: { shares },
         $set: {
           averagePrice: calculateAveragePrice(
-            currentShareHoldings, avgPriceOfHoldings, sharesBought, price,
+            currentShareHoldings, avgPriceOfHoldings, shares, stockPrice,
           ),
         },
       },
@@ -94,7 +94,7 @@ async function addOntoStock(stockSymbol, currentShareHoldings, sharesBought,
  * @param {*} sellingPrice The price of each unit/share the user is selling
  */
 async function sellAllStock(stock, sellingPrice) {
-  await Stock.findOneAndDelete({ stockSymbol: stock.stockSymbol, owner: stock.owner });
+  await Stock.findOneAndDelete({ symbol: stock.symbol, owner: stock.owner });
   await User.findByIdAndUpdate({ _id: stock.owner },
     { $pull: { stocks: stock._id }, $inc: { buyingPower: sellingPrice } });
 }
@@ -108,8 +108,8 @@ async function sellAllStock(stock, sellingPrice) {
  * @param {*} sellingPrice The price of each unit/share the user is selling
  */
 async function sellPartialStock(stock, sellingAmount, sellingPrice) {
-  await Stock.findOneAndUpdate({ stockSymbol: stock.stockSymbol, owner: stock.owner },
-    { $set: { totalShares: (parseInt(stock.totalShares, 10) - parseInt(sellingAmount, 10)) } });
+  await Stock.findOneAndUpdate({ symbol: stock.symbol, owner: stock.owner },
+    { $set: { shares: (parseInt(stock.shares, 10) - parseInt(sellingAmount, 10)) } });
   await User.findByIdAndUpdate({ _id: stock.owner }, { $inc: { buyingPower: sellingPrice } });
 }
 
@@ -118,52 +118,53 @@ async function sellPartialStock(stock, sellingAmount, sellingPrice) {
  * This function check whether the user has enough buying power in order to make
  * the purchase happen, and then goes ahead and does it by either creating a new stock
  * entry or by adding onto an existing stock entry (given the user has previously bought it).
- * @param {*} stockSymbol The unique identifying symbol for the stock the user is purchasing
- * @param {*} sharesBought The number of shares/units bought by the user
- * @param {*} price The price of each share/unit which the user bought
+ * @param {*} symbol The unique identifying symbol for the stock the user is purchasing
+ * @param {*} shares The number of shares/units bought by the user
+ * @param {*} stockPrice The price of each share/unit which the user bought
  * @param {*} owner The user's ID
  * @returns A status 201 with the stock purchased as json within the body
  *          if the purchase was successful.
  *          A status 400 with a relevant error message if the purchase was unsuccessful.
  */
-async function buyStock(stockSymbol, sharesBought, price, owner) {
+async function buyStock(symbol, shares, stockPrice, totalSpent, owner) {
   // retrieve user information
   const user = await User.findById(owner).populate('stocks');
   if (user === undefined) {
-    return { status: 400, json: { message: 'User could not be found' } };
+    return { status: 400, json: { message: 'User could not be found.' } };
   }
   const userStocks = user._doc.stocks;
 
   // If the user doesn't have enough funds to buy the stock, their purchase is terminated
-  const buyingPowerLeft = user._doc.buyingPower - (sharesBought * price);
+  const buyingPowerLeft = user._doc.buyingPower - totalSpent;
   if (buyingPowerLeft < 0) {
-    return { status: 400, json: { message: 'purchase exceeds buying power' } };
+    return { status: 400, json: { message: 'Purchase exceeds buying power.' } };
   }
-  const stock = userStocks.find((stocks) => stocks.stockSymbol === stockSymbol);
+  const stock = userStocks.find((stocks) => stocks.symbol === symbol);
 
   if (stock) {
     const stockBought = await
-    addOntoStock(stockSymbol, stock.totalShares, sharesBought,
-      stock.averagePrice, price, owner, buyingPowerLeft);
+    addOntoStock(symbol, stock.shares, shares,
+      stock.averagePrice, stockPrice, owner, buyingPowerLeft);
     if (stockBought) {
       return {
-        status: 201,
+        status: 200,
         json: { stock_purchase: stockBought },
       };
     }
 
-    return { status: 400, json: { message: 'could not finish purchase' } };
+    return { status: 400, json: { message: 'Could not finish purchase.' } };
   }
+
   const newStockInfo = await
-  createNewStock(stockSymbol, sharesBought, price, owner, buyingPowerLeft);
+  createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft);
 
   if (newStockInfo) {
     return {
-      status: 201,
+      status: 200,
       json: { stock_purchase: { newStockInfo } },
     };
   }
-  return { status: 400, json: { message: 'could not finish purchase' } };
+  return { status: 400, json: { message: 'Could not finish purchase.' } };
 }
 
 /**
@@ -171,30 +172,30 @@ async function buyStock(stockSymbol, sharesBought, price, owner) {
  * This function checks whether the user has/ has enough of the stock they want to sell. and then
  * goes ahead and either sells a portion of their stock or sells all shares/units which the
  * user owns.
- * @param {*} stockSymbol The unique identifying symbol for the stock the user is purchasing
+ * @param {*} symbol The unique identifying symbol for the stock the user is purchasing
  * @param {*} sellingAmount The number of units/shares the user is selling
- * @param {*} price The price of each share/unit which the user bought
+ * @param {*} stockPrice The price of each share/unit which the user bought
  * @param {*} owner The user's ID
  * @returns A status 201 with a relevant message if the purchase was successful.
  *          A status 400 with a relevant error message if the purchase was unsuccessful.
  */
-async function sellStock(stockSymbol, sellingAmount, price, owner) {
-  const sellingPrice = sellingAmount * price;
+async function sellStock(symbol, sellingAmount, stockPrice, owner) {
+  const sellingPrice = sellingAmount * stockPrice;
   const user = await User.findById(owner).populate('stocks');
   if (user === undefined) {
     return { status: 400, json: { message: 'User could not be found' } };
   }
   const userStocks = user._doc.stocks;
 
-  const stock = userStocks.find((stocks) => stocks.stockSymbol === stockSymbol);
+  const stock = userStocks.find((stocks) => stocks.symbol === symbol);
 
   if (stock === undefined) {
     return { status: 400, json: { message: 'could not find stock' } };
   }
-  if (stock.totalShares < sellingAmount) {
+  if (stock.shares < sellingAmount) {
     return { status: 400, json: { message: 'cannot sell more units than currently purchased' } };
   }
-  if (parseInt(stock.totalShares, 10) === parseInt(sellingAmount, 10)) {
+  if (parseInt(stock.shares, 10) === parseInt(sellingAmount, 10)) {
     await sellAllStock(stock, sellingPrice);
     return { status: 200, json: { message: 'successful sell' } };
   }
@@ -212,11 +213,11 @@ async function retrieveUserInformation(id) {
   const user = await User.findById(id);
 
   if (user) {
-    const userInfo = user._doc;
-    const stock = await Stock.find({ owner: id });
+    await User.populate(user, 'stocks');
+    const { password: hashedPassword, ...userInfo } = user._doc;
     return {
       status: 200,
-      json: { user: { ...userInfo }, stocks: stock },
+      json: { user: { ...userInfo } },
     };
   }
 
@@ -240,6 +241,7 @@ async function updateUserBuyingPower(id, amount) {
     { $inc: { buyingPower: amount } }, { returnOriginal: false });
 
   if (user) {
+    await User.populate(user, 'stocks');
     const userInfo = user._doc;
     return {
       status: 200,

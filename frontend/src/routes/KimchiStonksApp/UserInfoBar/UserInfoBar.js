@@ -26,7 +26,7 @@ function UserInfoBar() {
       </div>
       <div className="info-container">
         <div className="info-title">Buying Power</div>
-        <div className="info-value">{`$${user.buyingPower}`}</div>
+        <div className="info-value">{`$${user.buyingPower.toFixed(2)}`}</div>
       </div>
       <div className="info-container">
         <div className="info-title">Shares</div>

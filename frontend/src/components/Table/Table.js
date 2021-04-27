@@ -1,73 +1,51 @@
 import React from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
+
 import './Table.scss';
 
-function TableHeader() {
-  const titles = [
-    'STOCK',
-    'SHARES',
-    'AVG PRICE',
-    'VALUE',
-    'DAY CHANGE',
-    'TOTAL CHANGE',
-    'ACTION',
-  ];
+function Table({ children }) {
+  return <div className="table">{children}</div>;
+}
 
-  const holdingsList = [
-    {
-      stock: 'AMD',
-      shares: '1.00',
-      avgPrice: '$95.50',
-      value: '$76.27',
-      dayChange: '-$0.26 (-0.34%)',
-      totalChange: '-$18.99 (-19.93%)',
-      action: 'SELL',
-    },
-    {
-      stock: 'DBX',
-      shares: '1.00',
-      avgPrice: '$95.50',
-      value: '$76.27',
-      dayChange: '+$0.26 (-0.34%)',
-      totalChange: '+$18.99 (-19.93%)',
-      action: 'SELL',
-    },
-    {
-      stock: 'TSLA',
-      shares: '1.00',
-      avgPrice: '$595.50',
-      value: '$76.27',
-      dayChange: '+$0.26 (-0.34%)',
-      totalChange: '+$18.99 (-19.93%)',
-      action: 'SELL',
-    },
-  ];
-
-  const handleClick = () => null;
-
+function TableHeader({ headers }) {
   return (
     <div className="table">
-      <div className="table-header flex-grid">
-        {titles.map((title) => (
-          <div className="col">{title}</div>
+      <div className="header-container">
+        {headers.map((header) => (
+          <div className="header" key={header}>{header}</div>
         ))}
       </div>
-      {holdingsList.map((holding) => (
-        <div className="table-row flex-grid">
-          {Object.keys(holding).map((keyName) => (
-            <div
-              className={`col ${keyName} ${
-                holding[keyName][0] === '+' ? 'positive' : ''
-              } 
-              ${holding[keyName][0] === '-' ? 'negative' : ''}`}
-              onClick={handleClick}
-            >
-              {holding[keyName]}
-            </div>
-          ))}
+    </div>
+  );
+}
+
+function TableRow({ rowData, onClick }) {
+  const history = useHistory();
+  const { pathname } = useLocation();
+
+  function handleSellButtonClick(event) {
+    event.stopPropagation();
+    history.push(`${pathname}/sellStocks?symbol=${rowData.symbol}&totalShares=${rowData.shares}`);
+  }
+
+  return (
+    <div className="table-row" key={rowData.symbol} onClick={onClick}>
+      {Object.keys(rowData).map((key) => (
+        <div
+          className={`table-value ${key} ${
+            rowData[key][0] === '+' ? 'positive' : ''
+          }
+          ${rowData[key][0] === '-' ? 'negative' : ''}`}
+          key={`${rowData.symbol}-${key}`}
+          onClick={key === 'action' ? (event) => handleSellButtonClick(event) : null}
+        >
+          {rowData[key]}
         </div>
       ))}
     </div>
   );
 }
 
-export default TableHeader;
+export default Table;
+
+export { Table, TableHeader, TableRow };

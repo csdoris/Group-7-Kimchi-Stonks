@@ -26,6 +26,10 @@
   border-color: #D03800;
 }
 
+.button:active {
+  border-color: transparent;
+}
+
 .button:disabled {
   opacity: 0.5;
 }

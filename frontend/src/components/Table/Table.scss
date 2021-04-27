@@ -1,31 +1,37 @@
 .table {
-    .table-header.flex-grid {
+
+    .header-container {
         margin-bottom: 0.5em;
         background-color: #303030;
         padding: 1em;
         display: flex;
         border-radius: 10px;
-    
-        .col {
+
+        .header {
             flex: 1;
             text-align: center;
             color: #606060;
-            font-size: 85%;
+            font-size: 100%;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
     }
 
-    .table-row.flex-grid {
+    .table-row {
         margin-bottom: 0.5em;
         padding: 1em;
         display: flex;
         border-radius: 10px;
         justify-content: space-between;
+        transition: 0.3s ease;
 
-        .col {
+        .table-value {
             flex: 1;
             text-align: center;
-            font-size: 85%;
-
+            font-size: 100%;
+            letter-spacing: 1px;
+            font-weight: 300;
         }
 
         .stock {
@@ -33,27 +39,38 @@
                 cursor: pointer;
             }
         }
-    
+
         .action {
+          text-transform: uppercase;
+          font-weight: 600;
             color: #F3D098;
+            transition: 0.5s ease;
+            z-index: 100;
+
             &:hover {
                 cursor: pointer;
+                color: #F2B95E;
             }
-            
+
         }
-        
+
         .positive {
             color: #6BE647
         }
-        
+
         .negative {
             color: #FF4400;
         }
 
         &:hover {
-            background-color: #525252;
-            transition: all .2s linear;
-            -webkit-transition: all .2s linear;
+          cursor: pointer;
+          background-color: #464646;
+          transition: all .2s linear;
+          -webkit-transition: all .2s linear;
+        }
+
+        &:last-child {
+          margin-bottom: 0;
         }
     }
 }

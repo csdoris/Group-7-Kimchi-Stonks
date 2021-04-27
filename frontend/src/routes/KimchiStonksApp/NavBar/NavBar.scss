@@ -29,9 +29,11 @@
     display: inline-block;
     padding-left: 0;
     margin-left: auto;
+
     .nav-item {
       display: inline-block;
       margin-left: 1em;
+
       &:first-child {
         margin-left: 0;
       }

@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 
-import InputField from '../../../components/InputField/InputField';
+import StockSearch from './StockSearch/StockSearch';
 import Button from '../../../components/Button/Button';
 import { AuthContext } from '../../../contexts/Auth';
 
@@ -12,21 +12,12 @@ import './NavBar.scss';
 function NavBar() {
   const { logOut } = useContext(AuthContext);
 
-  const [search, setSearch] = useState('');
-
   return (
     <nav className="nav-bar">
       <Link to="/dashboard">
         <img className="logo" src={logo} alt="Kimchi Stonks Logo" />
       </Link>
-      <InputField
-        className="search"
-        type="text"
-        name="search"
-        value={search}
-        placeholder="Search Stonks"
-        onChange={(event) => setSearch(event.target.value)}
-      />
+      <StockSearch />
       <ul className="nav-list">
         <li className="nav-item">
           <NavLink className="nav-link" to="/dashboard">Dashboard</NavLink>

@@ -3,11 +3,15 @@ import axios from 'axios';
 
 const AuthContext = React.createContext();
 
-const url = process.env.REACT_APP_API_URL;
+const URL = process.env.REACT_APP_API_URL;
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined);
   const [timer, setTimer] = useState(undefined);
+
+  function updateUser(updatedUser) {
+    setUser({ ...updatedUser, accessToken: user.accessToken });
+  }
 
   function saveAuthData(token, expirationDate) {
     localStorage.setItem('token', token);
@@ -46,7 +50,7 @@ function AuthProvider({ children }) {
   }
 
   function register(firstName, lastName, email, password) {
-    axios.post(`${url}/auth/register`, {
+    axios.post(`${URL}/auth/register`, {
       firstName,
       lastName,
       email,
@@ -70,7 +74,7 @@ function AuthProvider({ children }) {
   }
 
   function login(email, password) {
-    axios.post(`${url}/auth/login`, {
+    axios.post(`${URL}/auth/login`, {
       email,
       password,
     }).then((res) => {
@@ -102,7 +106,7 @@ function AuthProvider({ children }) {
       const expiresIn = expirationDate.getTime() - now.getTime();
 
       if (expiresIn > 0) {
-        axios.get(`${url}/auth/auto-login`, {
+        axios.get(`${URL}/auth/auto-login`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -119,12 +123,29 @@ function AuthProvider({ children }) {
     }
   }
 
+  function retrieveUserInfo() {
+    axios.get(`${URL}/user/info`, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken.token}`,
+      },
+    }).then((res) => {
+      const { status, data } = res;
+      const { user: updatedUser } = data;
+
+      if (status === 200) {
+        setUser({ ...updatedUser, accessToken: user.accessToken });
+      }
+    });
+  }
+
   const context = {
     user,
+    updateUser,
     logOut,
     register,
     login,
     autoLogin,
+    retrieveUserInfo,
   };
 
   return (
