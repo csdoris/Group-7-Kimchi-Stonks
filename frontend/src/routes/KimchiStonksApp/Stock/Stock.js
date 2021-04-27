@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 
 import StockGraph from './StockGraph/StockGraph';
 import StockOverview from './StockOverview/StockOverview';
@@ -10,12 +10,13 @@ import './Stock.scss';
 
 function Stock({ stockSymbol }) {
   const { stock, stockData, retrieveStockData } = useContext(StockContext);
+  const period = new URLSearchParams(useLocation().search).get('period');
 
   const { symbol } = useParams();
 
   useEffect(() => {
-    retrieveStockData(symbol, 'DAY');
-  }, [symbol]);
+    retrieveStockData(symbol, period);
+  }, [symbol, period]);
 
   return (
     stock && stockData

@@ -26,13 +26,37 @@
         flex-direction: column;
 
         .graph-header-container {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 1em;
 
           .container-title {
+            align-self: center;
             text-transform: uppercase;
             font-weight: 500;
             letter-spacing: 1px;
             font-size: 150%;
-            margin-bottom: 1em;
+          }
+
+          .time-period-container {
+            display: flex;
+
+            .time-period-button {
+              font-size: 80%;
+              margin-right: 0.5em;
+
+              &:last-child {
+                margin-right: 0;
+              }
+
+              &:focus {
+                border-color: transparent;
+              }
+            }
+
+            .time-period-button.active {
+              color: #FFDA9F;
+            }
           }
         }
 

@@ -8,10 +8,10 @@ const StockContext = React.createContext();
 const URL = process.env.REACT_APP_API_URL;
 
 const TIME_PERIOD_MAP = {
-  DAY: 'intraday',
-  WEEK: 'daily',
-  MONTH: 'monthly',
-  YEAR: 'yearly',
+  day: 'intraday',
+  week: 'daily',
+  month: 'monthly',
+  year: 'yearly',
 };
 
 function StockProvider({ children }) {

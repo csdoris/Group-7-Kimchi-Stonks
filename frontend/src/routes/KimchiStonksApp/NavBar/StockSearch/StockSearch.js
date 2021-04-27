@@ -42,7 +42,7 @@ function StockSearch() {
     setSuggestions([]);
     clearStock();
 
-    history.push(`/stock/${symbol}`);
+    history.push(`/stock/${symbol}?period=day`);
   }
 
   return (
