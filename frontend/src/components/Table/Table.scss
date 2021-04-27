@@ -1,16 +1,19 @@
 .table {
-    .table-header.flex-grid {
+    .header-container.flex-grid {
         margin-bottom: 0.5em;
         background-color: #303030;
         padding: 1em;
         display: flex;
         border-radius: 10px;
-    
-        .col {
+
+        .header {
             flex: 1;
             text-align: center;
             color: #606060;
-            font-size: 85%;
+            font-size: 100%;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
     }
 
@@ -20,12 +23,14 @@
         display: flex;
         border-radius: 10px;
         justify-content: space-between;
+        transition: 0.3s ease;
 
-        .col {
+        .table-value {
             flex: 1;
             text-align: center;
-            font-size: 85%;
-
+            font-size: 100%;
+            letter-spacing: 1px;
+            font-weight: 300;
         }
 
         .stock {
@@ -33,25 +38,25 @@
                 cursor: pointer;
             }
         }
-    
+
         .action {
             color: #F3D098;
             &:hover {
                 cursor: pointer;
             }
-            
+
         }
-        
+
         .positive {
             color: #6BE647
         }
-        
+
         .negative {
             color: #FF4400;
         }
 
         &:hover {
-            background-color: #525252;
+            background-color: #464646;
             transition: all .2s linear;
             -webkit-transition: all .2s linear;
         }
