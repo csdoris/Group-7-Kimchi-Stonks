@@ -98,8 +98,8 @@ async function getStockOverview(req, res) {
         name: response.data.Name,
         currency: response.data.Currency,
         country: response.data.Country,
-        '52WeekHigh': response.data['52WeekHigh'],
-        '52WeekLow': response.data['52WeekLow'],
+        yearHigh: response.data['52WeekHigh'],
+        yearLow: response.data['52WeekLow'],
         currentPrice: Math.round(currentPrice * 100) / 100,
       };
 
