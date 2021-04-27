@@ -1,7 +1,8 @@
 import React, { useEffect, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
+import { Switch, Route, useHistory } from 'react-router-dom';
 
 import { Table, TableHeader, TableRow } from '../../../components/Table/Table';
+import SellStocksDialog from '../../../components/Dialogs/SellStocksDialog/SellStocksDialog';
 import { AuthContext } from '../../../contexts/Auth';
 
 import './Dashboard.scss';
@@ -21,7 +22,11 @@ function Dashboard() {
 
   useEffect(() => {
     retrieveUserInfo();
-  }, []);
+  }, [user]);
+
+  function handleSellButtonClick(symbol) {
+    history.push(`/stock/${symbol}?period=day`);
+  }
 
   return (
     <div className="dashboard-container">
@@ -43,12 +48,17 @@ function Dashboard() {
                   totalChange: '+135.12 (+0.25%)',
                   action: 'sell',
                 }}
-                onClick={() => history.push(`/stock/${stock.symbol}?period=day`)}
+                onClick={() => handleSellButtonClick(stock.symbol)}
               />
             ))}
           </Table>
         )
         : <p>No Holdings :(</p>}
+      <Switch>
+        <Route path="/dashboard/sellStocks">
+          <SellStocksDialog />
+        </Route>
+      </Switch>
     </div>
   );
 }

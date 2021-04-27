@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
 import './Table.scss';
 
@@ -19,9 +20,12 @@ function TableHeader({ headers }) {
 }
 
 function TableRow({ rowData, onClick }) {
+  const history = useHistory();
+  const { pathname } = useLocation();
+
   function handleSellButtonClick(event) {
     event.stopPropagation();
-    console.log('Sold');
+    history.push(`${pathname}/sellStocks?symbol=${rowData.symbol}&totalShares=${rowData.shares}`);
   }
 
   return (

@@ -28,6 +28,7 @@ function StockProvider({ children }) {
     setStockData(undefined);
   }
 
+<<<<<<< HEAD
   function predictStock(stockSymbol) {
     // Day price prediction
     axios.get(`${URL}/dashboard/predict-price/${stockSymbol}?days=0`, {
@@ -88,8 +89,11 @@ function StockProvider({ children }) {
   }
 
   function retrieveStockData(stockSymbol, period) {
+=======
+  function retrieveStockOverview(symbol) {
+>>>>>>> added sell stocks modal and connected to api
     // Get stock overview
-    axios.get(`${URL}/dashboard/stock-overview/${stockSymbol}`, {
+    axios.get(`${URL}/dashboard/stock-overview/${symbol}`, {
       headers: {
         Authorization: `Bearer ${user.accessToken.token}`,
       },
@@ -101,9 +105,11 @@ function StockProvider({ children }) {
         setStock(data);
       }
     });
+  }
 
+  function retrieveStockData(symbol, period) {
     const timePeriod = TIME_PERIOD_MAP[period];
-    axios.get(`${URL}/dashboard/time-series/${timePeriod}/${stockSymbol}`, {
+    axios.get(`${URL}/dashboard/time-series/${timePeriod}/${symbol}`, {
       headers: {
         Authorization: `Bearer ${user.accessToken.token}`,
       },
@@ -135,9 +141,9 @@ function StockProvider({ children }) {
     });
   }
 
-  function sellStocks(stockPrice, sellingAmount) {
+  function sellStocks(symbol, stockPrice, sellingAmount) {
     axios.post(`${URL}/user/sell`, {
-      symbol: stock.Symbol,
+      symbol,
       stockPrice,
       sellingAmount,
     }, {
@@ -149,7 +155,6 @@ function StockProvider({ children }) {
 
       if (status === 200) {
         // Show dialog confirming buy was successful.
-        console.log(res);
       }
     });
   }
@@ -161,6 +166,7 @@ function StockProvider({ children }) {
     stockMonthPrediction,
     stockYearPrediction,
     clearStock,
+    retrieveStockOverview,
     retrieveStockData,
     buyStocks,
     sellStocks,
