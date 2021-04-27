@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 
 import InputField from '../../../../components/InputField/InputField';
 import Button from '../../../../components/Button/Button';
+import { StockContext } from '../../../../contexts/Stock';
 
 import './StockUtility.scss';
 
 function StockUtility() {
   const [amount, setAmount] = useState(undefined);
+  const { stockPrediction } = useContext(StockContext);
 
   const predictions = [
     {
       futureTime: '1 Week',
-      predictedPrice: 145.12,
+      predictedPrice: stockPrediction,
     },
     {
       futureTime: '1 Month',

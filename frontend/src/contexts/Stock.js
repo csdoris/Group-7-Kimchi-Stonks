@@ -19,10 +19,31 @@ function StockProvider({ children }) {
 
   const [stock, setStock] = useState(undefined);
   const [stockData, setStockData] = useState(undefined);
+  const [stockPrediction, setPrediction] = useState(undefined);
 
   function clearStock() {
     setStock(undefined);
     setStockData(undefined);
+  }
+
+  function predictStock(stockSymbol) {
+    axios.get(`${URL}/dashboard/predict-price/${stockSymbol}`, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken.token}`,
+      },
+    }).then((res) => {
+      const { status, data } = res;
+
+      if (status === 200) {
+        if (data.prediction == null) {
+          setPrediction('N/A');
+        } else {
+          setPrediction(data.prediction);
+        }
+      } else {
+        setPrediction('N/A');
+      }
+    });
   }
 
   function retrieveStockData(stockSymbol, period) {
@@ -35,6 +56,7 @@ function StockProvider({ children }) {
       const { status, data } = res;
 
       if (status === 200) {
+        predictStock(stockSymbol);
         setStock(data);
       }
     });
@@ -56,6 +78,7 @@ function StockProvider({ children }) {
   const context = {
     stock,
     stockData,
+    stockPrediction,
     clearStock,
     retrieveStockData,
   };
