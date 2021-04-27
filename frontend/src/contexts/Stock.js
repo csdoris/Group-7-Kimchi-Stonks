@@ -19,7 +19,9 @@ function StockProvider({ children }) {
 
   const [stock, setStock] = useState(undefined);
   const [stockData, setStockData] = useState(undefined);
-  const [stockPrediction, setPrediction] = useState(undefined);
+  const [stockDayPrediction, setDayPrediction] = useState(undefined);
+  const [stockMonthPrediction, setMonthPrediction] = useState(undefined);
+  const [stockYearPrediction, setYearPrediction] = useState(undefined);
 
   function clearStock() {
     setStock(undefined);
@@ -27,7 +29,8 @@ function StockProvider({ children }) {
   }
 
   function predictStock(stockSymbol) {
-    axios.get(`${URL}/dashboard/predict-price/${stockSymbol}`, {
+    // Day price prediction
+    axios.get(`${URL}/dashboard/predict-price/${stockSymbol}?days=0`, {
       headers: {
         Authorization: `Bearer ${user.accessToken.token}`,
       },
@@ -36,12 +39,50 @@ function StockProvider({ children }) {
 
       if (status === 200) {
         if (data.prediction == null) {
-          setPrediction('N/A');
+          setDayPrediction('N/A');
         } else {
-          setPrediction(data.prediction);
+          setDayPrediction(data.prediction);
         }
       } else {
-        setPrediction('N/A');
+        setDayPrediction('N/A');
+      }
+    });
+
+    // One week price prediction
+    axios.get(`${URL}/dashboard/predict-price/${stockSymbol}?days=30`, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken.token}`,
+      },
+    }).then((res) => {
+      const { status, data } = res;
+
+      if (status === 200) {
+        if (data.prediction == null) {
+          setMonthPrediction('N/A');
+        } else {
+          setMonthPrediction(data.prediction);
+        }
+      } else {
+        setMonthPrediction('N/A');
+      }
+    });
+
+    // One year price prediction
+    axios.get(`${URL}/dashboard/predict-price/${stockSymbol}?days=365`, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken.token}`,
+      },
+    }).then((res) => {
+      const { status, data } = res;
+
+      if (status === 200) {
+        if (data.prediction == null) {
+          setYearPrediction('N/A');
+        } else {
+          setYearPrediction(data.prediction);
+        }
+      } else {
+        setYearPrediction('N/A');
       }
     });
   }
@@ -97,7 +138,9 @@ function StockProvider({ children }) {
   const context = {
     stock,
     stockData,
-    stockPrediction,
+    stockDayPrediction,
+    stockMonthPrediction,
+    stockYearPrediction,
     clearStock,
     retrieveStockData,
     buyStocks,

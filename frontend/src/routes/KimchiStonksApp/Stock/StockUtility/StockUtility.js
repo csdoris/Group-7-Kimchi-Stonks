@@ -8,23 +8,27 @@ import './StockUtility.scss';
 
 function StockUtility() {
   const { stock, buyStocks } = useContext(StockContext);
-  const { stockPrediction } = useContext(StockContext);
+  const {
+    stockDayPrediction,
+    stockMonthPrediction,
+    stockYearPrediction,
+  } = useContext(StockContext);
 
   const [amount, setAmount] = useState(undefined);
   const [shares, setShares] = useState(0.00);
-  
+
   const predictions = [
     {
       futureTime: '1 Week',
-      predictedPrice: stockPrediction,
+      predictedPrice: stockDayPrediction,
     },
     {
       futureTime: '1 Month',
-      predictedPrice: 159.95,
+      predictedPrice: stockMonthPrediction,
     },
     {
       futureTime: '1 Year',
-      predictedPrice: 178.51,
+      predictedPrice: stockYearPrediction,
     },
   ];
 
