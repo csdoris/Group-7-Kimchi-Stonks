@@ -40,8 +40,6 @@ async function createNewUser(firstName, lastName, email, password) {
     return { status: 400, json: { message: 'Email is already being used.' } };
   }
 
-  await User.populate(user, 'stocks');
-
   // Hash password
   const hash = await bcrypt.hash(password, 10);
 
