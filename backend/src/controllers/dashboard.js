@@ -56,13 +56,13 @@ function formatReturnData(data, interval) {
         dataPoint.xAxis = key.substr(11, 5);
         break;
       case TIME_SERIES_DAILY:
-        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { weekday: 'long' });
+        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { weekday: 'long' }).substr(0, 3);
         break;
       case TIME_SERIES_WEEKLY:
         dataPoint.xAxis = key;
         break;
       case TIME_SERIES_MONTHLY:
-        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { month: 'long' });
+        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { month: 'long' }).substr(0, 3);
         break;
       default:
     }
