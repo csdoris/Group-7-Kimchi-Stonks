@@ -28,10 +28,9 @@ function StockProvider({ children }) {
     setStockData(undefined);
   }
 
-<<<<<<< HEAD
-  function predictStock(stockSymbol) {
+  function predictStock(symbol) {
     // Day price prediction
-    axios.get(`${URL}/dashboard/predict-price/${stockSymbol}?days=0`, {
+    axios.get(`${URL}/dashboard/predict-price/${symbol}?days=0`, {
       headers: {
         Authorization: `Bearer ${user.accessToken.token}`,
       },
@@ -50,7 +49,7 @@ function StockProvider({ children }) {
     });
 
     // One week price prediction
-    axios.get(`${URL}/dashboard/predict-price/${stockSymbol}?days=30`, {
+    axios.get(`${URL}/dashboard/predict-price/${symbol}?days=30`, {
       headers: {
         Authorization: `Bearer ${user.accessToken.token}`,
       },
@@ -69,7 +68,7 @@ function StockProvider({ children }) {
     });
 
     // One year price prediction
-    axios.get(`${URL}/dashboard/predict-price/${stockSymbol}?days=365`, {
+    axios.get(`${URL}/dashboard/predict-price/${symbol}?days=365`, {
       headers: {
         Authorization: `Bearer ${user.accessToken.token}`,
       },
@@ -88,10 +87,7 @@ function StockProvider({ children }) {
     });
   }
 
-  function retrieveStockData(stockSymbol, period) {
-=======
   function retrieveStockOverview(symbol) {
->>>>>>> added sell stocks modal and connected to api
     // Get stock overview
     axios.get(`${URL}/dashboard/stock-overview/${symbol}`, {
       headers: {
@@ -101,7 +97,7 @@ function StockProvider({ children }) {
       const { status, data } = res;
 
       if (status === 200) {
-        predictStock(stockSymbol);
+        predictStock(symbol);
         setStock(data);
       }
     });
