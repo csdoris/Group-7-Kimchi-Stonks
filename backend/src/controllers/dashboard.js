@@ -92,7 +92,18 @@ async function getStockOverview(req, res) {
     if (!Object.keys(response.data).length) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      res.status(response.status).json(response.data);
+      const currentPrice = parseFloat(response.data.MarketCapitalization) / parseFloat(response.data.SharesOutstanding);
+      const returnObject = {
+        symbol: response.data.Symbol,
+        name: response.data.Name,
+        currency: response.data.Currency,
+        country: response.data.Country,
+        yearHigh: response.data['52WeekHigh'],
+        yearLow: response.data['52WeekLow'],
+        currentPrice: Math.round(currentPrice * 100) / 100,
+      };
+
+      res.status(response.status).json(returnObject);
     }
   }).catch((err) => {
     res.status(500).json(err);
