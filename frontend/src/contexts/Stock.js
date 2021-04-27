@@ -135,6 +135,25 @@ function StockProvider({ children }) {
     });
   }
 
+  function sellStocks(stockPrice, sellingAmount) {
+    axios.post(`${URL}/user/sell`, {
+      symbol: stock.Symbol,
+      stockPrice,
+      sellingAmount,
+    }, {
+      headers: {
+        Authorization: `Bearer ${user.accessToken.token}`,
+      },
+    }).then((res) => {
+      const { status } = res;
+
+      if (status === 200) {
+        // Show dialog confirming buy was successful.
+        console.log(res);
+      }
+    });
+  }
+
   const context = {
     stock,
     stockData,
@@ -144,6 +163,7 @@ function StockProvider({ children }) {
     clearStock,
     retrieveStockData,
     buyStocks,
+    sellStocks,
   };
 
   return (
