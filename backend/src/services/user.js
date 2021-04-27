@@ -241,6 +241,7 @@ async function updateUserBuyingPower(id, amount) {
     { $inc: { buyingPower: amount } }, { returnOriginal: false });
 
   if (user) {
+    await User.populate(user, 'stocks');
     const userInfo = user._doc;
     return {
       status: 200,

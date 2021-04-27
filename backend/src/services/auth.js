@@ -40,6 +40,8 @@ async function createNewUser(firstName, lastName, email, password) {
     return { status: 400, json: { message: 'Email is already being used.' } };
   }
 
+  await User.populate(user, 'stocks');
+
   // Hash password
   const hash = await bcrypt.hash(password, 10);
 
@@ -79,6 +81,7 @@ async function authenticateUser(email, password) {
     const isAuth = await bcrypt.compare(password, user.password);
 
     if (isAuth) {
+      await User.populate(user, 'stocks');
       const { password: hashedPassword, ...userInfo } = user._doc;
 
       const duration = 3600;
@@ -106,6 +109,7 @@ async function retrieveUser(id, token) {
   const user = await User.findById(id);
 
   if (user) {
+    await User.populate(user, 'stocks');
     const { password: hashedPassword, ...userInfo } = user._doc;
 
     const duration = 3600;
