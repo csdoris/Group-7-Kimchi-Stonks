@@ -1,4 +1,5 @@
 .table {
+
     .header-container.flex-grid {
         margin-bottom: 0.5em;
         background-color: #303030;
@@ -41,6 +42,7 @@
 
         .action {
             color: #F3D098;
+
             &:hover {
                 cursor: pointer;
             }
@@ -56,9 +58,14 @@
         }
 
         &:hover {
-            background-color: #464646;
-            transition: all .2s linear;
-            -webkit-transition: all .2s linear;
+          cursor: pointer;
+          background-color: #464646;
+          transition: all .2s linear;
+          -webkit-transition: all .2s linear;
+        }
+
+        &:last-child {
+          margin-bottom: 0;
         }
     }
 }
