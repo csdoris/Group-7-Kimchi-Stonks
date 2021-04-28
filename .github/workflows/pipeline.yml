@@ -47,8 +47,7 @@ jobs:
       run: npm ci
     - name: Test Backend Application
       working-directory: ${{ env.working-directory }}
-      run: jest --detectOpenHandles
-
+      run: npm run test
   verify-fe:
     name: Verify Frontend
     runs-on: ubuntu-latest
