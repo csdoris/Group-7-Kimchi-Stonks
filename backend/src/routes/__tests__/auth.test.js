@@ -87,3 +87,22 @@ it('tries to create an account with an email that is already used', async () => 
     expect(error.response.data.message).toBe('Email is already being used.');
   }
 });
+
+it('creates an account', async () => {
+  await axios.post('http://localhost:3000/register', {
+    firstName: 'Marsh',
+    lastName: 'Mellow',
+    email: 'newEmail@test.com',
+    password: 'password',
+  }).then((res) => {
+    const { status, data } = res;
+    const { user } = data;
+    const { token, expiresIn } = user.accessToken;
+    expect(status).toBe(201);
+    expect(data).toBeTruthy();
+    expect(user).toBeTruthy();
+    expect(token).toBeTruthy();
+    expect(expiresIn).toBeTruthy();
+  });
+});
+
