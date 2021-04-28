@@ -105,4 +105,3 @@ it('creates an account', async () => {
     expect(expiresIn).toBeTruthy();
   });
 });
-
