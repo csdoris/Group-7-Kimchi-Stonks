@@ -12,7 +12,6 @@ async function registerNewUser(req, res) {
   } = req.body;
 
   const { status, json } = await AuthService.createNewUser(firstName, lastName, email, password);
-
   res.status(status).json(json);
 }
 

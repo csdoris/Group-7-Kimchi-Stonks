@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import express from 'express';
 import axios from 'axios';
 import routes from '../auth';
+import User from '../../mongodb/schemas/userSchema';
 
 const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
@@ -35,20 +36,19 @@ beforeAll(async (done) => {
 beforeEach(async () => {
   const password = await bcrypt.hash('password', 10);
   const coll = await mongoose.connection.db.createCollection('users');
-
-  user1 = {
+  user1 = new User({
     firstName: 'Bob',
     lastName: 'Builder',
     email: 'test@test.com',
-    password,
-  };
+    password
+  });
 
-  user2 = {
+  user2 = new User({
     firstName: 'Daniel',
     lastName: 'Kim',
     email: 'daniel@test.com',
     password,
-  };
+  });
 
   await coll.insertMany([user1, user2]);
 });
@@ -80,7 +80,7 @@ it('tries to create an account with an email that is already used', async () => 
       email: 'test@test.com',
       password: 'password',
     }).then(() => {
-      expect(false).toBeTruthy();
+      fail('Should not have reached here');
     });
   } catch (error) {
     expect(error.response.status).toBe(400);
@@ -104,6 +104,7 @@ it('creates an account', async () => {
     expect(token).toBeTruthy();
     expect(expiresIn).toBeTruthy();
   });
+  
 });
 
 it('tries to login with invalid email', async () => {
@@ -112,7 +113,7 @@ it('tries to login with invalid email', async () => {
       email: 'notEmail@test.com',
       password: 'password',
     }).then(() => {
-      expect(false).toBeTruthy();
+      fail('Should not have reached here');
     });
   } catch (error) {
     expect(error.response.status).toBe(400);
@@ -126,7 +127,7 @@ it('tries to login with invalid password', async () => {
       email: 'test@test.com',
       password: 'notPassword',
     }).then(() => {
-      expect(false).toBeTruthy();
+      fail('Should not have reached here');
     });
   } catch (error) {
     expect(error.response.status).toBe(400);
@@ -135,10 +136,11 @@ it('tries to login with invalid password', async () => {
 });
 
 it('logs in correctly', async () => {
-  await axios.post('http://localhost:3000/login', {
+  const res = await axios.post('http://localhost:3000/login', {
     email: 'test@test.com',
     password: 'password',
-  }).then((res) => {
+  });
+    console.log("passed");
     const { status, data } = res;
     const { user } = data;
     const { token, expiresIn } = user.accessToken;
@@ -147,7 +149,6 @@ it('logs in correctly', async () => {
     expect(user).toBeTruthy();
     expect(token).toBeTruthy();
     expect(expiresIn).toBeTruthy();
-  });
 });
 
 it('tries to auto-login without a token', async () => {
@@ -158,7 +159,7 @@ it('tries to auto-login without a token', async () => {
         Authorization: `Bearer ${token}`,
       },
     }).then(() => {
-      expect(false).toBeTruthy();
+      fail('Should not have reached here');
     });
   } catch (error) {
     expect(error.response.status).toBe(401);
@@ -171,14 +172,15 @@ it('auto-login correctly', async () => {
     email: 'test@test.com',
     password: 'password',
   }).then((res) => {
+    console.log("got res");
     const { data } = res;
     const { user } = data;
     const { token } = user.accessToken;
     userToken = token;
+    console.log(userToken);
   });
-
   await axios.get('http://localhost:3000/auto-login', {
-    headers: {
+    headers: {  
       Authorization: `Bearer ${userToken}`,
     },
   }).then((res) => {
@@ -191,4 +193,4 @@ it('auto-login correctly', async () => {
     expect(token).toBeTruthy();
     expect(expiresIn).toBeTruthy();
   });
-});
+}); 
