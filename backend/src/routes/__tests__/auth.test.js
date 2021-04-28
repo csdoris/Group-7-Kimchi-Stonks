@@ -88,23 +88,6 @@ it('tries to create an account with an email that is already used', async () => 
   }
 });
 
-it('creates an account', async () => {
-  await axios.post('http://localhost:3000/register', {
-    firstName: 'Marsh',
-    lastName: 'Mellow',
-    email: 'newEmail@test.com',
-    password: 'password',
-  }).then((res) => {
-    const { status, data } = res;
-    const { user } = data;
-    const { token, expiresIn } = user.accessToken;
-    expect(status).toBe(201);
-    expect(data).toBeTruthy();
-    expect(user).toBeTruthy();
-    expect(token).toBeTruthy();
-    expect(expiresIn).toBeTruthy();
-  });
-});
 
 it('tries to login with invalid email', async () => {
   try {
@@ -134,22 +117,6 @@ it('tries to login with invalid password', async () => {
   }
 });
 
-it('logs in correctly', async () => {
-  const res = await axios.post('http://localhost:3000/login', {
-    email: 'test@test.com',
-    password: 'password',
-  });
-  console.log('passed');
-  const { status, data } = res;
-  const { user } = data;
-  const { token, expiresIn } = user.accessToken;
-  expect(status).toBe(200);
-  expect(data).toBeTruthy();
-  expect(user).toBeTruthy();
-  expect(token).toBeTruthy();
-  expect(expiresIn).toBeTruthy();
-});
-
 it('tries to auto-login without a token', async () => {
   const token = null;
   try {
@@ -165,31 +132,3 @@ it('tries to auto-login without a token', async () => {
   }
 });
 
-it('auto-login correctly', async () => {
-  let userToken;
-  await axios.post('http://localhost:3000/login', {
-    email: 'test@test.com',
-    password: 'password',
-  }).then((res) => {
-    console.log('got res');
-    const { data } = res;
-    const { user } = data;
-    const { token } = user.accessToken;
-    userToken = token;
-    console.log(userToken);
-  });
-  await axios.get('http://localhost:3000/auto-login', {
-    headers: {
-      Authorization: `Bearer ${userToken}`,
-    },
-  }).then((res) => {
-    const { status, data } = res;
-    const { user } = data;
-    const { token, expiresIn } = user.accessToken;
-    expect(status).toBe(200);
-    expect(data).toBeTruthy();
-    expect(user).toBeTruthy();
-    expect(token).toBeTruthy();
-    expect(expiresIn).toBeTruthy();
-  });
-});
