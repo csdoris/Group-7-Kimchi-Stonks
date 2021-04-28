@@ -1,7 +1,7 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import express from 'express';
-// import axios from 'axios';
+import axios from 'axios';
 import routes from '../auth';
 import User from '../../mongodb/schemas/userSchema';
 
@@ -73,5 +73,17 @@ afterAll((done) => {
 });
 
 it('tries to create an account with an email that is already used', async () => {
-  expect(true).toBeTruthy();
+  try {
+    await axios.post('http://localhost:3000/register', {
+      firstName: 'Marsh',
+      lastName: 'Mellow',
+      email: 'test@test.com',
+      password: 'password',
+    }).then(() => {
+      fail('Should not have reached here');
+    });
+  } catch (error) {
+    expect(error.response.status).toBe(400);
+    expect(error.response.data.message).toBe('Email is already being used.');
+  }
 });
