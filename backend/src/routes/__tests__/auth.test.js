@@ -1,7 +1,7 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import express from 'express';
-import axios from 'axios';
+// import axios from 'axios';
 import routes from '../auth';
 import User from '../../mongodb/schemas/userSchema';
 
