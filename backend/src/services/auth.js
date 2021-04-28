@@ -79,7 +79,6 @@ async function authenticateUser(email, password) {
     const isAuth = await bcrypt.compare(password, user.password);
 
     if (isAuth) {
-
       const { password: hashedPassword, ...userInfo } = user._doc;
 
       if (userInfo.stocks.length > 0) {

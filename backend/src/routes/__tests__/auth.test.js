@@ -40,7 +40,7 @@ beforeEach(async () => {
     firstName: 'Bob',
     lastName: 'Builder',
     email: 'test@test.com',
-    password
+    password,
   });
 
   user2 = new User({
@@ -104,7 +104,6 @@ it('creates an account', async () => {
     expect(token).toBeTruthy();
     expect(expiresIn).toBeTruthy();
   });
-  
 });
 
 it('tries to login with invalid email', async () => {
@@ -140,15 +139,15 @@ it('logs in correctly', async () => {
     email: 'test@test.com',
     password: 'password',
   });
-    console.log("passed");
-    const { status, data } = res;
-    const { user } = data;
-    const { token, expiresIn } = user.accessToken;
-    expect(status).toBe(200);
-    expect(data).toBeTruthy();
-    expect(user).toBeTruthy();
-    expect(token).toBeTruthy();
-    expect(expiresIn).toBeTruthy();
+  console.log('passed');
+  const { status, data } = res;
+  const { user } = data;
+  const { token, expiresIn } = user.accessToken;
+  expect(status).toBe(200);
+  expect(data).toBeTruthy();
+  expect(user).toBeTruthy();
+  expect(token).toBeTruthy();
+  expect(expiresIn).toBeTruthy();
 });
 
 it('tries to auto-login without a token', async () => {
@@ -172,7 +171,7 @@ it('auto-login correctly', async () => {
     email: 'test@test.com',
     password: 'password',
   }).then((res) => {
-    console.log("got res");
+    console.log('got res');
     const { data } = res;
     const { user } = data;
     const { token } = user.accessToken;
@@ -180,7 +179,7 @@ it('auto-login correctly', async () => {
     console.log(userToken);
   });
   await axios.get('http://localhost:3000/auto-login', {
-    headers: {  
+    headers: {
       Authorization: `Bearer ${userToken}`,
     },
   }).then((res) => {
@@ -193,4 +192,4 @@ it('auto-login correctly', async () => {
     expect(token).toBeTruthy();
     expect(expiresIn).toBeTruthy();
   });
-}); 
+});
