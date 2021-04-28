@@ -105,3 +105,91 @@ it('creates an account', async () => {
     expect(expiresIn).toBeTruthy();
   });
 });
+
+it('tries to login with invalid email', async () => {
+  try {
+    await axios.post('http://localhost:3000/login', {
+      email: 'notEmail@test.com',
+      password: 'password',
+    }).then(() => {
+      fail('Should not have reached here');
+    });
+  } catch (error) {
+    expect(error.response.status).toBe(400);
+    expect(error.response.data.message).toBe('Incorrect user credentials.');
+  }
+});
+
+it('tries to login with invalid password', async () => {
+  try {
+    await axios.post('http://localhost:3000/login', {
+      email: 'test@test.com',
+      password: 'notPassword',
+    }).then(() => {
+      fail('Should not have reached here');
+    });
+  } catch (error) {
+    expect(error.response.status).toBe(400);
+    expect(error.response.data.message).toBe('Incorrect user credentials.');
+  }
+});
+
+it('logs in correctly', async () => {
+  const res = await axios.post('http://localhost:3000/login', {
+    email: 'test@test.com',
+    password: 'password',
+  });
+  console.log('passed');
+  const { status, data } = res;
+  const { user } = data;
+  const { token, expiresIn } = user.accessToken;
+  expect(status).toBe(200);
+  expect(data).toBeTruthy();
+  expect(user).toBeTruthy();
+  expect(token).toBeTruthy();
+  expect(expiresIn).toBeTruthy();
+});
+
+it('tries to auto-login without a token', async () => {
+  const token = null;
+  try {
+    await axios.get('http://localhost:3000/auto-login', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }).then(() => {
+      fail('Should not have reached here');
+    });
+  } catch (error) {
+    expect(error.response.status).toBe(401);
+  }
+});
+
+it('auto-login correctly', async () => {
+  let userToken;
+  await axios.post('http://localhost:3000/login', {
+    email: 'test@test.com',
+    password: 'password',
+  }).then((res) => {
+    console.log('got res');
+    const { data } = res;
+    const { user } = data;
+    const { token } = user.accessToken;
+    userToken = token;
+    console.log(userToken);
+  });
+  await axios.get('http://localhost:3000/auto-login', {
+    headers: {
+      Authorization: `Bearer ${userToken}`,
+    },
+  }).then((res) => {
+    const { status, data } = res;
+    const { user } = data;
+    const { token, expiresIn } = user.accessToken;
+    expect(status).toBe(200);
+    expect(data).toBeTruthy();
+    expect(user).toBeTruthy();
+    expect(token).toBeTruthy();
+    expect(expiresIn).toBeTruthy();
+  });
+});
