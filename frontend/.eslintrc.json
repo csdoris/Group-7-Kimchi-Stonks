@@ -2,8 +2,7 @@
     "env": {
         "browser": true,
         "es2021": true,
-        "jest": true,
-        "jasmine": true
+        "jest": true
     },
     "extends": [
         "plugin:react/recommended",
