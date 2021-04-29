@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 
+import Loading from '../../../components/Loading/Loading';
 import StockGraph from './StockGraph/StockGraph';
 import StockOverview from './StockOverview/StockOverview';
 import StockUtility from './StockUtility/StockUtility';
@@ -38,7 +39,7 @@ function Stock({ stockSymbol }) {
           </div>
         </div>
       )
-      : null
+      : <Loading />
   );
 }
 

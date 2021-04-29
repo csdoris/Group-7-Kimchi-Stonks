@@ -23,7 +23,7 @@ function SellStocksDialog() {
   }, []);
 
   function handleSellStock() {
-    sellStocks(symbol, stock['50DayMovingAverage'], sharesAmount);
+    sellStocks(symbol, stock.currentPrice, sharesAmount);
     history.goBack();
   }
 

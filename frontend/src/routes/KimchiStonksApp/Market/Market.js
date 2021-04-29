@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 
+import Loading from '../../../components/Loading/Loading';
 import { Table, TableHeader, TableRow } from '../../../components/Table/Table';
 import { AuthContext } from '../../../contexts/Auth';
 
@@ -42,6 +43,10 @@ function Market() {
       }
     });
   }, []);
+
+  if (marketData.length === 0) {
+    return <Loading />;
+  }
 
   return (
     <div className="market-container">
