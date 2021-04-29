@@ -88,7 +88,6 @@ it('tries to create an account with an email that is already used', async () => 
   }
 });
 
-
 it('tries to login with invalid email', async () => {
   try {
     await axios.post('http://localhost:3000/login', {
@@ -131,4 +130,3 @@ it('tries to auto-login without a token', async () => {
     expect(error.response.status).toBe(401);
   }
 });
-
