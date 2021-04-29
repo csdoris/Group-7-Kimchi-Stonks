@@ -152,7 +152,6 @@ function StockProvider({ children }) {
       const { status } = res;
 
       if (status === 200) {
-        console.log(res.data);
         // Show dialog confirming buy was successful.
       }
     });
