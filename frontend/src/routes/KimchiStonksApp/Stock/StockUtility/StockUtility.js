@@ -36,8 +36,14 @@ function StockUtility() {
     const buyingAmount = event.target.value;
     setAmount(buyingAmount);
 
-    const calculatedShares = buyingAmount / stock['50DayMovingAverage'];
+    const calculatedShares = buyingAmount / stock.currentPrice;
     setShares(calculatedShares);
+  }
+
+  function handleBuyButtonClick() {
+    buyStocks(shares, stock.currentPrice, amount);
+    setAmount(undefined);
+    setShares(0.00);
   }
 
   return (
@@ -75,7 +81,7 @@ function StockUtility() {
           value="Buy"
           text="Buy"
           variant="contained"
-          onClick={() => buyStocks(shares, stock['50DayMovingAverage'], amount)}
+          onClick={handleBuyButtonClick}
         />
       </div>
     </div>

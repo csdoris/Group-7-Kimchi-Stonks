@@ -78,7 +78,7 @@ function StockGraph() {
     <div className="inner-graph-container">
       <div className="graph-header-container">
         <div className="container-title">
-          {`${stock.Symbol} | ${stock.Name}`}
+          {`${stock.symbol} | ${stock.name}`}
         </div>
         <div className="time-period-container">
           {TIME_PERIOD.map((period) => (
