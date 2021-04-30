@@ -49,13 +49,15 @@ function AuthProvider({ children }) {
     }, duration * 1000));
   }
 
-  function register(firstName, lastName, email, password) {
-    axios.post(`${URL}/auth/register`, {
-      firstName,
-      lastName,
-      email,
-      password,
-    }).then((res) => {
+  async function register(firstName, lastName, email, password) {
+    try {
+      const res = await axios.post(`${URL}/auth/register`, {
+        firstName,
+        lastName,
+        email,
+        password,
+      });
+
       const { status, data } = res;
       const { user } = data;
       const { token, expiresIn } = user.accessToken;
@@ -68,16 +70,21 @@ function AuthProvider({ children }) {
         const expirationDate = new Date(now.getTime() + expiresIn * 1000);
 
         saveAuthData(token, expirationDate);
+        return true;
       }
-      // TODO: Error Message
-    });
+      return false;
+    } catch (err) {
+      return false;
+    }
   }
 
-  function login(email, password) {
-    axios.post(`${URL}/auth/login`, {
-      email,
-      password,
-    }).then((res) => {
+  async function login(email, password) {
+    try {
+      const res = await axios.post(`${URL}/auth/login`, {
+        email,
+        password,
+      });
+
       const { status, data } = res;
       const { user } = data;
       const { token, expiresIn } = user.accessToken;
@@ -90,10 +97,12 @@ function AuthProvider({ children }) {
         const expirationDate = new Date(now.getTime() + expiresIn * 1000);
 
         saveAuthData(token, expirationDate);
+        return true;
       }
-
-      // TODO: Error Message
-    });
+      return false;
+    } catch (err) {
+      return false;
+    }
   }
 
   function autoLogin() {

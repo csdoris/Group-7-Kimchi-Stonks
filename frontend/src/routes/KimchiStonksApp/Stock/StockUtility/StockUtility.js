@@ -6,7 +6,12 @@ import { StockContext } from '../../../../contexts/Stock';
 
 import './StockUtility.scss';
 
-function StockUtility() {
+function StockUtility({
+  amount,
+  setAmount,
+  setFormSubmitted,
+  setBuyStockUnsuccessful,
+}) {
   const { stock, buyStocks } = useContext(StockContext);
   const {
     stockDayPrediction,
@@ -14,7 +19,6 @@ function StockUtility() {
     stockYearPrediction,
   } = useContext(StockContext);
 
-  const [amount, setAmount] = useState(undefined);
   const [shares, setShares] = useState(0.00);
 
   const predictions = [
@@ -40,9 +44,27 @@ function StockUtility() {
     setShares(calculatedShares);
   }
 
-  function handleBuyButtonClick() {
-    buyStocks(shares, stock.currentPrice, amount);
-    setAmount(undefined);
+  function checkInputCharacter(event) {
+    if (event.key < '0' || event.key > '9') {
+      if (event.keyCode !== 8 && event.keyCode !== 13 && event.keyCode !== 190) {
+        event.preventDefault();
+      }
+    }
+  }
+
+  function checkInputValid() {
+    const regex = /^\d+(\.\d{1,2})?$/;
+
+    if (regex.test(amount)) {
+      return true;
+    }
+    return false;
+  }
+
+  async function handleBuyButtonClick() {
+    setFormSubmitted(true);
+    const buyStockSuccessful = await buyStocks(shares, stock.currentPrice, amount);
+    setBuyStockUnsuccessful(!buyStockSuccessful);
     setShares(0.00);
   }
 
@@ -69,6 +91,7 @@ function StockUtility() {
           name="amount"
           value={amount}
           placeholder="Amount ($)"
+          onKeyDown={(event) => checkInputCharacter(event)}
           onChange={(event) => handleAmountChange(event)}
         />
         <div className="estimation-row">
@@ -81,6 +104,7 @@ function StockUtility() {
           value="Buy"
           text="Buy"
           variant="contained"
+          disabled={!checkInputValid()}
           onClick={handleBuyButtonClick}
         />
       </div>

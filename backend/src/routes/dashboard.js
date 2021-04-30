@@ -11,8 +11,6 @@ router.get('/time-series/intraday/:symbol', validateUser, DashboardController.ge
 
 router.get('/time-series/daily/:symbol', validateUser, DashboardController.getTimeSeriesDaily);
 
-router.get('/time-series/weekly/:symbol', validateUser, DashboardController.getTimeSeriesWeekly);
-
 router.get('/time-series/monthly/:symbol', validateUser, DashboardController.getTimeSeriesMonthly);
 
 router.get('/time-series/yearly/:symbol', validateUser, DashboardController.getTimeSeriesYearly);
