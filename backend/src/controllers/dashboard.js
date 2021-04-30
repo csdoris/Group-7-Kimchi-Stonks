@@ -19,9 +19,9 @@ function convertUnixTimeToEDT(unixTime) {
 }
 
 /**
- * Formats response from Alpha Vantage in format more useful for client.
+ * Formats response from Yahoo Finance for output.
  *
- * @param  {Object} data     Alpha Vantage API repsonse data
+ * @param  {Object} data     Yahoo Finance API repsonse data
  * @param  {Object} interval Data interval
  */
 function formatReturnData(data, interval) {
@@ -110,9 +110,9 @@ async function getStockOverview(req, res) {
     const returnObject = {
       symbol: response.data.data.quote.Instrument.Ticker,
       name: response.data.data.quote.Instrument.CommonName,
-      currentPrice: response.data.data.quote.topSection.value,
-      yearLow: lowHigh.split(' - ')[0],
-      yearHigh: lowHigh.split(' - ')[1],
+      currentPrice: response.data.data.quote.topSection.value.replace(',', ''),
+      yearLow: lowHigh.split(' - ')[0].replace(',', ''),
+      yearHigh: lowHigh.split(' - ')[1].replace(',', ''),
       volume: response.data.data.quote.Todays.Vol,
       marketCap: response.data.data.quote.marketCap,
     };
@@ -258,7 +258,7 @@ async function predictPrice(req, res) {
   url += '&type=quotes_chart';
 
   axios.get(encodeURI(url)).then((response) => {
-    const currentPrice = parseFloat(response.data.data.quote.topSection.value);
+    const currentPrice = parseFloat(response.data.data.quote.topSection.value.replace(',', ''));
 
     // arbitrary multiplier dependent on current hour to calculate prediction
     const hour = new Date().getHours();
