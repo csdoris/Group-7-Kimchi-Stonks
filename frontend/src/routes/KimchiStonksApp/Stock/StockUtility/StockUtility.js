@@ -40,6 +40,23 @@ function StockUtility() {
     setShares(calculatedShares);
   }
 
+  function checkInputCharacter(event) {
+    if (event.key < '0' || event.key > '9') {
+      if (event.keyCode !== 8 && event.keyCode !== 13 && event.keyCode !== 190) {
+        event.preventDefault();
+      }
+    }
+  }
+
+  function checkInputValid() {
+    const regex = /^(([0-9]|1[0-3])(\.\d\d?)?|14(\.00?)?)$/;
+
+    if (regex.test(amount)) {
+      return true;
+    }
+    return false;
+  }
+
   function handleBuyButtonClick() {
     buyStocks(shares, stock.currentPrice, amount);
     setAmount(undefined);
@@ -69,6 +86,7 @@ function StockUtility() {
           name="amount"
           value={amount}
           placeholder="Amount ($)"
+          onKeyDown={(event) => checkInputCharacter(event)}
           onChange={(event) => handleAmountChange(event)}
         />
         <div className="estimation-row">
@@ -81,6 +99,7 @@ function StockUtility() {
           value="Buy"
           text="Buy"
           variant="contained"
+          disabled={!checkInputValid()}
           onClick={handleBuyButtonClick}
         />
       </div>

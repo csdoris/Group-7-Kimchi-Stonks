@@ -5,6 +5,7 @@ import Loading from '../../../components/Loading/Loading';
 import StockGraph from './StockGraph/StockGraph';
 import StockOverview from './StockOverview/StockOverview';
 import StockUtility from './StockUtility/StockUtility';
+// import TextDialog from '../../../components/Dialogs/TextDialog/TextDialog';
 import { StockContext } from '../../../contexts/Stock';
 
 import './Stock.scss';

@@ -25,8 +25,18 @@ function SellStocksDialog() {
     retrieveStockOverview(symbol);
   }, []);
 
+  function checkInputCharacter(event) {
+    if (event.key < '0' || event.key > '9') {
+      if (event.keyCode !== 8 && event.keyCode !== 13 && event.keyCode !== 190) {
+        event.preventDefault();
+      }
+    }
+  }
+
   function checkInputValid() {
-    if (sharesAmount !== undefined && parseFloat(sharesAmount) > 0) {
+    const regex = /^(([0-9]|1[0-3])(\.\d\d?)?|14(\.00?)?)$/;
+
+    if (regex.test(sharesAmount)) {
       return true;
     }
     return false;
@@ -66,6 +76,7 @@ function SellStocksDialog() {
                   name="number-of-shares"
                   value={sharesAmount}
                   placeholder="Number of Shares"
+                  onKeyDown={(event) => checkInputCharacter(event)}
                   onChange={(event) => setSharesAmount(event.target.value)}
                 />
                 <Button
