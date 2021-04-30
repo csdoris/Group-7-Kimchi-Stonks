@@ -126,7 +126,7 @@ async function getStockOverview(req, res) {
 async function getTimeSeriesIntraday(req, res) {
   const { symbol } = req.params;
 
-  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=1h&range=1d`;
+  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=30m&range=1d`;
 
   axios.get(url).then((response) => {
     if (response.status === 404) {
@@ -148,7 +148,7 @@ async function getTimeSeriesIntraday(req, res) {
       for (let i = 0; i < timestamp.length; i += 1) {
         const dataPoint = {
           dateTime: timestamp[i],
-          xAxis: convertUnixTimeToEDT(timestamp[i]),
+          xAxis: convertUnixTimeToEDT(timestamp[i]).substr(11, 5),
           open: Math.round(open[i] * 100) / 100,
           high: Math.round(high[i] * 100) / 100,
           low: Math.round(low[i] * 100) / 100,
