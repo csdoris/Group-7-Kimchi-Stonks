@@ -19,9 +19,9 @@ function convertUnixTimeToEDT(unixTime) {
 }
 
 /**
- * Formats response from Alpha Vantage in format more useful for client.
+ * Formats response from Yahoo Finance for output.
  *
- * @param  {Object} data     Alpha Vantage API repsonse data
+ * @param  {Object} data     Yahoo Finance API repsonse data
  * @param  {Object} interval Data interval
  */
 function formatReturnData(data, interval) {
