@@ -83,7 +83,7 @@ async function authenticateUser(email, password) {
         await User.populate(user, 'stocks');
       }
 
-      const { password, ...userInfo } = user._doc;
+      const { password: hashedPassword, ...userInfo } = user._doc;
       const duration = 3600;
       const token = await generateAccessToken(user._id, duration);
 
