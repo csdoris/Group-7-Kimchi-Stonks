@@ -76,6 +76,13 @@ function formatReturnData(data, interval) {
   };
 }
 
+function convertUnixTimeToEDT(timeEpoch) {
+  const d = new Date(timeEpoch * 1000);
+  const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+  const nd = new Date(utc - 14400000 - (d.getTimezoneOffset() * 60 * 1000));
+  return `${nd.toISOString().substr(0, 10)} ${nd.toISOString().substr(11, 5)}`;
+}
+
 /**
  * Gets the stock overview for the stock symbol passed as the path param.
  *
@@ -119,27 +126,37 @@ async function getStockOverview(req, res) {
 async function getTimeSeriesIntraday(req, res) {
   const { symbol } = req.params;
 
-  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&interval=60min&apikey=${process.env.AV_API_KEY}`;
+  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=30m&range=1d`;
 
   axios.get(url).then((response) => {
-    // AV API returns object with 'Error Message' property if symbol is invalid
-    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
+    if (response.status === 404) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
+      const returnObject = {
+        metaData: {
+          symbol: response.data.chart.result[0].meta.symbol,
+          interval: '30min',
+        },
+        timeSeriesData: [],
+      };
 
-      const todayDate = returnObject.timeSeriesData[0].dateTime.substr(0, 10);
-      const start = `${todayDate} 10:00:00`;
-      const end = `${todayDate} 16:00:00`;
+      const { timestamp } = response.data.chart.result[0];
+      const {
+        open, high, low, close, volume,
+      } = response.data.chart.result[0].indicators.quote[0];
 
-      const validObjects = [];
-      returnObject.timeSeriesData.forEach((el) => {
-        if (el.dateTime >= start && el.dateTime <= end) {
-          validObjects.push(el);
-        }
-      });
-
-      returnObject.timeSeriesData = validObjects.reverse();
+      for (let i = 0; i < timestamp.length; i += 1) {
+        const dataPoint = {
+          dateTime: timestamp[i],
+          xAxis: convertUnixTimeToEDT(timestamp[i]).substr(11, 5),
+          open: Math.round(open[i] * 100) / 100,
+          high: Math.round(high[i] * 100) / 100,
+          low: Math.round(low[i] * 100) / 100,
+          close: Math.round(close[i] * 100) / 100,
+          volume: Math.round(volume[i] * 100) / 100,
+        };
+        returnObject.timeSeriesData.push(dataPoint);
+      }
 
       res.status(response.status).json(returnObject);
     }
