@@ -22,12 +22,12 @@ function StockOverview() {
           <p className="info-text">{stock.symbol}</p>
         </div>
         <div className="grid-item">
-          <p className="info-title">Country:</p>
-          <p className="info-text">{stock.country}</p>
+          <p className="info-title">Volume:</p>
+          <p className="info-text">{stock.volume}</p>
         </div>
         <div className="grid-item">
-          <p className="info-title">Currency:</p>
-          <p className="info-text">{stock.currency}</p>
+          <p className="info-title">Market Cap:</p>
+          <p className="info-text">{stock.marketCap}</p>
         </div>
         <div className="grid-item">
           <p className="info-title">52 Week High:</p>

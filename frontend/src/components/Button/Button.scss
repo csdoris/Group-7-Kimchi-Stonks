@@ -34,6 +34,12 @@
   opacity: 0.5;
 }
 
+.button:disabled:hover {
+  cursor: default;
+  border-color: #E56536;
+  background-color: #E56536;
+}
+
 .button.text {
   border-radius: 5px;
   border: solid 2px transparent;
