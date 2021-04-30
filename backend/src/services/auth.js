@@ -79,12 +79,11 @@ async function authenticateUser(email, password) {
     const isAuth = await bcrypt.compare(password, user.password);
 
     if (isAuth) {
-      const { password: hashedPassword, ...userInfo } = user._doc;
-
-      if (userInfo.stocks.length > 0) {
+      if (user._doc.stocks.length > 0) {
         await User.populate(user, 'stocks');
       }
 
+      const { password: hashedPassword, ...userInfo } = user._doc;
       const duration = 3600;
       const token = await generateAccessToken(user._id, duration);
 
@@ -110,11 +109,11 @@ async function retrieveUser(id, token) {
   const user = await User.findById(id);
 
   if (user) {
-    const { password: hashedPassword, ...userInfo } = user._doc;
-
-    if (userInfo.stocks.length > 0) {
+    if (user._doc.stocks.length > 0) {
       await User.populate(user, 'stocks');
     }
+
+    const { password, ...userInfo } = user._doc;
 
     const duration = 3600;
 
