@@ -214,7 +214,7 @@ async function retrieveUserInformation(id) {
 
   if (user) {
     await User.populate(user, 'stocks');
-    const { password: hashedPassword, ...userInfo } = user._doc;
+    const { password, ...userInfo } = user._doc;
     return {
       status: 200,
       json: { user: { ...userInfo } },
@@ -242,7 +242,7 @@ async function updateUserBuyingPower(id, amount) {
 
   if (user) {
     await User.populate(user, 'stocks');
-    const userInfo = user._doc;
+    const { password, ...userInfo } = user._doc;
     return {
       status: 200,
       json: { user: userInfo },
