@@ -242,7 +242,7 @@ async function getTrending(req, res) {
 }
 
 /**
- * Uses the analyst price target as a prediction for the stock price in 12 months
+ * Use an arbitrary multiplier (!) as a prediction for the stock price in 12 months
  * for the symbol passed as the path param. Optional query param 'days' to
  * calculate the predicted price for x days in the future.
  *
@@ -251,27 +251,31 @@ async function getTrending(req, res) {
  */
 async function predictPrice(req, res) {
   const { symbol } = req.params;
+  const days = parseInt(req.query.days, 10);
 
-  const url = `${process.env.AV_DOMAIN}/query?function=OVERVIEW&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+  let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
+  url += `?id={"ticker":"${symbol}","countryCode":"US","exchange":"","type":"STOCK","path":"/${symbol}"}`;
+  url += '&type=quotes_chart';
 
-  axios.get(url).then((response) => {
-    // AV API returns empty object if stock symbol is invalid
-    if (!Object.keys(response.data).length) {
+  axios.get(encodeURI(url)).then((response) => {
+    const currentPrice = parseFloat(response.data.data.quote.topSection.value);
+
+    // arbitrary multiplier dependent on current hour to calculate prediction
+    const hour = new Date().getHours();
+    const multiplier = 1 + (12 - hour) / 100;
+    let prediction = currentPrice * multiplier;
+    if (days >= 0) {
+      prediction = currentPrice + (prediction - currentPrice) * days / 365;
+    }
+
+    const predictionObject = { prediction: Math.round(prediction * 100) / 100 };
+    res.status(response.status).json(predictionObject);
+  }).catch((err) => {
+    if (err.message.includes('404')) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const days = parseInt(req.query.days, 10);
-      const currentPrice = parseFloat(response.data.MarketCapitalization) / parseFloat(response.data.SharesOutstanding);
-      let prediction = response.data.AnalystTargetPrice;
-
-      if (days >= 0) {
-        prediction = currentPrice + (prediction - currentPrice) * days / 365;
-      }
-
-      const predictionObject = { prediction: Math.round(prediction * 100) / 100 };
-      res.status(response.status).json(predictionObject);
+      res.status(500).json(err);
     }
-  }).catch((err) => {
-    res.status(500).json(err);
   });
 }
 
@@ -284,7 +288,6 @@ async function predictPrice(req, res) {
 async function searchStocks(req, res) {
   const { keyword } = req.query;
 
-  // use YAHOO FINANCE API for non-rate-limited searching
   let url = `${process.env.YAHOO_DOMAIN}/v1/finance/search`;
   url += `?q=${keyword}`;
   url += '&lang=en-US';
@@ -297,7 +300,7 @@ async function searchStocks(req, res) {
   axios.get(url).then((response) => {
     const matches = [];
     response.data.quotes.forEach((el) => {
-      // only include equities listed on US exchanges to keep consistent with AV API data
+      // only include equities listed on US exchanges to keep consistent with WSJ API data
       if (el.isYahooFinance && el.quoteType === 'EQUITY' && el.exchange !== 'PNK' && !el.symbol.includes('.')) {
         const data = {
           symbol: el.symbol,
