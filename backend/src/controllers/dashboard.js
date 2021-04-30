@@ -100,27 +100,30 @@ function formatReturnData(data, interval) {
 async function getStockOverview(req, res) {
   const { symbol } = req.params;
 
-  const url = `${process.env.THESTREET_DOMAIN}/marketdata/2/1?format=json&s=${symbol}`;
+  let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
+  url += `?id={"ticker":"${symbol}","countryCode":"US","exchange":"","type":"STOCK","path":"/${symbol}"}`;
+  url += '&type=quotes_chart';
 
-  axios.get(url).then((response) => {
-    // TheStreet API returns numFound=0 if stock symbol is invalid
-    if (response.data.response.numFound === 0) {
+  axios.get(encodeURI(url)).then((response) => {
+    const lowHigh = response.data.data.quote.F2Week.LowHighVal;
+
+    const returnObject = {
+      symbol: response.data.data.quote.Instrument.Ticker,
+      name: response.data.data.quote.Instrument.CommonName,
+      currentPrice: response.data.data.quote.topSection.value,
+      yearLow: lowHigh.split(' - ')[0],
+      yearHigh: lowHigh.split(' - ')[1],
+      volume: response.data.data.quote.Todays.Vol,
+      marketCap: response.data.data.quote.marketCap,
+    };
+
+    res.status(response.status).json(returnObject);
+  }).catch((err) => {
+    if (err.message.includes('404')) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const returnObject = {
-        symbol: response.data.response.quotes[0].symbol,
-        name: response.data.response.quotes[0].companyName,
-        currentPrice: response.data.response.quotes[0].currentPrice,
-        yearHigh: response.data.response.quotes[0].oneYearHigh,
-        yearLow: response.data.response.quotes[0].oneYearLow,
-        volume: response.data.response.quotes[0].volume,
-        marketCap: response.data.response.quotes[0].marketCap,
-      };
-
-      res.status(response.status).json(returnObject);
+      res.status(500).json(err);
     }
-  }).catch((err) => {
-    res.status(500).json(err);
   });
 }
 
