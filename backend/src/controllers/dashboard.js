@@ -2,8 +2,7 @@ const axios = require('axios');
 
 const TIME_SERIES_INTRADAY = 0;
 const TIME_SERIES_DAILY = 1;
-const TIME_SERIES_WEEKLY = 2;
-const TIME_SERIES_MONTHLY = 3;
+const TIME_SERIES_MONTHLY = 2;
 
 /**
  * Formats response from Alpha Vantage in format more useful for client.
@@ -22,10 +21,6 @@ function formatReturnData(data, interval) {
     case TIME_SERIES_DAILY:
       intervalText = 'Daily';
       timeSeries = data['Time Series (Daily)'];
-      break;
-    case TIME_SERIES_WEEKLY:
-      intervalText = 'Weekly';
-      timeSeries = data['Weekly Time Series'];
       break;
     case TIME_SERIES_MONTHLY:
       intervalText = 'Monthly';
@@ -57,9 +52,6 @@ function formatReturnData(data, interval) {
         break;
       case TIME_SERIES_DAILY:
         dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { weekday: 'long' }).substr(0, 3);
-        break;
-      case TIME_SERIES_WEEKLY:
-        dataPoint.xAxis = key;
         break;
       case TIME_SERIES_MONTHLY:
         dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { month: 'long' }).substr(0, 3);
@@ -184,31 +176,6 @@ async function getTimeSeriesDaily(req, res) {
       if (returnObject.timeSeriesData.length > 5) {
         returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 5);
       }
-      returnObject.timeSeriesData.reverse();
-      res.status(response.status).json(returnObject);
-    }
-  }).catch((err) => {
-    res.status(500).json(err);
-  });
-}
-
-/**
- * Gets the weekly stock time series for the symbol passed as the path param.
- *
- * @param  {Object} req Request object
- * @param  {Object} res Response object
- */
-async function getTimeSeriesWeekly(req, res) {
-  const { symbol } = req.params;
-
-  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_WEEKLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
-
-  axios.get(url).then((response) => {
-    // AV API returns object with 'Error Message' property if symbol is invalid
-    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
-      res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
-    } else {
-      const returnObject = formatReturnData(response.data, TIME_SERIES_WEEKLY);
       returnObject.timeSeriesData.reverse();
       res.status(response.status).json(returnObject);
     }
@@ -372,7 +339,6 @@ module.exports = {
   getStockOverview,
   getTimeSeriesIntraday,
   getTimeSeriesDaily,
-  getTimeSeriesWeekly,
   getTimeSeriesMonthly,
   getTimeSeriesYearly,
   getTrending,
