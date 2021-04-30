@@ -1,9 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
-import TextDialog from '../../../components/Dialogs/TextDialog/TextDialog';
 import InputField from '../../../components/InputField/InputField';
 import Button from '../../../components/Button/Button';
+import TextDialog from '../../../components/Dialogs/TextDialog/TextDialog';
 import { AuthContext } from '../../../contexts/Auth';
 
 import logo from '../../../assets/logo.png';
