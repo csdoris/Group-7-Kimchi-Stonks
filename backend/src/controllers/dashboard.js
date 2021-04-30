@@ -2,8 +2,21 @@ const axios = require('axios');
 
 const TIME_SERIES_INTRADAY = 0;
 const TIME_SERIES_DAILY = 1;
-const TIME_SERIES_WEEKLY = 2;
-const TIME_SERIES_MONTHLY = 3;
+const TIME_SERIES_MONTHLY = 2;
+const TIME_SERIES_YEARLY = 3;
+
+/**
+ * Formats Unix epoch time to human-readable string: yyyy-mm-dd HH:mm
+ *
+ * @param {*} unixTime unix epoch time
+ * @returns human-readable string representation of supplied Unix time: yyyy-mm-dd HH:mm
+ */
+function convertUnixTimeToEDT(unixTime) {
+  const d = new Date(unixTime * 1000);
+  const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+  const nd = new Date(utc - 14400000 - (d.getTimezoneOffset() * 60 * 1000));
+  return `${nd.toISOString().substr(0, 10)} ${nd.toISOString().substr(11, 5)}`;
+}
 
 /**
  * Formats response from Alpha Vantage in format more useful for client.
@@ -13,74 +26,69 @@ const TIME_SERIES_MONTHLY = 3;
  */
 function formatReturnData(data, interval) {
   let intervalText;
-  let timeSeries;
   switch (interval) {
     case TIME_SERIES_INTRADAY:
-      intervalText = data['Meta Data']['4. Interval'];
-      timeSeries = data['Time Series (60min)'];
+      intervalText = '30min';
       break;
     case TIME_SERIES_DAILY:
       intervalText = 'Daily';
-      timeSeries = data['Time Series (Daily)'];
-      break;
-    case TIME_SERIES_WEEKLY:
-      intervalText = 'Weekly';
-      timeSeries = data['Weekly Time Series'];
       break;
     case TIME_SERIES_MONTHLY:
       intervalText = 'Monthly';
-      timeSeries = data['Monthly Time Series'];
+      break;
+    case TIME_SERIES_YEARLY:
+      intervalText = 'Yearly';
       break;
     default:
   }
 
   const metaData = {
-    symbol: data['Meta Data']['2. Symbol'].toUpperCase(),
+    symbol: data.chart.result[0].meta.symbol,
     interval: intervalText,
   };
 
   const timeSeriesData = [];
-  Object.keys(timeSeries).forEach((key) => {
+
+  const { timestamp } = data.chart.result[0];
+  const {
+    open, high, low, close, volume,
+  } = data.chart.result[0].indicators.quote[0];
+
+  for (let i = 0; i < timestamp.length; i += 1) {
     const dataPoint = {
-      dateTime: key,
       xAxis: '',
-      open: timeSeries[key]['1. open'],
-      high: timeSeries[key]['2. high'],
-      low: timeSeries[key]['3. low'],
-      close: timeSeries[key]['4. close'],
-      volume: timeSeries[key]['5. volume'],
+      open: Math.round(open[i] * 100) / 100,
+      high: Math.round(high[i] * 100) / 100,
+      low: Math.round(low[i] * 100) / 100,
+      close: Math.round(close[i] * 100) / 100,
+      volume: Math.round(volume[i] * 100) / 100,
     };
 
     switch (interval) {
       case TIME_SERIES_INTRADAY:
-        dataPoint.xAxis = key.substr(11, 5);
+        dataPoint.xAxis = convertUnixTimeToEDT(timestamp[i]).substr(11, 5);
         break;
       case TIME_SERIES_DAILY:
-        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { weekday: 'long' }).substr(0, 3);
-        break;
-      case TIME_SERIES_WEEKLY:
-        dataPoint.xAxis = key;
+        dataPoint.xAxis = new Date(convertUnixTimeToEDT(timestamp[i]).substr(0, 10)).toLocaleDateString('en-us', { weekday: 'long' }).substr(0, 3);
         break;
       case TIME_SERIES_MONTHLY:
-        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { month: 'long' }).substr(0, 3);
+        dataPoint.xAxis = new Date(convertUnixTimeToEDT(timestamp[i]).substr(0, 10)).toLocaleDateString('en-us', { month: 'long' }).substr(0, 3);
+        break;
+      case TIME_SERIES_YEARLY:
+        dataPoint.xAxis = convertUnixTimeToEDT(timestamp[i]).substr(0, 4);
         break;
       default:
     }
 
-    timeSeriesData.push(dataPoint);
-  });
+    if (interval !== TIME_SERIES_YEARLY || i % 4 === 0) { // yearly: only add every 4th data point
+      timeSeriesData.push(dataPoint);
+    }
+  }
 
   return {
     metaData,
     timeSeriesData,
   };
-}
-
-function convertUnixTimeToEDT(timeEpoch) {
-  const d = new Date(timeEpoch * 1000);
-  const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
-  const nd = new Date(utc - 14400000 - (d.getTimezoneOffset() * 60 * 1000));
-  return `${nd.toISOString().substr(0, 10)} ${nd.toISOString().substr(11, 5)}`;
 }
 
 /**
@@ -92,27 +100,30 @@ function convertUnixTimeToEDT(timeEpoch) {
 async function getStockOverview(req, res) {
   const { symbol } = req.params;
 
-  const url = `${process.env.THESTREET_DOMAIN}/marketdata/2/1?format=json&s=${symbol}`;
+  let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
+  url += `?id={"ticker":"${symbol}","countryCode":"US","exchange":"","type":"STOCK","path":"/${symbol}"}`;
+  url += '&type=quotes_chart';
 
-  axios.get(url).then((response) => {
-    // TheStreet API returns numFound=0 if stock symbol is invalid
-    if (response.data.response.numFound === 0) {
+  axios.get(encodeURI(url)).then((response) => {
+    const lowHigh = response.data.data.quote.F2Week.LowHighVal;
+
+    const returnObject = {
+      symbol: response.data.data.quote.Instrument.Ticker,
+      name: response.data.data.quote.Instrument.CommonName,
+      currentPrice: response.data.data.quote.topSection.value,
+      yearLow: lowHigh.split(' - ')[0],
+      yearHigh: lowHigh.split(' - ')[1],
+      volume: response.data.data.quote.Todays.Vol,
+      marketCap: response.data.data.quote.marketCap,
+    };
+
+    res.status(response.status).json(returnObject);
+  }).catch((err) => {
+    if (err.message.includes('404')) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const returnObject = {
-        symbol: response.data.response.quotes[0].symbol,
-        name: response.data.response.quotes[0].companyName,
-        currentPrice: response.data.response.quotes[0].currentPrice,
-        yearHigh: response.data.response.quotes[0].oneYearHigh,
-        yearLow: response.data.response.quotes[0].oneYearLow,
-        volume: response.data.response.quotes[0].volume,
-        marketCap: response.data.response.quotes[0].marketCap,
-      };
-
-      res.status(response.status).json(returnObject);
+      res.status(500).json(err);
     }
-  }).catch((err) => {
-    res.status(500).json(err);
   });
 }
 
@@ -128,32 +139,7 @@ async function getTimeSeriesIntraday(req, res) {
   const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=30m&range=1d`;
 
   axios.get(url).then((response) => {
-    const returnObject = {
-      metaData: {
-        symbol: response.data.chart.result[0].meta.symbol,
-        interval: '30min',
-      },
-      timeSeriesData: [],
-    };
-
-    const { timestamp } = response.data.chart.result[0];
-    const {
-      open, high, low, close, volume,
-    } = response.data.chart.result[0].indicators.quote[0];
-
-    for (let i = 0; i < timestamp.length; i += 1) {
-      const dataPoint = {
-        dateTime: timestamp[i],
-        xAxis: convertUnixTimeToEDT(timestamp[i]).substr(11, 5),
-        open: Math.round(open[i] * 100) / 100,
-        high: Math.round(high[i] * 100) / 100,
-        low: Math.round(low[i] * 100) / 100,
-        close: Math.round(close[i] * 100) / 100,
-        volume: Math.round(volume[i] * 100) / 100,
-      };
-      returnObject.timeSeriesData.push(dataPoint);
-    }
-
+    const returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
     res.status(response.status).json(returnObject);
   }).catch((err) => {
     if (err.message.includes('404')) {
@@ -173,47 +159,17 @@ async function getTimeSeriesIntraday(req, res) {
 async function getTimeSeriesDaily(req, res) {
   const { symbol } = req.params;
 
-  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=1d&range=5d`;
 
   axios.get(url).then((response) => {
-    // AV API returns object with 'Error Message' property if symbol is invalid
-    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
+    const returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
+    res.status(response.status).json(returnObject);
+  }).catch((err) => {
+    if (err.message.includes('404')) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
-      if (returnObject.timeSeriesData.length > 5) {
-        returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 5);
-      }
-      returnObject.timeSeriesData.reverse();
-      res.status(response.status).json(returnObject);
+      res.status(500).json(err);
     }
-  }).catch((err) => {
-    res.status(500).json(err);
-  });
-}
-
-/**
- * Gets the weekly stock time series for the symbol passed as the path param.
- *
- * @param  {Object} req Request object
- * @param  {Object} res Response object
- */
-async function getTimeSeriesWeekly(req, res) {
-  const { symbol } = req.params;
-
-  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_WEEKLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
-
-  axios.get(url).then((response) => {
-    // AV API returns object with 'Error Message' property if symbol is invalid
-    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
-      res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
-    } else {
-      const returnObject = formatReturnData(response.data, TIME_SERIES_WEEKLY);
-      returnObject.timeSeriesData.reverse();
-      res.status(response.status).json(returnObject);
-    }
-  }).catch((err) => {
-    res.status(500).json(err);
   });
 }
 
@@ -226,22 +182,23 @@ async function getTimeSeriesWeekly(req, res) {
 async function getTimeSeriesMonthly(req, res) {
   const { symbol } = req.params;
 
-  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=1mo&range=1y`;
 
   axios.get(url).then((response) => {
-    // AV API returns object with 'Error Message' property if symbol is invalid
-    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
+    const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
+
+    // api returns most recent month twice, need to trim data
+    if (returnObject.timeSeriesData.length > 12) {
+      returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 12);
+    }
+
+    res.status(response.status).json(returnObject);
+  }).catch((err) => {
+    if (err.message.includes('404')) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
-      if (returnObject.timeSeriesData.length > 12) {
-        returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 12);
-      }
-      returnObject.timeSeriesData.reverse();
-      res.status(response.status).json(returnObject);
+      res.status(500).json(err);
     }
-  }).catch((err) => {
-    res.status(500).json(err);
   });
 }
 
@@ -254,29 +211,17 @@ async function getTimeSeriesMonthly(req, res) {
 async function getTimeSeriesYearly(req, res) {
   const { symbol } = req.params;
 
-  // AV API does not have yearly interval, need to hack monthly data
-  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=3mo&range=10y`;
 
   axios.get(url).then((response) => {
-    // AV API returns object with 'Error Message' property if symbol is invalid
-    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
+    const returnObject = formatReturnData(response.data, TIME_SERIES_YEARLY);
+    res.status(response.status).json(returnObject);
+  }).catch((err) => {
+    if (err.message.includes('404')) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
-      returnObject.metaData.interval = 'Yearly';
-
-      const validTimeSeries = [];
-      for (let i = 0; i < returnObject.timeSeriesData.length && validTimeSeries.length < 10; i += 12) {
-        const temp = returnObject.timeSeriesData[i];
-        temp.xAxis = temp.dateTime.substr(0, 4);
-        validTimeSeries.push(temp);
-      }
-      returnObject.timeSeriesData = validTimeSeries.reverse();
-
-      res.status(response.status).json(returnObject);
+      res.status(500).json(err);
     }
-  }).catch((err) => {
-    res.status(500).json(err);
   });
 }
 
@@ -297,7 +242,7 @@ async function getTrending(req, res) {
 }
 
 /**
- * Uses the analyst price target as a prediction for the stock price in 12 months
+ * Use an arbitrary multiplier (!) as a prediction for the stock price in 12 months
  * for the symbol passed as the path param. Optional query param 'days' to
  * calculate the predicted price for x days in the future.
  *
@@ -306,27 +251,31 @@ async function getTrending(req, res) {
  */
 async function predictPrice(req, res) {
   const { symbol } = req.params;
+  const days = parseInt(req.query.days, 10);
 
-  const url = `${process.env.AV_DOMAIN}/query?function=OVERVIEW&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+  let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
+  url += `?id={"ticker":"${symbol}","countryCode":"US","exchange":"","type":"STOCK","path":"/${symbol}"}`;
+  url += '&type=quotes_chart';
 
-  axios.get(url).then((response) => {
-    // AV API returns empty object if stock symbol is invalid
-    if (!Object.keys(response.data).length) {
+  axios.get(encodeURI(url)).then((response) => {
+    const currentPrice = parseFloat(response.data.data.quote.topSection.value);
+
+    // arbitrary multiplier dependent on current hour to calculate prediction
+    const hour = new Date().getHours();
+    const multiplier = 1 + (12 - hour) / 100;
+    let prediction = currentPrice * multiplier;
+    if (days >= 0) {
+      prediction = currentPrice + (prediction - currentPrice) * days / 365;
+    }
+
+    const predictionObject = { prediction: Math.round(prediction * 100) / 100 };
+    res.status(response.status).json(predictionObject);
+  }).catch((err) => {
+    if (err.message.includes('404')) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const days = parseInt(req.query.days, 10);
-      const currentPrice = parseFloat(response.data.MarketCapitalization) / parseFloat(response.data.SharesOutstanding);
-      let prediction = response.data.AnalystTargetPrice;
-
-      if (days >= 0) {
-        prediction = currentPrice + (prediction - currentPrice) * days / 365;
-      }
-
-      const predictionObject = { prediction: Math.round(prediction * 100) / 100 };
-      res.status(response.status).json(predictionObject);
+      res.status(500).json(err);
     }
-  }).catch((err) => {
-    res.status(500).json(err);
   });
 }
 
@@ -339,7 +288,6 @@ async function predictPrice(req, res) {
 async function searchStocks(req, res) {
   const { keyword } = req.query;
 
-  // use YAHOO FINANCE API for non-rate-limited searching
   let url = `${process.env.YAHOO_DOMAIN}/v1/finance/search`;
   url += `?q=${keyword}`;
   url += '&lang=en-US';
@@ -352,7 +300,7 @@ async function searchStocks(req, res) {
   axios.get(url).then((response) => {
     const matches = [];
     response.data.quotes.forEach((el) => {
-      // only include equities listed on US exchanges to keep consistent with AV API data
+      // only include equities listed on US exchanges to keep consistent with WSJ API data
       if (el.isYahooFinance && el.quoteType === 'EQUITY' && el.exchange !== 'PNK' && !el.symbol.includes('.')) {
         const data = {
           symbol: el.symbol,
@@ -372,7 +320,6 @@ module.exports = {
   getStockOverview,
   getTimeSeriesIntraday,
   getTimeSeriesDaily,
-  getTimeSeriesWeekly,
   getTimeSeriesMonthly,
   getTimeSeriesYearly,
   getTrending,
