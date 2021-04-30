@@ -19,9 +19,10 @@ function LoginForm() {
     return ((email !== '') && (password !== ''));
   }
 
-  function handleLoginForm(event) {
+  async function handleLoginForm(event) {
     event.preventDefault();
-    setLoginUnsuccessful(!login(email, password));
+    const loginSuccessful = await login(email, password);
+    setLoginUnsuccessful(!loginSuccessful);
   }
 
   return (

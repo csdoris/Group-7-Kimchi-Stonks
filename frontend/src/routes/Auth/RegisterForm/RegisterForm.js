@@ -29,9 +29,10 @@ function RegisterForm() {
     );
   }
 
-  function handleRegisterForm(event) {
+  async function handleRegisterForm(event) {
     event.preventDefault();
-    setRegisterUnsuccessful(!register(firstName, lastName, email, password));
+    const registerSuccessful = await register(firstName, lastName, email, password);
+    setRegisterUnsuccessful(!registerSuccessful);
   }
 
   return (
