@@ -22,7 +22,7 @@ function Dashboard() {
 
   useEffect(() => {
     retrieveUserInfo();
-  }, [user]);
+  }, []);
 
   function handleSellButtonClick(symbol) {
     history.push(`/stock/${symbol}?period=day`);

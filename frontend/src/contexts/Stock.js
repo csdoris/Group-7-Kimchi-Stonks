@@ -15,7 +15,7 @@ const TIME_PERIOD_MAP = {
 };
 
 function StockProvider({ children }) {
-  const { user } = useContext(AuthContext);
+  const { user, updateUser } = useContext(AuthContext);
 
   const [stock, setStock] = useState(undefined);
   const [stockData, setStockData] = useState(undefined);
@@ -120,7 +120,7 @@ function StockProvider({ children }) {
 
   function buyStocks(shares, stockPrice, totalSpent) {
     axios.post(`${URL}/user/buy`, {
-      symbol: stock.Symbol,
+      symbol: stock.symbol,
       shares,
       stockPrice,
       totalSpent,
@@ -130,9 +130,11 @@ function StockProvider({ children }) {
       },
     }).then((res) => {
       const { status } = res;
-
       if (status === 200) {
         // Show dialog confirming buy was successful.
+        const { accessToken, ...updatedUser } = user;
+        updatedUser.buyingPower -= totalSpent;
+        updateUser(updatedUser);
       }
     });
   }
