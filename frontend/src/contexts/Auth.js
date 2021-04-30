@@ -90,8 +90,10 @@ function AuthProvider({ children }) {
         const expirationDate = new Date(now.getTime() + expiresIn * 1000);
 
         saveAuthData(token, expirationDate);
+        return true;
       }
 
+      return false;
       // TODO: Error Message
     });
   }
