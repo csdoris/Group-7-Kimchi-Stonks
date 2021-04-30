@@ -20,10 +20,14 @@ function NavBar() {
       <StockSearch />
       <ul className="nav-list">
         <li className="nav-item">
-          <NavLink className="nav-link" to="/dashboard">Dashboard</NavLink>
+          <NavLink className="nav-link" to="/dashboard">
+            Dashboard
+          </NavLink>
         </li>
         <li className="nav-item">
-          <NavLink className="nav-link" to="/market">Wall St</NavLink>
+          <NavLink className="nav-link" to="/market">
+            Wall St
+          </NavLink>
         </li>
         <li className="nav-item">
           <Button

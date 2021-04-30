@@ -5,13 +5,13 @@
 
   .logo {
     width: 200px;
-    margin-right: 4em;
+    margin-right: 3em;
 
     &:hover {
       cursor: pointer;
     }
+    
   }
-
 
   .input-field.search {
     width: 30vw;
@@ -63,10 +63,52 @@
         }
       }
 
+      @media (max-width: 768px) {
+        &:last-child {
+          float: right;
+        }
+      }
     }
+    
     .log-out {
       width: 120px;
       padding: 0.8em;
     }
+
+    @media (max-width: 768px){
+    .nav-item {
+        display: inline-flex;
+      }
+    }
+  }
+    
+  @media (max-width: 1080px){
+    .logo {
+      width: 150px;
+      margin-right: 2em;
+    }
+  }
+    
+  @media (max-width: 768px){
+    .logo {
+      width: 150px;
+      align-content: center;
+      margin-bottom: 1.5rem;
+      margin-right: 0;
+    }
+    .nav-list {
+      margin-left: 0;
+      width: 100%;
+    }
+    .input-field.search {
+      width: 100%;
+    }
+  }
+}
+  
+@media (max-width: 768px){
+  .nav-bar {
+    flex-direction: column;
+    
   }
 }
