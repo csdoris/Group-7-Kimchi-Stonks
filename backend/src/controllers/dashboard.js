@@ -3,6 +3,20 @@ const axios = require('axios');
 const TIME_SERIES_INTRADAY = 0;
 const TIME_SERIES_DAILY = 1;
 const TIME_SERIES_MONTHLY = 2;
+const TIME_SERIES_YEARLY = 3;
+
+/**
+ * Formats Unix epoch time to human-readable string: yyyy-mm-dd HH:mm
+ *
+ * @param {*} unixTime unix epoch time
+ * @returns human-readable string representation of supplied Unix time: yyyy-mm-dd HH:mm
+ */
+function convertUnixTimeToEDT(unixTime) {
+  const d = new Date(unixTime * 1000);
+  const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+  const nd = new Date(utc - 14400000 - (d.getTimezoneOffset() * 60 * 1000));
+  return `${nd.toISOString().substr(0, 10)} ${nd.toISOString().substr(11, 5)}`;
+}
 
 /**
  * Formats response from Alpha Vantage in format more useful for client.
@@ -12,67 +26,69 @@ const TIME_SERIES_MONTHLY = 2;
  */
 function formatReturnData(data, interval) {
   let intervalText;
-  let timeSeries;
   switch (interval) {
     case TIME_SERIES_INTRADAY:
-      intervalText = data['Meta Data']['4. Interval'];
-      timeSeries = data['Time Series (60min)'];
+      intervalText = '30min';
       break;
     case TIME_SERIES_DAILY:
       intervalText = 'Daily';
-      timeSeries = data['Time Series (Daily)'];
       break;
     case TIME_SERIES_MONTHLY:
       intervalText = 'Monthly';
-      timeSeries = data['Monthly Time Series'];
+      break;
+    case TIME_SERIES_YEARLY:
+      intervalText = 'Yearly';
       break;
     default:
   }
 
   const metaData = {
-    symbol: data['Meta Data']['2. Symbol'].toUpperCase(),
+    symbol: data.chart.result[0].meta.symbol,
     interval: intervalText,
   };
 
   const timeSeriesData = [];
-  Object.keys(timeSeries).forEach((key) => {
+
+  const { timestamp } = data.chart.result[0];
+  const {
+    open, high, low, close, volume,
+  } = data.chart.result[0].indicators.quote[0];
+
+  for (let i = 0; i < timestamp.length; i += 1) {
     const dataPoint = {
-      dateTime: key,
       xAxis: '',
-      open: timeSeries[key]['1. open'],
-      high: timeSeries[key]['2. high'],
-      low: timeSeries[key]['3. low'],
-      close: timeSeries[key]['4. close'],
-      volume: timeSeries[key]['5. volume'],
+      open: Math.round(open[i] * 100) / 100,
+      high: Math.round(high[i] * 100) / 100,
+      low: Math.round(low[i] * 100) / 100,
+      close: Math.round(close[i] * 100) / 100,
+      volume: Math.round(volume[i] * 100) / 100,
     };
 
     switch (interval) {
       case TIME_SERIES_INTRADAY:
-        dataPoint.xAxis = key.substr(11, 5);
+        dataPoint.xAxis = convertUnixTimeToEDT(timestamp[i]).substr(11, 5);
         break;
       case TIME_SERIES_DAILY:
-        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { weekday: 'long' }).substr(0, 3);
+        dataPoint.xAxis = new Date(convertUnixTimeToEDT(timestamp[i]).substr(0, 10)).toLocaleDateString('en-us', { weekday: 'long' }).substr(0, 3);
         break;
       case TIME_SERIES_MONTHLY:
-        dataPoint.xAxis = new Date(key).toLocaleDateString('en-us', { month: 'long' }).substr(0, 3);
+        dataPoint.xAxis = new Date(convertUnixTimeToEDT(timestamp[i]).substr(0, 10)).toLocaleDateString('en-us', { month: 'long' }).substr(0, 3);
+        break;
+      case TIME_SERIES_YEARLY:
+        dataPoint.xAxis = convertUnixTimeToEDT(timestamp[i]).substr(0, 4);
         break;
       default:
     }
 
-    timeSeriesData.push(dataPoint);
-  });
+    if (interval !== TIME_SERIES_YEARLY || i % 4 === 0) { // yearly: only add every 4th data point
+      timeSeriesData.push(dataPoint);
+    }
+  }
 
   return {
     metaData,
     timeSeriesData,
   };
-}
-
-function convertUnixTimeToEDT(timeEpoch) {
-  const d = new Date(timeEpoch * 1000);
-  const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
-  const nd = new Date(utc - 14400000 - (d.getTimezoneOffset() * 60 * 1000));
-  return `${nd.toISOString().substr(0, 10)} ${nd.toISOString().substr(11, 5)}`;
 }
 
 /**
@@ -120,32 +136,7 @@ async function getTimeSeriesIntraday(req, res) {
   const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=30m&range=1d`;
 
   axios.get(url).then((response) => {
-    const returnObject = {
-      metaData: {
-        symbol: response.data.chart.result[0].meta.symbol,
-        interval: '30min',
-      },
-      timeSeriesData: [],
-    };
-
-    const { timestamp } = response.data.chart.result[0];
-    const {
-      open, high, low, close, volume,
-    } = response.data.chart.result[0].indicators.quote[0];
-
-    for (let i = 0; i < timestamp.length; i += 1) {
-      const dataPoint = {
-        dateTime: timestamp[i],
-        xAxis: convertUnixTimeToEDT(timestamp[i]).substr(11, 5),
-        open: Math.round(open[i] * 100) / 100,
-        high: Math.round(high[i] * 100) / 100,
-        low: Math.round(low[i] * 100) / 100,
-        close: Math.round(close[i] * 100) / 100,
-        volume: Math.round(volume[i] * 100) / 100,
-      };
-      returnObject.timeSeriesData.push(dataPoint);
-    }
-
+    const returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
     res.status(response.status).json(returnObject);
   }).catch((err) => {
     if (err.message.includes('404')) {
@@ -165,22 +156,17 @@ async function getTimeSeriesIntraday(req, res) {
 async function getTimeSeriesDaily(req, res) {
   const { symbol } = req.params;
 
-  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=1d&range=5d`;
 
   axios.get(url).then((response) => {
-    // AV API returns object with 'Error Message' property if symbol is invalid
-    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
+    const returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
+    res.status(response.status).json(returnObject);
+  }).catch((err) => {
+    if (err.message.includes('404')) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
-      if (returnObject.timeSeriesData.length > 5) {
-        returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 5);
-      }
-      returnObject.timeSeriesData.reverse();
-      res.status(response.status).json(returnObject);
+      res.status(500).json(err);
     }
-  }).catch((err) => {
-    res.status(500).json(err);
   });
 }
 
@@ -193,22 +179,23 @@ async function getTimeSeriesDaily(req, res) {
 async function getTimeSeriesMonthly(req, res) {
   const { symbol } = req.params;
 
-  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=1mo&range=1y`;
 
   axios.get(url).then((response) => {
-    // AV API returns object with 'Error Message' property if symbol is invalid
-    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
+    const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
+
+    // api returns most recent month twice, need to trim data
+    if (returnObject.timeSeriesData.length > 12) {
+      returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 12);
+    }
+
+    res.status(response.status).json(returnObject);
+  }).catch((err) => {
+    if (err.message.includes('404')) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
-      if (returnObject.timeSeriesData.length > 12) {
-        returnObject.timeSeriesData = returnObject.timeSeriesData.slice(0, 12);
-      }
-      returnObject.timeSeriesData.reverse();
-      res.status(response.status).json(returnObject);
+      res.status(500).json(err);
     }
-  }).catch((err) => {
-    res.status(500).json(err);
   });
 }
 
@@ -221,29 +208,17 @@ async function getTimeSeriesMonthly(req, res) {
 async function getTimeSeriesYearly(req, res) {
   const { symbol } = req.params;
 
-  // AV API does not have yearly interval, need to hack monthly data
-  const url = `${process.env.AV_DOMAIN}/query?function=TIME_SERIES_MONTHLY&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=3mo&range=10y`;
 
   axios.get(url).then((response) => {
-    // AV API returns object with 'Error Message' property if symbol is invalid
-    if (Object.prototype.hasOwnProperty.call(response.data, 'Error Message')) {
+    const returnObject = formatReturnData(response.data, TIME_SERIES_YEARLY);
+    res.status(response.status).json(returnObject);
+  }).catch((err) => {
+    if (err.message.includes('404')) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
-      returnObject.metaData.interval = 'Yearly';
-
-      const validTimeSeries = [];
-      for (let i = 0; i < returnObject.timeSeriesData.length && validTimeSeries.length < 10; i += 12) {
-        const temp = returnObject.timeSeriesData[i];
-        temp.xAxis = temp.dateTime.substr(0, 4);
-        validTimeSeries.push(temp);
-      }
-      returnObject.timeSeriesData = validTimeSeries.reverse();
-
-      res.status(response.status).json(returnObject);
+      res.status(500).json(err);
     }
-  }).catch((err) => {
-    res.status(500).json(err);
   });
 }
 
