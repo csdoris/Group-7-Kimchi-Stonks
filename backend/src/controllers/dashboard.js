@@ -135,7 +135,7 @@ async function getTimeSeriesIntraday(req, res) {
       const returnObject = {
         metaData: {
           symbol: response.data.chart.result[0].meta.symbol,
-          interval: '60min',
+          interval: '30min',
         },
         timeSeriesData: [],
       };
