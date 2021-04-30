@@ -139,22 +139,28 @@ function StockProvider({ children }) {
     });
   }
 
-  function sellStocks(symbol, stockPrice, sellingAmount) {
-    axios.post(`${URL}/user/sell`, {
-      symbol,
-      stockPrice,
-      sellingAmount,
-    }, {
-      headers: {
-        Authorization: `Bearer ${user.accessToken.token}`,
-      },
-    }).then((res) => {
+  async function sellStocks(symbol, stockPrice, sellingAmount) {
+    try {
+      const res = await axios.post(`${URL}/user/sell`, {
+        symbol,
+        stockPrice,
+        sellingAmount,
+      }, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken.token}`,
+        },
+      });
+
       const { status } = res;
 
       if (status === 200) {
         // Show dialog confirming buy was successful.
+        return true;
       }
-    });
+      return false;
+    } catch (err) {
+      return false;
+    }
   }
 
   const context = {
