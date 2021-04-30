@@ -23,6 +23,23 @@ function AddBuyingPowerDialog() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [addBuyingPowerUnsucessful, setAddBuyingPowerUnsuccessful] = useState(false);
 
+  function checkInputCharacter(event) {
+    if (event.key < '0' || event.key > '9') {
+      if (event.keyCode !== 8 && event.keyCode !== 13 && event.keyCode !== 190) {
+        event.preventDefault();
+      }
+    }
+  }
+
+  function checkInputValid() {
+    const regex = /^\d+(\.\d{1,2})?$/;
+
+    if (regex.test(amount)) {
+      return true;
+    }
+    return false;
+  }
+
   async function handleAddBuyingPower() {
     setFormSubmitted(true);
     try {
@@ -50,7 +67,7 @@ function AddBuyingPowerDialog() {
           ? (
             <TextDialog
               title={addBuyingPowerUnsucessful ? 'Transaction Unsuccessful' : 'Transaction Successful'}
-              text={addBuyingPowerUnsucessful ? 'Something occured when trying to add buying power to your account. Please try again.' : `You have successfully added $${amount}.00 to your account.`}
+              text={addBuyingPowerUnsucessful ? 'Something occured when trying to add buying power to your account. Please try again.' : `You have successfully added $${amount} to your account.`}
               onDismiss={history.goBack}
             />
           )
@@ -67,6 +84,7 @@ function AddBuyingPowerDialog() {
                   name="amount"
                   value={amount}
                   placeholder="Amount"
+                  onKeyDown={(event) => checkInputCharacter(event)}
                   onChange={(event) => setAmount(event.target.value)}
                 />
                 <Button
@@ -75,6 +93,7 @@ function AddBuyingPowerDialog() {
                   value="Add Buying Power"
                   text="Add Buying Power"
                   variant="contained"
+                  disabled={!checkInputValid()}
                   onClick={handleAddBuyingPower}
                 />
               </div>

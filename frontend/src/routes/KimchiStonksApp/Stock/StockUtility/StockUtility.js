@@ -6,7 +6,12 @@ import { StockContext } from '../../../../contexts/Stock';
 
 import './StockUtility.scss';
 
-function StockUtility() {
+function StockUtility({
+  amount,
+  setAmount,
+  setFormSubmitted,
+  setBuyStockUnsuccessful,
+}) {
   const { stock, buyStocks } = useContext(StockContext);
   const {
     stockDayPrediction,
@@ -14,7 +19,6 @@ function StockUtility() {
     stockYearPrediction,
   } = useContext(StockContext);
 
-  const [amount, setAmount] = useState(undefined);
   const [shares, setShares] = useState(0.00);
 
   const predictions = [
@@ -49,7 +53,7 @@ function StockUtility() {
   }
 
   function checkInputValid() {
-    const regex = /^(([0-9]|1[0-3])(\.\d\d?)?|14(\.00?)?)$/;
+    const regex = /^\d+(\.\d{1,2})?$/;
 
     if (regex.test(amount)) {
       return true;
@@ -57,9 +61,10 @@ function StockUtility() {
     return false;
   }
 
-  function handleBuyButtonClick() {
-    buyStocks(shares, stock.currentPrice, amount);
-    setAmount(undefined);
+  async function handleBuyButtonClick() {
+    setFormSubmitted(true);
+    const buyStockSuccessful = await buyStocks(shares, stock.currentPrice, amount);
+    setBuyStockUnsuccessful(!buyStockSuccessful);
     setShares(0.00);
   }
 

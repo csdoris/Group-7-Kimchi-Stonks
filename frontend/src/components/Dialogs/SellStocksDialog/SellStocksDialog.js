@@ -34,7 +34,7 @@ function SellStocksDialog() {
   }
 
   function checkInputValid() {
-    const regex = /^(([0-9]|1[0-3])(\.\d\d?)?|14(\.00?)?)$/;
+    const regex = /^\d+(\.\d{1,2})?$/;
 
     if (regex.test(sharesAmount)) {
       return true;

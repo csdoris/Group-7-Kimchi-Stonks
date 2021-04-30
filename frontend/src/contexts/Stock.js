@@ -118,25 +118,31 @@ function StockProvider({ children }) {
     });
   }
 
-  function buyStocks(shares, stockPrice, totalSpent) {
-    axios.post(`${URL}/user/buy`, {
-      symbol: stock.symbol,
-      shares,
-      stockPrice,
-      totalSpent,
-    }, {
-      headers: {
-        Authorization: `Bearer ${user.accessToken.token}`,
-      },
-    }).then((res) => {
+  async function buyStocks(shares, stockPrice, totalSpent) {
+    try {
+      const res = await axios.post(`${URL}/user/buy`, {
+        symbol: stock.symbol,
+        shares,
+        stockPrice,
+        totalSpent,
+      }, {
+        headers: {
+          Authorization: `Bearer ${user.accessToken.token}`,
+        },
+      });
+
       const { status } = res;
       if (status === 200) {
         // Show dialog confirming buy was successful.
         const { accessToken, ...updatedUser } = user;
         updatedUser.buyingPower -= totalSpent;
         updateUser(updatedUser);
+        return true;
       }
-    });
+      return false;
+    } catch (err) {
+      return false;
+    }
   }
 
   async function sellStocks(symbol, stockPrice, sellingAmount) {
