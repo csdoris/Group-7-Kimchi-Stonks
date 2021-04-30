@@ -64,8 +64,8 @@ function LoginForm() {
         loginUnsuccessful
           ? (
             <TextDialog
-              title="Hi"
-              text="Bye"
+              title="Login Unsuccessful"
+              text="The email or password you entered was incorrect. Please try again."
               onDismiss={() => setLoginUnsuccessful(false)}
             />
           )

@@ -15,6 +15,7 @@ function RegisterForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  // const [registerUnsuccessful, setRegisterUnsuccessful] = useState(false);
 
   function isFormValid() {
     return (

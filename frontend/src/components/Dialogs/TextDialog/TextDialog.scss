@@ -1,0 +1,26 @@
+.modal-content.text-dialog {
+  width: 350px;
+  margin: auto;
+  padding: 3em 5em;
+  text-align: center;
+
+  .info-title.text-dialog,
+  .info-text.text-dialog {
+    text-transform: uppercase;
+  }
+
+  .info-title.text-dialog {
+      font-size: 120%;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 1em;
+  }
+
+  .info-text.text-dialog {
+    font-size: 90%;
+    color: #ACACAC;
+    letter-spacing: 0.5px;
+    line-height: 150%;
+    margin-bottom: 2em;
+  }
+}

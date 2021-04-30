@@ -8,11 +8,11 @@ import './TextDialog.scss';
 function TextDialog({ title, text, onDismiss }) {
   return (
     <Modal dismissOnClickOutside>
-      <div className="modal-content">
-        <p className="info-title">{title}</p>
-        <p className="info-text">{text}</p>
+      <div className="modal-content text-dialog">
+        <p className="info-title text-dialog">{title}</p>
+        <p className="info-text text-dialog">{text}</p>
         <Button
-          className="sell-stocks"
+          className="ok"
           type="button"
           value="OK"
           text="OK"
