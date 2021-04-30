@@ -19,7 +19,7 @@ function AddBuyingPowerDialog() {
 
   const { user, updateUser } = useContext(AuthContext);
 
-  const [amount, setAmount] = useState(undefined);
+  const [amount, setAmount] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [addBuyingPowerUnsucessful, setAddBuyingPowerUnsuccessful] = useState(false);
 

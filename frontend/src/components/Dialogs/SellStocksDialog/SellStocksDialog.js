@@ -17,7 +17,7 @@ function SellStocksDialog() {
   const symbol = new URLSearchParams(useLocation().search).get('symbol');
   const totalShares = new URLSearchParams(useLocation().search).get('totalShares');
 
-  const [sharesAmount, setSharesAmount] = useState(undefined);
+  const [sharesAmount, setSharesAmount] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [sellStockUnsucessful, setSellStockUnsuccessful] = useState(false);
 
