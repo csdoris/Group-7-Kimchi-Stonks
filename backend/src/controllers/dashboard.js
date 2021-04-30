@@ -92,22 +92,21 @@ function convertUnixTimeToEDT(timeEpoch) {
 async function getStockOverview(req, res) {
   const { symbol } = req.params;
 
-  const url = `${process.env.AV_DOMAIN}/query?function=OVERVIEW&symbol=${symbol}&apikey=${process.env.AV_API_KEY}`;
+  const url = `${process.env.THESTREET_DOMAIN}/marketdata/2/1?format=json&s=${symbol}`;
 
   axios.get(url).then((response) => {
-    // AV API returns empty object if stock symbol is invalid
-    if (!Object.keys(response.data).length) {
+    // TheStreet API returns numFound=0 if stock symbol is invalid
+    if (response.data.response.numFound === 0) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const currentPrice = parseFloat(response.data.MarketCapitalization) / parseFloat(response.data.SharesOutstanding);
       const returnObject = {
-        symbol: response.data.Symbol,
-        name: response.data.Name,
-        currency: response.data.Currency,
-        country: response.data.Country,
-        yearHigh: response.data['52WeekHigh'],
-        yearLow: response.data['52WeekLow'],
-        currentPrice: Math.round(currentPrice * 100) / 100,
+        symbol: response.data.response.quotes[0].symbol,
+        name: response.data.response.quotes[0].companyName,
+        currentPrice: response.data.response.quotes[0].currentPrice,
+        yearHigh: response.data.response.quotes[0].oneYearHigh,
+        yearLow: response.data.response.quotes[0].oneYearLow,
+        volume: response.data.response.quotes[0].volume,
+        marketCap: response.data.response.quotes[0].marketCap,
       };
 
       res.status(response.status).json(returnObject);
@@ -118,7 +117,7 @@ async function getStockOverview(req, res) {
 }
 
 /**
- * Gets the intraday (60 min resolution, 10:00-16:00) stock time series for the symbol passed as the path param.
+ * Gets the intraday (30 min resolution, 09:30-15:30) stock time series for the symbol passed as the path param.
  *
  * @param  {Object} req Request object
  * @param  {Object} res Response object
@@ -129,39 +128,39 @@ async function getTimeSeriesIntraday(req, res) {
   const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=30m&range=1d`;
 
   axios.get(url).then((response) => {
-    if (response.status === 404) {
+    const returnObject = {
+      metaData: {
+        symbol: response.data.chart.result[0].meta.symbol,
+        interval: '30min',
+      },
+      timeSeriesData: [],
+    };
+
+    const { timestamp } = response.data.chart.result[0];
+    const {
+      open, high, low, close, volume,
+    } = response.data.chart.result[0].indicators.quote[0];
+
+    for (let i = 0; i < timestamp.length; i += 1) {
+      const dataPoint = {
+        dateTime: timestamp[i],
+        xAxis: convertUnixTimeToEDT(timestamp[i]).substr(11, 5),
+        open: Math.round(open[i] * 100) / 100,
+        high: Math.round(high[i] * 100) / 100,
+        low: Math.round(low[i] * 100) / 100,
+        close: Math.round(close[i] * 100) / 100,
+        volume: Math.round(volume[i] * 100) / 100,
+      };
+      returnObject.timeSeriesData.push(dataPoint);
+    }
+
+    res.status(response.status).json(returnObject);
+  }).catch((err) => {
+    if (err.message.includes('404')) {
       res.status(404).json({ error: `${symbol.toUpperCase()} is not a valid stock symbol` });
     } else {
-      const returnObject = {
-        metaData: {
-          symbol: response.data.chart.result[0].meta.symbol,
-          interval: '30min',
-        },
-        timeSeriesData: [],
-      };
-
-      const { timestamp } = response.data.chart.result[0];
-      const {
-        open, high, low, close, volume,
-      } = response.data.chart.result[0].indicators.quote[0];
-
-      for (let i = 0; i < timestamp.length; i += 1) {
-        const dataPoint = {
-          dateTime: timestamp[i],
-          xAxis: convertUnixTimeToEDT(timestamp[i]).substr(11, 5),
-          open: Math.round(open[i] * 100) / 100,
-          high: Math.round(high[i] * 100) / 100,
-          low: Math.round(low[i] * 100) / 100,
-          close: Math.round(close[i] * 100) / 100,
-          volume: Math.round(volume[i] * 100) / 100,
-        };
-        returnObject.timeSeriesData.push(dataPoint);
-      }
-
-      res.status(response.status).json(returnObject);
+      res.status(500).json(err);
     }
-  }).catch((err) => {
-    res.status(500).json(err);
   });
 }
 
