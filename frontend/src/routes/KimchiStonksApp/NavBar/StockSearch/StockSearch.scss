@@ -4,6 +4,12 @@
   border-radius: 5px;
   overflow: hidden;
 
+  .input-field {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 0px;
+  }
+
   .suggestion-list {
     border: solid 2px #606060;
     width: 30vw;
@@ -85,5 +91,3 @@
     justify-content: center;
   }
 }
-
-

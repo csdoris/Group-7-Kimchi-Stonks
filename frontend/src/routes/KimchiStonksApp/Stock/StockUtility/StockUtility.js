@@ -12,8 +12,9 @@ function StockUtility({
   setFormSubmitted,
   setBuyStockUnsuccessful,
 }) {
-  const { stock, buyStocks } = useContext(StockContext);
   const {
+    stock,
+    buyStocks,
     stockDayPrediction,
     stockMonthPrediction,
     stockYearPrediction,
@@ -85,6 +86,10 @@ function StockUtility({
       <div className="purchase-container">
         <p className="container-title">Market Purchase</p>
         <p className="container-info">Purchase stocks at the current market price.</p>
+        <div className="stock-price-row">
+          <p className="key">Current price</p>
+          <p className="value">{`$${parseFloat(stock.currentPrice).toFixed(2)}`}</p>
+        </div>
         <InputField
           className="amount"
           type="text"

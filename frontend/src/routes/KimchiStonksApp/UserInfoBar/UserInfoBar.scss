@@ -6,7 +6,7 @@
   filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.15));
   margin-bottom: 2em;
   display: flex;
-  
+
   .user-profile-icon {
     width: 10%;
     height: 10%;
@@ -38,7 +38,7 @@
       }
     }
   }
-  
+
   .name-account-container {
     display: flex;
     flex-direction: column;
@@ -52,7 +52,7 @@
       font-size: 150%;
       margin-bottom: 0.25em;
     }
-    
+
     .account {
       font-size: 80%;
       letter-spacing: 0.5px;
@@ -64,8 +64,8 @@
       }
     }
   }
-  
-  
+
+
   .info-container {
     border-radius: 5px;
     background-color: #383838;
@@ -81,7 +81,7 @@
       font-size: 75%;
       letter-spacing: 1px;
     }
-    
+
     .info-value {
       font-size: 150%;
       font-weight: 300;
@@ -146,9 +146,7 @@
     display: grid;
     grid-template-rows:auto;
     grid-template-columns: 1fr 2fr 1fr;
-    justify-items: center;
     text-align: center;
     row-gap: 1rem;
   }
 }
-
