@@ -109,7 +109,7 @@ async function sellAllStock(stock, sellingPrice) {
  */
 async function sellPartialStock(stock, sellingAmount, sellingPrice) {
   await Stock.findOneAndUpdate({ symbol: stock.symbol, owner: stock.owner },
-    { $set: { shares: (parseInt(stock.shares, 10) - parseInt(sellingAmount, 10)) } });
+    { $set: { shares: (stock.shares - sellingAmount) } });
   await User.findByIdAndUpdate({ _id: stock.owner }, { $inc: { buyingPower: sellingPrice } });
 }
 
@@ -195,7 +195,7 @@ async function sellStock(symbol, sellingAmount, stockPrice, owner) {
   if (stock.shares < sellingAmount) {
     return { status: 400, json: { message: 'cannot sell more units than currently purchased' } };
   }
-  if (parseInt(stock.shares, 10) === parseInt(sellingAmount, 10)) {
+  if (stock.shares === sellingAmount) {
     await sellAllStock(stock, sellingPrice);
     return { status: 200, json: { message: 'successful sell' } };
   }

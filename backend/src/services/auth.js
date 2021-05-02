@@ -115,6 +115,10 @@ async function retrieveUser(id, token) {
 
     const { password, ...userInfo } = user._doc;
 
+    if (userInfo.stocks.length > 0) {
+      await User.populate(user, 'stocks');
+    }
+
     const duration = 3600;
 
     return {
