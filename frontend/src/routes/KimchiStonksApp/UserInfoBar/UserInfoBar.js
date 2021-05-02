@@ -21,20 +21,16 @@ function UserInfoBar() {
         <p className="account">Individual Account</p>
       </div>
       <div className="info-container">
-        <div className="info-title">Equity Value</div>
+        <div className="info-title">Total Equity</div>
         <div className="info-value">
           {`$${
-            user.equityValue ? user.equityValue : 0
+            user.totalEquity ? user.totalEquity : 0
           }`}
         </div>
       </div>
       <div className="info-container">
         <div className="info-title">Buying Power</div>
         <div className="info-value">{`$${user.buyingPower.toFixed(2)}`}</div>
-      </div>
-      <div className="info-container">
-        <div className="info-title">Shares</div>
-        <div className="info-value">{user.shares ? user.shares : 0}</div>
       </div>
       <div className="button-container">
         <Button
