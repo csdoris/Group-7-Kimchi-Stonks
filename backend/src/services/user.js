@@ -1,3 +1,4 @@
+const axios = require('axios');
 const Stock = require('../mongodb/schemas/stockSchema');
 const User = require('../mongodb/schemas/userSchema');
 
@@ -53,6 +54,30 @@ async function createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft
   return newStockInfo;
 }
 
+async function updateUserEquity(id) {
+  let user = await User.findById(id).populate('stocks');
+  const { stocks } = user._doc;
+  let calculatedEquity = 0;
+  const stockPrices = [];
+  for (let i = 0; i < stocks.length; i += 1) {
+    const { symbol } = stocks[i];
+    let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
+    url += `?id={"ticker":"${symbol}","countryCode":"US","exchange":"","type":"STOCK","path":"/${symbol}"}`;
+    url += '&type=quotes_chart';
+    const response = axios.get(url);
+    stockPrices.push(response);
+  }
+  const finishedStockPrices = await Promise.all(stockPrices);
+
+  for (let i = 0; i < finishedStockPrices.length; i += 1) {
+    const currentStock = stocks.find((userStocks) => userStocks.symbol === finishedStockPrices[i].data.data.quote.Instrument.Ticker);
+    calculatedEquity += finishedStockPrices[i].data.data.quote.topSection.value.replace(',', '') * currentStock.shares;
+  }
+
+  user = await User.findByIdAndUpdate({ _id: id }, { $set: { totalEquity: calculatedEquity } }, { returnOriginal: false });
+  const { password, ...userInfo } = user._doc;
+  return userInfo;
+}
 /**
  * The addOntoStock function adds more units onto stocks that the user has already bought.
  * This is called if the user purchases a stock which they have already invested in.
@@ -146,9 +171,10 @@ async function buyStock(symbol, shares, stockPrice, totalSpent, owner) {
     addOntoStock(symbol, stock.shares, shares,
       stock.averagePrice, stockPrice, owner, buyingPowerLeft);
     if (stockBought) {
+      const userInfo = await updateUserEquity(owner);
       return {
         status: 200,
-        json: { stock_purchase: stockBought },
+        json: { stock_purchase: stockBought, userInfo },
       };
     }
 
@@ -159,9 +185,10 @@ async function buyStock(symbol, shares, stockPrice, totalSpent, owner) {
   createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft);
 
   if (newStockInfo) {
+    const userInfo = await updateUserEquity(owner);
     return {
       status: 200,
-      json: { stock_purchase: { newStockInfo } },
+      json: { stock_purchase: newStockInfo, userInfo },
     };
   }
   return { status: 400, json: { message: 'Could not finish purchase.' } };
@@ -197,10 +224,12 @@ async function sellStock(symbol, sellingAmount, stockPrice, owner) {
   }
   if (stock.shares === sellingAmount) {
     await sellAllStock(stock, sellingPrice);
-    return { status: 200, json: { message: 'successful sell' } };
+    const userInfo = await updateUserEquity(owner);
+    return { status: 200, json: { message: 'successful sell', userInfo } };
   }
   await sellPartialStock(stock, sellingAmount, sellingPrice);
-  return { status: 200, json: { message: 'successful sell' } };
+  const userInfo = await updateUserEquity(owner);
+  return { status: 200, json: { message: 'successful sell', userInfo } };
 }
 
 /**
