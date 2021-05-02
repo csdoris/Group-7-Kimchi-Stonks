@@ -14,8 +14,8 @@
   }
 
   .input-field.search {
-    width: 30vw;
-    border-color: #464646;
+    width: 100%;
+    border: none;
     background-color: #464646;
     color: #FFDA9F;
 
@@ -63,7 +63,7 @@
         }
       }
 
-      @media (max-width: 768px) {
+      @media (max-width: 1080px) {
         &:last-child {
           float: right;
         }
@@ -75,21 +75,27 @@
       padding: 0.8em;
     }
 
-    @media (max-width: 768px){
+    @media (max-width: 1440px){
+    .nav-item {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 1080px){
     .nav-item {
         display: inline-flex;
       }
     }
   }
-    
-  @media (max-width: 1080px){
+
+  @media (max-width: 1440px){
     .logo {
-      width: 150px;
+      width: 175px;
       margin-right: 2em;
     }
   }
     
-  @media (max-width: 768px){
+  @media (max-width: 1080px){
     .logo {
       width: 150px;
       align-content: center;
@@ -106,9 +112,8 @@
   }
 }
   
-@media (max-width: 768px){
+@media (max-width: 1080px){
   .nav-bar {
     flex-direction: column;
-    
   }
 }
