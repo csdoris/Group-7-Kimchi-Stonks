@@ -98,7 +98,7 @@ function formatReturnData(data, interval) {
  * @param  {Object} res Response object
  */
 async function getStockOverview(req, res) {
-  const { symbol } = req.params;
+  const symbol = req.params.symbol.replace('-', '.');
 
   let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
   url += `?id={"ticker":"${symbol}","countryCode":"US","exchange":"","type":"STOCK","path":"/${symbol}"}`;
@@ -250,7 +250,7 @@ async function getTrending(req, res) {
  * @param  {Object} res Response object
  */
 async function predictPrice(req, res) {
-  const { symbol } = req.params;
+  const symbol = req.params.symbol.replace('-', '.');
   const days = parseInt(req.query.days, 10);
 
   let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
