@@ -18,7 +18,7 @@ function Stock({ stockSymbol }) {
 
   const { symbol } = useParams();
 
-  const [amount, setAmount] = useState(undefined);
+  const [amount, setAmount] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [buyStockUnsucessful, setBuyStockUnsuccessful] = useState(false);
 
