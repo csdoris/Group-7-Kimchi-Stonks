@@ -79,7 +79,7 @@ async function updateUserEquity(id) {
     calculatedEquity += finishedStockPrices[i].data.data.quote.topSection.value.replace(',', '') * currentStock.shares;
   }
 
-  user = await User.findByIdAndUpdate({ _id: id }, { $set: { totalEquity: calculatedEquity } }, { returnOriginal: false });
+  user = await User.findByIdAndUpdate({ _id: id }, { $set: { totalEquity: calculatedEquity } }, { returnOriginal: false }).populate('stocks');
   const { password, ...userInfo } = user._doc;
   return userInfo;
 }
@@ -206,29 +206,28 @@ async function buyStock(symbol, shares, stockPrice, totalSpent, owner) {
   const stock = userStocks.find((stocks) => stocks.symbol === symbol);
 
   if (stock) {
-    const stockBought = await
-    addOntoStock(symbol, stock.shares, shares,
+    await addOntoStock(symbol, stock.shares, shares,
       stock.averagePrice, stockPrice, owner, buyingPowerLeft);
     if (stockBought) {
       await updateUserStockStatistics(owner);
       const userInfo = await updateUserEquity(owner);
       return {
         status: 200,
-        json: { stock_purchase: stockBought, user: userInfo },
+        json: { user: userInfo },
       };
     }
 
     return { status: 400, json: { message: 'Could not finish purchase.' } };
   }
 
-  const newStockInfo = await
-  createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft);
+  await createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft);
 
   if (newStockInfo) {
+    await updateUserStockStatistics(owner);
     const userInfo = await updateUserEquity(owner);
     return {
       status: 200,
-      json: { stock_purchase: newStockInfo, user: userInfo },
+      json: { user: userInfo },
     };
   }
   return { status: 400, json: { message: 'Could not finish purchase.' } };
