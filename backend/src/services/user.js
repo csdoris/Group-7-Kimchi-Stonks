@@ -20,8 +20,13 @@ function calculateAveragePrice(currentShares, averagePrice, additionalShares, cu
   / (parseInt(currentShares, 10) + parseInt(additionalShares, 10));
 }
 
-function calculateStockGain(priceBoughtAt, marketPrice) {
-  return ((marketPrice - priceBoughtAt) / priceBoughtAt) * 100;
+function calculateStockPriceChange(priceBoughtAt, marketPrice) {
+  const priceDifferencePercentage = Math.round(((((marketPrice - priceBoughtAt) / priceBoughtAt) * 100) + Number.EPSILON) * 100) / 100;
+  const priceDifferenceValue = Math.round((marketPrice - priceBoughtAt + Number.EPSILON) * 100) / 100;
+  if (priceDifferenceValue < 0) {
+    return `${priceDifferenceValue} (${priceDifferencePercentage}%)`;
+  }
+  return `+${priceDifferenceValue} (+${priceDifferencePercentage}%)`;
 }
 
 /**
@@ -38,7 +43,7 @@ function calculateStockGain(priceBoughtAt, marketPrice) {
  */
 async function createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft) {
   const newStock = new Stock({
-    symbol, shares, averagePrice: stockPrice, marketPrice: stockPrice, owner,
+    symbol, shares, averagePrice: stockPrice, owner,
   });
 
   const { err } = await newStock.save();
@@ -106,8 +111,7 @@ async function updateUserStockStatistics(id) {
       .findOneAndUpdate({ symbol: currentStock.symbol, owner: id },
         {
           $set: {
-            marketPrice: finishedStockPrices[i].data.data.quote.topSection.value.replace(',', ''),
-            gain: calculateStockGain(currentStock.averagePrice, finishedStockPrices[i].data.data.quote.topSection.value.replace(',', '')),
+            totalChange: calculateStockPriceChange(currentStock.averagePrice, finishedStockPrices[i].data.data.quote.topSection.value.replace(',', '')),
           },
         },
         { returnOriginal: false });
@@ -137,7 +141,6 @@ async function addOntoStock(symbol, currentShareHoldings, shares,
       {
         $inc: { shares },
         $set: {
-          marketPrice: stockPrice,
           averagePrice: calculateAveragePrice(
             currentShareHoldings, avgPriceOfHoldings, shares, stockPrice,
           ),
