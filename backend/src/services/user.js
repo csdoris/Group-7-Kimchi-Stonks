@@ -206,7 +206,7 @@ async function buyStock(symbol, shares, stockPrice, totalSpent, owner) {
   const stock = userStocks.find((stocks) => stocks.symbol === symbol);
 
   if (stock) {
-    await addOntoStock(symbol, stock.shares, shares,
+    const stockBought = await addOntoStock(symbol, stock.shares, shares,
       stock.averagePrice, stockPrice, owner, buyingPowerLeft);
     if (stockBought) {
       await updateUserStockStatistics(owner);
@@ -220,7 +220,7 @@ async function buyStock(symbol, shares, stockPrice, totalSpent, owner) {
     return { status: 400, json: { message: 'Could not finish purchase.' } };
   }
 
-  await createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft);
+  const newStockInfo = await createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft);
 
   if (newStockInfo) {
     await updateUserStockStatistics(owner);
