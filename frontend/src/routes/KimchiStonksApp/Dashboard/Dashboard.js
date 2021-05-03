@@ -49,7 +49,7 @@ function Dashboard() {
                   shares: stock.shares.toFixed(2),
                   averagePrice: stock.averagePrice.toFixed(2),
                   value: parseFloat(stock.shares * stock.averagePrice).toFixed(2),
-                  totalChange: '+135.12 (+0.25%)',
+                  totalChange: stock.totalChange,
                   action: 'sell',
                 }}
                 onClick={() => handleRowClick(stock.symbol)}
