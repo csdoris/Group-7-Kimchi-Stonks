@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
 
 import Modal from '../../Modal/Modal';
 import InputField from '../../InputField/InputField';
@@ -11,11 +10,8 @@ import logo from '../../../assets/logo.png';
 
 import './SellStocksDialog.scss';
 
-function SellStocksDialog() {
-  const history = useHistory();
+function SellStocksDialog({ onDismiss, symbol, totalShares }) {
   const { stock, sellStocks, retrieveStockOverview } = useContext(StockContext);
-  const symbol = new URLSearchParams(useLocation().search).get('symbol');
-  const totalShares = new URLSearchParams(useLocation().search).get('totalShares');
 
   const [sharesAmount, setSharesAmount] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -56,11 +52,11 @@ function SellStocksDialog() {
             <TextDialog
               title={sellStockUnsucessful ? 'Transaction Unsuccessful' : 'Transaction Successful'}
               text={sellStockUnsucessful ? 'Something occured when trying to sell your stock. Please try again.' : `You have successfully sold ${sharesAmount} of ${symbol}.`}
-              onDismiss={history.goBack}
+              onDismiss={onDismiss}
             />
           )
           : (
-            <Modal dismissOnClickOutside>
+            <Modal dismissOnClickOutside onDismiss={onDismiss}>
               <div className="modal-header">
                 <img className="logo" src={logo} alt="Kimchi Stonks Logo" />
               </div>

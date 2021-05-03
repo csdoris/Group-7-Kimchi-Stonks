@@ -55,6 +55,29 @@
       margin-bottom: 1.5em;
     }
 
+    .stock-price-row {
+      display: grid;
+      grid-template-columns: 6fr 4fr;
+
+      .key,
+      .value {
+        display: inline-block;
+        letter-spacing: 1px;
+      }
+
+      .key {
+        margin-right: 1em;
+        text-transform: uppercase;
+        font-weight: 300;
+        color: #FFDA9F;
+      }
+
+      .value {
+        font-weight: 600;
+        color: #E56536;
+      }
+    }
+
     .estimation-row {
       display: grid;
       grid-template-columns: 6fr 4fr;

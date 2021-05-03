@@ -1,19 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { useHistory } from 'react-router-dom';
 
 import './Modal.scss';
 
 const modalRoot = document.querySelector('#modal-root');
 
 function Modal({
-  dismissOnClickOutside, className, children,
+  dismissOnClickOutside, className, children, onDismiss,
 }) {
-  const history = useHistory();
-
   function handleModalBackground(event) {
     if (dismissOnClickOutside && event.target.parentElement === modalRoot) {
-      history.goBack();
+      onDismiss();
     }
   }
 

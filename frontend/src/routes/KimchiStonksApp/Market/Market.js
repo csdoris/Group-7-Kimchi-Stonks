@@ -13,7 +13,7 @@ const URL = process.env.REACT_APP_API_URL;
 const headers = [
   'Stock',
   'Organisation Name',
-  'Price',
+  '($) Price',
   '% Change',
 ];
 
@@ -37,7 +37,7 @@ function Market() {
         setMarketData(trendingStocks.map((stock) => ({
           symbol: stock.ticker,
           organisation: stock.companyName,
-          price: stock.price,
+          price: parseFloat(stock.price).toFixed(2),
           percentageChange: `${stock.changesPercentage.substring(1, stock.changesPercentage.length - 1)}`,
         })));
       }

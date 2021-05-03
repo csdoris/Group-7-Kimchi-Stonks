@@ -131,11 +131,10 @@ function StockProvider({ children }) {
         },
       });
 
-      const { status } = res;
+      const { status, data } = res;
       if (status === 200) {
         // Show dialog confirming buy was successful.
-        const { accessToken, ...updatedUser } = user;
-        updatedUser.buyingPower -= totalSpent;
+        const { user: updatedUser } = data;
         updateUser(updatedUser);
         return true;
       }
@@ -157,9 +156,11 @@ function StockProvider({ children }) {
         },
       });
 
-      const { status } = res;
+      const { status, data } = res;
 
       if (status === 200) {
+        const { user: updatedUser } = data;
+        updateUser(updatedUser);
         // Show dialog confirming buy was successful.
         return true;
       }
