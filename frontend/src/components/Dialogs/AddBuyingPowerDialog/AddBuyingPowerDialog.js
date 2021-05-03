@@ -1,5 +1,4 @@
 import React, { useState, useContext } from 'react';
-import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 
 import Modal from '../../Modal/Modal';
@@ -14,9 +13,7 @@ import './AddBuyingPowerDialog.scss';
 
 const url = process.env.REACT_APP_API_URL;
 
-function AddBuyingPowerDialog() {
-  const history = useHistory();
-
+function AddBuyingPowerDialog({ onDismiss }) {
   const { user, updateUser } = useContext(AuthContext);
 
   const [amount, setAmount] = useState('');
@@ -68,11 +65,11 @@ function AddBuyingPowerDialog() {
             <TextDialog
               title={addBuyingPowerUnsucessful ? 'Transaction Unsuccessful' : 'Transaction Successful'}
               text={addBuyingPowerUnsucessful ? 'Something occured when trying to add buying power to your account. Please try again.' : `You have successfully added $${amount} to your account.`}
-              onDismiss={history.goBack}
+              onDismiss={onDismiss}
             />
           )
           : (
-            <Modal dismissOnClickOutside>
+            <Modal dismissOnClickOutside onDismiss={onDismiss}>
               <div className="modal-header">
                 <img className="logo" src={logo} alt="Kimchi Stonks Logo" />
               </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Switch, Route, Redirect,
 } from 'react-router-dom';
@@ -14,12 +14,14 @@ import AddBuyingPowerDialog from '../../components/Dialogs/AddBuyingPowerDialog/
 import './KimchiStonksApp.scss';
 
 function KimchiStonksApp() {
+  const [addBuyingPower, setAddBuyingPower] = useState(false);
+
   return (
     <StockProvider>
       <div className="app-container">
         <div className="main">
           <NavBar />
-          <UserInfoBar />
+          <UserInfoBar setAddBuyingPower={setAddBuyingPower} />
           <Switch>
             <Route path="/dashboard">
               <Dashboard />
@@ -34,13 +36,11 @@ function KimchiStonksApp() {
               <Redirect to="/dashboard" />
             </Route>
           </Switch>
-          <Switch>
-            <Route path="/*/addBuyingPower">
-              <AddBuyingPowerDialog />
-            </Route>
-          </Switch>
         </div>
       </div>
+      {
+        addBuyingPower ? <AddBuyingPowerDialog onDismiss={() => setAddBuyingPower(false)} /> : null
+      }
     </StockProvider>
   );
 }

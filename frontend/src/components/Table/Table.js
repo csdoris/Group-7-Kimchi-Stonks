@@ -1,5 +1,4 @@
 import React from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
 
 import './Table.scss';
 
@@ -19,13 +18,18 @@ function TableHeader({ headers }) {
   );
 }
 
-function TableRow({ rowData, onClick }) {
-  const history = useHistory();
-  const { pathname } = useLocation();
-
-  function handleSellButtonClick(event) {
+function TableRow({
+  rowData,
+  onClick,
+  setSellStocks,
+  setStockSymbol,
+  setTotalShares,
+}) {
+  function handleSellButtonClick(event, symbol, totalShares) {
     event.stopPropagation();
-    history.push(`${pathname}/sellStocks?symbol=${rowData.symbol}&totalShares=${rowData.shares}`);
+    setStockSymbol(symbol);
+    setTotalShares(totalShares);
+    setSellStocks(true);
   }
 
   return (
@@ -37,7 +41,7 @@ function TableRow({ rowData, onClick }) {
           }
           ${rowData[key][0] === '-' ? 'negative' : ''}`}
           key={`${rowData.symbol}-${key}`}
-          onClick={key === 'action' ? (event) => handleSellButtonClick(event) : null}
+          onClick={key === 'action' ? (event) => handleSellButtonClick(event, rowData.symbol, rowData.shares) : null}
         >
           {rowData[key]}
         </div>

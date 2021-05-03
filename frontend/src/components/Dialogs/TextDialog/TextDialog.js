@@ -7,7 +7,7 @@ import './TextDialog.scss';
 
 function TextDialog({ title, text, onDismiss }) {
   return (
-    <Modal dismissOnClickOutside>
+    <Modal dismissOnClickOutside onDismiss={onDismiss}>
       <div className="modal-content text-dialog">
         <p className="info-title text-dialog">{title}</p>
         <p className="info-text text-dialog">{text}</p>
