@@ -21,8 +21,8 @@ function calculateAveragePrice(currentShares, averagePrice, additionalShares, cu
 }
 
 function calculateStockPriceChange(priceBoughtAt, marketPrice) {
-  const priceDifferencePercentage = Math.round(((((marketPrice - priceBoughtAt) / priceBoughtAt) * 100) + Number.EPSILON) * 100) / 100;
-  const priceDifferenceValue = Math.round((marketPrice - priceBoughtAt + Number.EPSILON) * 100) / 100;
+  const priceDifferencePercentage = ((((((marketPrice - priceBoughtAt) / priceBoughtAt) * 100) + Number.EPSILON) * 100) / 100).toFixed(2);
+  const priceDifferenceValue = (((marketPrice - priceBoughtAt + Number.EPSILON) * 100) / 100).toFixed(2);
   if (priceDifferenceValue < 0) {
     return `${priceDifferenceValue} (${priceDifferencePercentage}%)`;
   }
@@ -89,7 +89,7 @@ async function updateUserEquity(id) {
   if (user._doc.stocks.length > 0) {
     await User.populate(user, 'stocks');
   }
-  
+
   const { password, ...userInfo } = user._doc;
   return userInfo;
 }
