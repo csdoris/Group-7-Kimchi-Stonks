@@ -7,6 +7,7 @@ function InputField({
   value,
   className,
   onChange,
+  onKeyDown,
   type,
   disabled,
   placeholder,
@@ -21,6 +22,7 @@ function InputField({
       value={value}
       placeholder={placeholder}
       disabled={disabled}
+      onKeyDown={onKeyDown}
       onChange={onChange}
     />
   );

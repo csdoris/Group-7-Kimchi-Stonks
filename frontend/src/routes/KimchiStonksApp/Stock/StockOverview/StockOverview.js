@@ -15,27 +15,27 @@ function StockOverview() {
       <div className="grid-container">
         <div className="grid-item">
           <p className="info-title">Name:</p>
-          <p className="info-text">{stock.Name}</p>
+          <p className="info-text">{stock.name}</p>
         </div>
         <div className="grid-item">
           <p className="info-title">Symbol:</p>
-          <p className="info-text">{stock.Symbol}</p>
+          <p className="info-text">{stock.symbol}</p>
         </div>
         <div className="grid-item">
-          <p className="info-title">Country:</p>
-          <p className="info-text">{stock.Country}</p>
+          <p className="info-title">Volume:</p>
+          <p className="info-text">{stock.volume}</p>
         </div>
         <div className="grid-item">
-          <p className="info-title">Currency:</p>
-          <p className="info-text">{stock.Currency}</p>
+          <p className="info-title">Market Cap:</p>
+          <p className="info-text">{stock.marketCap}</p>
         </div>
         <div className="grid-item">
           <p className="info-title">52 Week High:</p>
-          <p className="info-text">{parseFloat(stock['52WeekHigh']).toFixed(2)}</p>
+          <p className="info-text">{parseFloat(stock.yearHigh).toFixed(2)}</p>
         </div>
         <div className="grid-item">
           <p className="info-title">52 Week Low:</p>
-          <p className="info-text">{parseFloat(stock['52WeekLow']).toFixed(2)}</p>
+          <p className="info-text">{parseFloat(stock.yearLow).toFixed(2)}</p>
         </div>
       </div>
     </div>

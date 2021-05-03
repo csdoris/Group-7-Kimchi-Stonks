@@ -30,6 +30,11 @@ const userSchema = Schema({
     default: 0,
     required: false,
   },
+  totalEquity: {
+    type: Number,
+    default: 0,
+    required: false,
+  },
   stocks: [{ type: Schema.Types.ObjectId, ref: 'Stock', required: false }],
 });
 

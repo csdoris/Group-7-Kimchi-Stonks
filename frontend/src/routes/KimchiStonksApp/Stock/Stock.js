@@ -1,9 +1,11 @@
-import React, { useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 
+import Loading from '../../../components/Loading/Loading';
 import StockGraph from './StockGraph/StockGraph';
 import StockOverview from './StockOverview/StockOverview';
 import StockUtility from './StockUtility/StockUtility';
+import TextDialog from '../../../components/Dialogs/TextDialog/TextDialog';
 import { StockContext } from '../../../contexts/Stock';
 
 import './Stock.scss';
@@ -16,6 +18,10 @@ function Stock({ stockSymbol }) {
 
   const { symbol } = useParams();
 
+  const [amount, setAmount] = useState('');
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [buyStockUnsucessful, setBuyStockUnsuccessful] = useState(false);
+
   useEffect(() => {
     retrieveStockOverview(symbol);
     retrieveStockData(symbol, period);
@@ -24,21 +30,39 @@ function Stock({ stockSymbol }) {
   return (
     stock && stockData
       ? (
-        <div className="stock-container">
-          <div className="left-container">
-            <div className="graph-container">
-              <StockGraph stockSymbol={stockSymbol} />
+        <div>
+          <div className="stock-container">
+            <div className="left-container">
+              <div className="graph-container">
+                <StockGraph stockSymbol={stockSymbol} />
+              </div>
+              <div className="overview-container">
+                <StockOverview />
+              </div>
             </div>
-            <div className="overview-container">
-              <StockOverview />
+            <div className="right-container">
+              <StockUtility
+                amount={amount}
+                setAmount={setAmount}
+                setFormSubmitted={setFormSubmitted}
+                setBuyStockUnsuccessful={setBuyStockUnsuccessful}
+              />
             </div>
           </div>
-          <div className="right-container">
-            <StockUtility />
-          </div>
+          {
+            formSubmitted
+              ? (
+                <TextDialog
+                  title={buyStockUnsucessful ? 'Transaction Unsuccessful' : 'Transaction Successful'}
+                  text={buyStockUnsucessful ? `Something occured when trying to buy ${symbol} stock. You may have insufficent funds. Please try again.` : `You have successfully bought $${amount} of ${symbol}.`}
+                  onDismiss={() => setFormSubmitted(false)}
+                />
+              )
+              : null
+          }
         </div>
       )
-      : null
+      : <Loading />
   );
 }
 

@@ -14,7 +14,7 @@ function UserInfoBar() {
   return (
     <div className="user-info-bar-container">
       <div className="user-profile-icon">
-        <p className="user-letter">{user.firstName.charAt(0)}</p>
+        <div className="user-letter">{user.firstName.charAt(0)}</div>
       </div>
       <div className="name-account-container">
         <p className="name">{`${user.firstName} ${user.lastName}`}</p>
@@ -22,7 +22,11 @@ function UserInfoBar() {
       </div>
       <div className="info-container">
         <div className="info-title">Equity Value</div>
-        <div className="info-value">{`$${user.equityValue ? user.equityValue : 0}`}</div>
+        <div className="info-value">
+          {`$${
+            user.equityValue ? user.equityValue : 0
+          }`}
+        </div>
       </div>
       <div className="info-container">
         <div className="info-title">Buying Power</div>
