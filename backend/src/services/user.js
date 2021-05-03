@@ -20,6 +20,10 @@ function calculateAveragePrice(currentShares, averagePrice, additionalShares, cu
   / (parseInt(currentShares, 10) + parseInt(additionalShares, 10));
 }
 
+function calculateStockGain(priceBoughtAt, marketPrice) {
+  return ((marketPrice - priceBoughtAt) / priceBoughtAt) * 100;
+}
+
 /**
  * The createNewStock function creates a new stock purchase into the mongoDB and also creates a
  * refernce of the stock into the user's "stock" field. This function also sets the updated
@@ -34,7 +38,7 @@ function calculateAveragePrice(currentShares, averagePrice, additionalShares, cu
  */
 async function createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft) {
   const newStock = new Stock({
-    symbol, shares, averagePrice: stockPrice, owner,
+    symbol, shares, averagePrice: stockPrice, marketPrice: stockPrice, owner,
   });
 
   const { err } = await newStock.save();
@@ -59,6 +63,7 @@ async function updateUserEquity(id) {
   const { stocks } = user._doc;
   let calculatedEquity = 0;
   const stockPrices = [];
+
   for (let i = 0; i < stocks.length; i += 1) {
     const { symbol } = stocks[i];
     let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
@@ -74,9 +79,42 @@ async function updateUserEquity(id) {
     calculatedEquity += finishedStockPrices[i].data.data.quote.topSection.value.replace(',', '') * currentStock.shares;
   }
 
-  user = await User.findByIdAndUpdate({ _id: id }, { $set: { totalEquity: calculatedEquity } }, { returnOriginal: false });
+  user = await User.findByIdAndUpdate({ _id: id }, { $set: { totalEquity: calculatedEquity } }, { returnOriginal: false }).populate('stocks');
   const { password, ...userInfo } = user._doc;
   return userInfo;
+}
+
+async function updateUserStockStatistics(id) {
+  const user = await User.findById(id).populate('stocks');
+  const { stocks } = user._doc;
+  const stockPrices = [];
+
+  for (let i = 0; i < stocks.length; i += 1) {
+    const { symbol } = stocks[i];
+    let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
+    url += `?id={"ticker":"${symbol}","countryCode":"US","exchange":"","type":"STOCK","path":"/${symbol}"}`;
+    url += '&type=quotes_chart';
+    const response = axios.get(url);
+    stockPrices.push(response);
+  }
+  const finishedStockPrices = await Promise.all(stockPrices);
+  const stockUpdates = [];
+
+  for (let i = 0; i < finishedStockPrices.length; i += 1) {
+    const currentStock = stocks.find((userStocks) => userStocks.symbol === finishedStockPrices[i].data.data.quote.Instrument.Ticker);
+    const stock = Stock
+      .findOneAndUpdate({ symbol: currentStock.symbol, owner: id },
+        {
+          $set: {
+            marketPrice: finishedStockPrices[i].data.data.quote.topSection.value.replace(',', ''),
+            gain: calculateStockGain(currentStock.averagePrice, finishedStockPrices[i].data.data.quote.topSection.value.replace(',', '')),
+          },
+        },
+        { returnOriginal: false });
+    stockUpdates.push(stock);
+  }
+
+  await Promise.all(stockUpdates);
 }
 /**
  * The addOntoStock function adds more units onto stocks that the user has already bought.
@@ -99,6 +137,7 @@ async function addOntoStock(symbol, currentShareHoldings, shares,
       {
         $inc: { shares },
         $set: {
+          marketPrice: stockPrice,
           averagePrice: calculateAveragePrice(
             currentShareHoldings, avgPriceOfHoldings, shares, stockPrice,
           ),
@@ -167,28 +206,28 @@ async function buyStock(symbol, shares, stockPrice, totalSpent, owner) {
   const stock = userStocks.find((stocks) => stocks.symbol === symbol);
 
   if (stock) {
-    const stockBought = await
-    addOntoStock(symbol, stock.shares, shares,
+    const stockBought = await addOntoStock(symbol, stock.shares, shares,
       stock.averagePrice, stockPrice, owner, buyingPowerLeft);
     if (stockBought) {
+      await updateUserStockStatistics(owner);
       const userInfo = await updateUserEquity(owner);
       return {
         status: 200,
-        json: { stock_purchase: stockBought, user: userInfo },
+        json: { user: userInfo },
       };
     }
 
     return { status: 400, json: { message: 'Could not finish purchase.' } };
   }
 
-  const newStockInfo = await
-  createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft);
+  const newStockInfo = await createNewStock(symbol, shares, stockPrice, owner, buyingPowerLeft);
 
   if (newStockInfo) {
+    await updateUserStockStatistics(owner);
     const userInfo = await updateUserEquity(owner);
     return {
       status: 200,
-      json: { stock_purchase: newStockInfo, user: userInfo },
+      json: { user: userInfo },
     };
   }
   return { status: 400, json: { message: 'Could not finish purchase.' } };
@@ -224,10 +263,12 @@ async function sellStock(symbol, sellingAmount, stockPrice, owner) {
   }
   if (stock.shares === sellingAmount) {
     await sellAllStock(stock, sellingPrice);
+    await updateUserStockStatistics(owner);
     const userInfo = await updateUserEquity(owner);
     return { status: 200, json: { message: 'successful sell', user: userInfo } };
   }
   await sellPartialStock(stock, sellingAmount, sellingPrice);
+  await updateUserStockStatistics(owner);
   const userInfo = await updateUserEquity(owner);
   return { status: 200, json: { message: 'successful sell', user: userInfo } };
 }
@@ -239,6 +280,7 @@ async function sellStock(symbol, sellingAmount, stockPrice, owner) {
  *          A status 400 with an error message if successful.
  */
 async function retrieveUserInformation(id) {
+  await updateUserStockStatistics(id);
   const user = await User.findById(id);
 
   if (user) {
@@ -265,7 +307,7 @@ async function updateUserBuyingPower(id, amount) {
   if (amount < 0) {
     return { status: 400, json: { message: 'cannot add negative values' } };
   }
-
+  await updateUserStockStatistics(id);
   const user = await User.findOneAndUpdate({ _id: id },
     { $inc: { buyingPower: amount } }, { returnOriginal: false });
 
