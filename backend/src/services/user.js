@@ -84,7 +84,12 @@ async function updateUserEquity(id) {
     calculatedEquity += finishedStockPrices[i].data.data.quote.topSection.value.replace(',', '') * currentStock.shares;
   }
 
-  user = await User.findByIdAndUpdate({ _id: id }, { $set: { totalEquity: calculatedEquity } }, { returnOriginal: false }).populate('stocks');
+  user = await User.findByIdAndUpdate({ _id: id }, { $set: { totalEquity: calculatedEquity } }, { returnOriginal: false });
+
+  if (user._doc.stocks.length > 0) {
+    await User.populate(user, 'stocks');
+  }
+  
   const { password, ...userInfo } = user._doc;
   return userInfo;
 }
