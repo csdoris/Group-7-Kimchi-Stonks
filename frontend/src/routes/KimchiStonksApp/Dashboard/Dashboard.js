@@ -20,6 +20,8 @@ function Dashboard() {
   const history = useHistory();
   const { user, retrieveUserInfo } = useContext(AuthContext);
 
+  console.log(user);
+
   useEffect(() => {
     retrieveUserInfo();
   }, []);

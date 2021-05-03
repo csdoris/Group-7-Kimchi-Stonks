@@ -142,6 +142,7 @@ function AuthProvider({ children }) {
       const { user: updatedUser } = data;
 
       if (status === 200) {
+        console.log(updatedUser);
         setUser({ ...updatedUser, accessToken: user.accessToken });
       }
     });

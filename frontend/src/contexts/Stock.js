@@ -131,12 +131,13 @@ function StockProvider({ children }) {
         },
       });
 
-      const { status } = res;
+      const { status, data } = res;
       if (status === 200) {
         // Show dialog confirming buy was successful.
-        const { accessToken, ...updatedUser } = user;
-        updatedUser.buyingPower -= totalSpent;
-        updateUser(updatedUser);
+        // const { user: updatedUser } = data;
+        // updatedUser.buyingPower -= totalSpent;
+        // updateUser(updatedUser);
+        console.log(data);
         return true;
       }
       return false;
@@ -157,9 +158,12 @@ function StockProvider({ children }) {
         },
       });
 
-      const { status } = res;
+      const { status, data } = res;
 
       if (status === 200) {
+        const { user: updatedUser } = data;
+        updateUser(updatedUser);
+        console.log(updatedUser);
         // Show dialog confirming buy was successful.
         return true;
       }
