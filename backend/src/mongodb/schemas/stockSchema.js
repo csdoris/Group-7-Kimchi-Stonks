@@ -16,14 +16,10 @@ const stockSchema = Schema({
     type: Number,
     required: true,
   },
-  marketPrice: {
-    type: Number,
-    required: true,
-  },
-  gain: {
-    type: Number,
+  totalChange: {
+    type: String,
     required: false,
-    default: 0,
+    default: '+0.00 (+0.00%)',
   },
   owner: { type: Schema.Types.ObjectId, ref: 'User' },
 });
