@@ -174,7 +174,7 @@ async function buyStock(symbol, shares, stockPrice, totalSpent, owner) {
       const userInfo = await updateUserEquity(owner);
       return {
         status: 200,
-        json: { stock_purchase: stockBought, userInfo },
+        json: { stock_purchase: stockBought, user: userInfo },
       };
     }
 
@@ -188,7 +188,7 @@ async function buyStock(symbol, shares, stockPrice, totalSpent, owner) {
     const userInfo = await updateUserEquity(owner);
     return {
       status: 200,
-      json: { stock_purchase: newStockInfo, userInfo },
+      json: { stock_purchase: newStockInfo, user: userInfo },
     };
   }
   return { status: 400, json: { message: 'Could not finish purchase.' } };
@@ -225,11 +225,11 @@ async function sellStock(symbol, sellingAmount, stockPrice, owner) {
   if (stock.shares === sellingAmount) {
     await sellAllStock(stock, sellingPrice);
     const userInfo = await updateUserEquity(owner);
-    return { status: 200, json: { message: 'successful sell', userInfo } };
+    return { status: 200, json: { message: 'successful sell', user: userInfo } };
   }
   await sellPartialStock(stock, sellingAmount, sellingPrice);
   const userInfo = await updateUserEquity(owner);
-  return { status: 200, json: { message: 'successful sell', userInfo } };
+  return { status: 200, json: { message: 'successful sell', user: userInfo } };
 }
 
 /**

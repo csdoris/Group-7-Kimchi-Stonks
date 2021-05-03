@@ -119,6 +119,10 @@ async function retrieveUser(id, token) {
       await User.populate(user, 'stocks');
     }
 
+    if (userInfo.stocks.length > 0) {
+      await User.populate(user, 'stocks');
+    }
+
     const duration = 3600;
 
     return {
