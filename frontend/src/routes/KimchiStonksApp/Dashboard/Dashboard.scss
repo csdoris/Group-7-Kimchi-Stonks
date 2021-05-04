@@ -1,15 +1,18 @@
 .dashboard-container {
-  flex: 1 1 auto;
-  border-radius: 10px;
-  background-color: #3E3E3E;
-  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.15));
-  padding: 2.5em 3em;
+	flex: 1 1 auto;
+	border-radius: 10px;
+	background-color: #3e3e3e;
+	filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.15));
+	padding: 2.5em 3em;
+	max-height: 30vh;
+	max-height: 65vh;
+	overflow: hidden;
 
-    .dashboard-title {
-        text-transform: uppercase;
-        font-weight: 500;
-        letter-spacing: 1px;
-        font-size: 150%;
-        margin-bottom: 1em;
-    }
+	.dashboard-title {
+		text-transform: uppercase;
+		font-weight: 500;
+		letter-spacing: 1px;
+		font-size: 150%;
+		margin-bottom: 1em;
+	}
 }
