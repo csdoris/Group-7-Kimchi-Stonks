@@ -8,12 +8,10 @@ function Table({ children }) {
 
 function TableHeader({ headers }) {
   return (
-    <div className="table">
-      <div className="header-container">
-        {headers.map((header) => (
-          <div className="header" key={header}>{header}</div>
-        ))}
-      </div>
+    <div className="header-container">
+      {headers.map((header) => (
+        <div className="header" key={header}>{header}</div>
+      ))}
     </div>
   );
 }
