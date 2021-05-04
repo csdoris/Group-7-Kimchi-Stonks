@@ -51,10 +51,10 @@ function Market() {
   return (
     <div className="market-container">
       <p className="container-title">Trending Stocks</p>
+      <TableHeader
+        headers={headers}
+      />
       <Table>
-        <TableHeader
-          headers={headers}
-        />
         {marketData.map((stock) => (
           <TableRow
             key={`trending-${stock.symbol}`}

@@ -35,12 +35,12 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <h1 className="dashboard-title">Holdings</h1>
+      <TableHeader
+        headers={headers}
+      />
       { user.stocks.length > 0
         ? (
           <Table>
-            <TableHeader
-              headers={headers}
-            />
             {user.stocks.map((stock) => (
               <TableRow
                 key={`holdings-${stock.symbol}`}
