@@ -1,106 +1,130 @@
 .prediction-purchase-container {
-  .container-title {
-    text-transform: uppercase;
-    font-weight: 500;
-    letter-spacing: 1px;
-    font-size: 150%;
-    margin-bottom: 1em;
-  }
+	.container-title {
+		text-transform: uppercase;
+		font-weight: 500;
+		letter-spacing: 1px;
+		font-size: 150%;
+		margin-bottom: 1em;
+	}
 
-  .container-info {
-    text-transform: uppercase;
-    font-size: 90%;
-    color: #ACACAC;
-    letter-spacing: 0.5px;
-    line-height: 150%;
-    margin-bottom: 2em;
-  }
+	.container-info {
+		text-transform: uppercase;
+		font-size: 90%;
+		color: #acacac;
+		letter-spacing: 0.5px;
+		line-height: 150%;
+		margin-bottom: 2em;
+	}
 
-  .prediction-container {
-    margin-bottom: 5em;
+	.prediction-container {
+		margin-bottom: 5em;
 
-    .prediction-table {
-      .prediction-row {
-        display: grid;
-        grid-template-columns: 4fr 6fr;
-        margin-bottom: 1em;
+		.prediction-table {
+			.prediction-row {
+				display: grid;
+				grid-template-columns: 4fr 6fr;
+				margin-bottom: 1em;
 
-        .future-time,
-        .predicted-price {
-          display: inline-block;
-          letter-spacing: 1px;
-        }
+				.future-time,
+				.predicted-price {
+					display: inline-block;
+					letter-spacing: 1px;
+				}
 
-        .future-time {
-          margin-right: 1em;
-          text-transform: uppercase;
-          font-weight: 300;
-          color: #E8E8E8;
-        }
+				.future-time {
+					margin-right: 1em;
+					text-transform: uppercase;
+					font-weight: 300;
+					color: #e8e8e8;
+				}
 
-        .predicted-price {
-          font-weight: 600;
-          color: #E56536;
-        }
-      }
-    }
-  }
+				.predicted-price {
+					font-weight: 600;
+					color: #e56536;
+				}
+			}
+		}
+	}
 
-  .purchase-container {
-    .input-field.amount {
-      display: flex;
-      box-sizing: border-box;
-      width: 100%;
-      margin-top: 2em;
-      margin-bottom: 1.5em;
-    }
+	.purchase-container {
+		.input-field.amount {
+			display: flex;
+			box-sizing: border-box;
+			width: 100%;
+			margin-top: 2em;
+			margin-bottom: 1.5em;
+		}
 
-    .stock-price-row {
-      display: grid;
-      grid-template-columns: 6fr 4fr;
+		.stock-price-row {
+			display: grid;
+			grid-template-columns: 6fr 4fr;
 
-      .key,
-      .value {
-        display: inline-block;
-        letter-spacing: 1px;
-      }
+			.key,
+			.value {
+				display: inline-block;
+				letter-spacing: 1px;
+			}
 
-      .key {
-        margin-right: 1em;
-        text-transform: uppercase;
-        font-weight: 300;
-        color: #FFDA9F;
-      }
+			.key {
+				margin-right: 1em;
+				text-transform: uppercase;
+				font-weight: 300;
+				color: #ffda9f;
+			}
 
-      .value {
-        font-weight: 600;
-        color: #E56536;
-      }
-    }
+			.value {
+				font-weight: 600;
+				color: #e56536;
+			}
+		}
 
-    .estimation-row {
-      display: grid;
-      grid-template-columns: 6fr 4fr;
-      margin-bottom: 3em;
+		.estimation-row {
+			display: grid;
+			grid-template-columns: 6fr 4fr;
+			margin-bottom: 3em;
 
-      .key,
-      .value {
-        display: inline-block;
-        letter-spacing: 1px;
-      }
+			.key,
+			.value {
+				display: inline-block;
+				letter-spacing: 1px;
+			}
 
-      .key {
-        margin-right: 1em;
-        text-transform: uppercase;
-        font-weight: 300;
-        color: #E8E8E8;
-      }
+			.key {
+				margin-right: 1em;
+				text-transform: uppercase;
+				font-weight: 300;
+				color: #e8e8e8;
+			}
 
-      .value {
-        font-weight: 600;
-        color: #E56536;
-      }
-    }
-  }
+			.value {
+				font-weight: 600;
+				color: #e56536;
+			}
+		}
 
+		@media (max-width: 1200px) {
+			.input-field.amount {
+				margin-top: 1em;
+				margin-bottom: 1em;
+			}
+			.stock-price-row {
+				grid-template-columns: none;
+				row-gap: 0.5em;
+			}
+			.estimation-row {
+				row-gap: 0.5em;
+				grid-template-columns: none;
+				margin-bottom: 1.5em;
+			}
+		}
+	}
+
+	@media (max-width: 1200px) {
+		.prediction-container {
+			margin-bottom: 2.5em;
+		}
+		.container-title {
+			font-size: 137.5%;
+		}
+	}
 }
