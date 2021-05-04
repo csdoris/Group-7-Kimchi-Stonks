@@ -1,76 +1,74 @@
 .table {
+	.table-row {
+		margin-bottom: 0.5em;
+		padding: 1em;
+		display: flex;
+		border-radius: 10px;
+		justify-content: space-between;
+		transition: 0.3s ease;
 
-    .header-container {
-        margin-bottom: 0.5em;
-        background-color: #303030;
-        padding: 1em;
-        display: flex;
-        border-radius: 10px;
+		.table-value {
+			flex: 1;
+			text-align: center;
+			font-size: 100%;
+			letter-spacing: 1px;
+			font-weight: 300;
+		}
 
-        .header {
-            flex: 1;
-            text-align: center;
-            color: #606060;
-            font-size: 100%;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-    }
+		.stock {
+			&:hover {
+				cursor: pointer;
+			}
+		}
 
-    .table-row {
-        margin-bottom: 0.5em;
-        padding: 1em;
-        display: flex;
-        border-radius: 10px;
-        justify-content: space-between;
-        transition: 0.3s ease;
+		.action {
+			text-transform: uppercase;
+			font-weight: 600;
+			color: #f3d098;
+			transition: 0.5s ease;
+			z-index: 100;
 
-        .table-value {
-            flex: 1;
-            text-align: center;
-            font-size: 100%;
-            letter-spacing: 1px;
-            font-weight: 300;
-        }
+			&:hover {
+				cursor: pointer;
+				color: #f2b95e;
+			}
+		}
 
-        .stock {
-            &:hover {
-                cursor: pointer;
-            }
-        }
+		.positive {
+			color: #6be647;
+		}
 
-        .action {
-          text-transform: uppercase;
-          font-weight: 600;
-            color: #F3D098;
-            transition: 0.5s ease;
-            z-index: 100;
+		.negative {
+			color: #ff4400;
+		}
 
-            &:hover {
-                cursor: pointer;
-                color: #F2B95E;
-            }
+		&:hover {
+			cursor: pointer;
+			background-color: #464646;
+			transition: all 0.2s linear;
+			-webkit-transition: all 0.2s linear;
+		}
 
-        }
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+}
 
-        .positive {
-            color: #6BE647
-        }
+.header-container {
+	margin-bottom: 0.5em;
+	background-color: #303030;
+	padding: 1em;
+	display: flex;
+	border-radius: 10px;
 
-        .negative {
-            color: #FF4400;
-        }
-
-        &:hover {
-          cursor: pointer;
-          background-color: #464646;
-          transition: all .2s linear;
-          -webkit-transition: all .2s linear;
-        }
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-    }
+	.header {
+		flex: 1;
+		text-align: center;
+		color: #606060;
+		font-size: 100%;
+		font-weight: 600;
+		letter-spacing: 1px;
+		text-transform: uppercase;
+	}
 }
