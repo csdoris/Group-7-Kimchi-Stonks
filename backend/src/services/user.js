@@ -2,6 +2,8 @@ const axios = require('axios');
 const Stock = require('../mongodb/schemas/stockSchema');
 const User = require('../mongodb/schemas/userSchema');
 
+const WSJ_DOMAIN = 'https://www.wsj.com';
+
 /**
  * The calculateAveragePrice function calculates the average price of each unit of stock/share
  * the user has purchased.
@@ -71,7 +73,7 @@ async function updateUserEquity(id) {
 
   for (let i = 0; i < stocks.length; i += 1) {
     const { symbol } = stocks[i];
-    let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
+    let url = `${WSJ_DOMAIN}/market-data/quotes/${symbol}`;
     url += `?id={"ticker":"${symbol}","countryCode":"US","exchange":"","type":"STOCK","path":"/${symbol}"}`;
     url += '&type=quotes_chart';
     const response = axios.get(url);
@@ -101,7 +103,7 @@ async function updateUserStockStatistics(id) {
 
   for (let i = 0; i < stocks.length; i += 1) {
     const { symbol } = stocks[i];
-    let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
+    let url = `${WSJ_DOMAIN}/market-data/quotes/${symbol}`;
     url += `?id={"ticker":"${symbol}","countryCode":"US","exchange":"","type":"STOCK","path":"/${symbol}"}`;
     url += '&type=quotes_chart';
     const response = axios.get(url);

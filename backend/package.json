@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "lint": "eslint . --fix",
-    "test": "jest --detectOpenHandles --maxWorkers=25%",
+    "test": "jest --detectOpenHandles --forceExit --runInBand",
     "start": "nodemon src/server.js"
   },
   "author": "Group 7",
@@ -26,10 +26,11 @@
     "@babel/preset-env": "^7.13.10",
     "@types/jest": "^26.0.20",
     "babel-jest": "^26.6.3",
-    "jest": "^26.6.3",
-    "mongodb-memory-server": "^6.9.6",
     "eslint": "^7.22.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1"
+    "eslint-plugin-import": "^2.22.1",
+    "jest": "^26.6.3",
+    "jest-json-schema": "^5.0.0",
+    "mongodb-memory-server": "^6.9.6"
   }
 }
