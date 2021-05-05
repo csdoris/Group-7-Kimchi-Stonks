@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "lint": "eslint . --fix",
-    "test": "jest --detectOpenHandles --maxWorkers=25%",
+    "test": "jest --detectOpenHandles --forceExit --runInBand",
     "start": "nodemon src/server.js"
   },
   "author": "Group 7",
