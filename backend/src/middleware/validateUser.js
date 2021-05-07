@@ -1,7 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'my_secret';
-
 /**
  * Extracts the token from the authorization request header and verifies whether
  * the token is valid or not.
@@ -12,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'my_secret';
 function validateUser(req, res, next) {
   try {
     const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, JWT_SECRET);
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     req.user = { id: decodedToken.id, token };
     next();
   } catch (error) {
