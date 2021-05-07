@@ -5,11 +5,6 @@ const TIME_SERIES_DAILY = 1;
 const TIME_SERIES_MONTHLY = 2;
 const TIME_SERIES_YEARLY = 3;
 
-const FMP_API_KEY = process.env.FMP_API_KEY || '3ed6aa92d60ca415e41dd482fbee9ee7';
-const FMP_DOMAIN = 'https://financialmodelingprep.com';
-const YAHOO_DOMAIN = 'https://query2.finance.yahoo.com';
-const WSJ_DOMAIN = 'https://www.wsj.com';
-
 /**
  * Formats Unix epoch time to human-readable string: yyyy-mm-dd HH:mm
  *
@@ -105,7 +100,7 @@ function formatReturnData(data, interval) {
 async function getStockOverview(req, res) {
   const symbol = req.params.symbol.replace('-', '.');
 
-  let url = `${WSJ_DOMAIN}/market-data/quotes/${symbol}`;
+  let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
   url += `?id={"ticker":"${symbol}","countryCode":"US","exchange":"","type":"STOCK","path":"/${symbol}"}`;
   url += '&type=quotes_chart';
 
@@ -141,7 +136,7 @@ async function getStockOverview(req, res) {
 async function getTimeSeriesIntraday(req, res) {
   const { symbol } = req.params;
 
-  const url = `${YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=30m&range=1d`;
+  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=30m&range=1d`;
 
   axios.get(url).then((response) => {
     const returnObject = formatReturnData(response.data, TIME_SERIES_INTRADAY);
@@ -164,7 +159,7 @@ async function getTimeSeriesIntraday(req, res) {
 async function getTimeSeriesDaily(req, res) {
   const { symbol } = req.params;
 
-  const url = `${YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=1d&range=5d`;
+  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=1d&range=5d`;
 
   axios.get(url).then((response) => {
     const returnObject = formatReturnData(response.data, TIME_SERIES_DAILY);
@@ -187,7 +182,7 @@ async function getTimeSeriesDaily(req, res) {
 async function getTimeSeriesMonthly(req, res) {
   const { symbol } = req.params;
 
-  const url = `${YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=1mo&range=1y`;
+  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=1mo&range=1y`;
 
   axios.get(url).then((response) => {
     const returnObject = formatReturnData(response.data, TIME_SERIES_MONTHLY);
@@ -216,7 +211,7 @@ async function getTimeSeriesMonthly(req, res) {
 async function getTimeSeriesYearly(req, res) {
   const { symbol } = req.params;
 
-  const url = `${YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=3mo&range=10y`;
+  const url = `${process.env.YAHOO_DOMAIN}/v8/finance/chart/${symbol}?region=US&lang=en-US&interval=3mo&range=10y`;
 
   axios.get(url).then((response) => {
     const returnObject = formatReturnData(response.data, TIME_SERIES_YEARLY);
@@ -237,7 +232,7 @@ async function getTimeSeriesYearly(req, res) {
  * @param  {Object} res Response object
  */
 async function getTrending(req, res) {
-  const url = `${FMP_DOMAIN}/api/v3/stock/gainers?apikey=${FMP_API_KEY}`;
+  const url = `${process.env.FMP_DOMAIN}/gainers?apikey=${process.env.FMP_API_KEY}`;
 
   axios.get(url).then((response) => {
     res.status(response.status).json(response.data);
@@ -258,7 +253,7 @@ async function predictPrice(req, res) {
   const symbol = req.params.symbol.replace('-', '.');
   const days = parseInt(req.query.days, 10);
 
-  let url = `${WSJ_DOMAIN}/market-data/quotes/${symbol}`;
+  let url = `${process.env.WSJ_DOMAIN}/market-data/quotes/${symbol}`;
   url += `?id={"ticker":"${symbol}","countryCode":"US","exchange":"","type":"STOCK","path":"/${symbol}"}`;
   url += '&type=quotes_chart';
 
@@ -293,7 +288,7 @@ async function predictPrice(req, res) {
 async function searchStocks(req, res) {
   const { keyword } = req.query;
 
-  let url = `${YAHOO_DOMAIN}/v1/finance/search`;
+  let url = `${process.env.YAHOO_DOMAIN}/v1/finance/search`;
   url += `?q=${keyword}`;
   url += '&lang=en-US';
   url += '&region=US';

@@ -2,8 +2,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../mongodb/schemas/userSchema');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'my_secret';
-
 /**
  * Generates an access token for the client
  *
@@ -12,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'my_secret';
  * @return {Object}        A token object
  */
 async function generateAccessToken(id, duration) {
-  return jwt.sign({ id }, JWT_SECRET, { expiresIn: duration });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: duration });
 }
 
 /**
