@@ -90,3 +90,9 @@ API Keys are provided in an `.env` file
 - [FMP](https://financialmodelingprep.com/developer)
 - [Yahoo Finance](https://finance.yahoo.com/)
 - [WSJ](https://www.wsj.com/)
+
+## Backend Testing
+
+Navigate into the backend folder `src/backend` and run the following command:
+
+`npm test`
