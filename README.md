@@ -19,6 +19,7 @@ Developing this app’s motivation is to promote healthy trading psychology and 
 - **MongoDB** (NoSQL Database)
 - **Node & Express** (Backend)
 - **React** (Frontend)
+- More information can be found in our [Architecture](https://github.com/csdoris/Group-7-Lilac-Lion/wiki/Architecture) wiki
 
 ## Features
 - Real time stock market look up
@@ -96,3 +97,13 @@ API Keys are provided in an `.env` file
 Navigate into the backend folder `src/backend` and run the following command:
 
 `npm test`
+
+## How to contribute
+For other developers who may want to contribute or create issues, please visit the following wiki links:
+- [Workflow](https://github.com/csdoris/Group-7-Lilac-Lion/wiki/Workflow)
+- [GitHub issues](https://github.com/csdoris/Group-7-Lilac-Lion/wiki/GitHub-Issues)
+- [Pull Requests (PR)](https://github.com/csdoris/Group-7-Lilac-Lion/wiki/Pull-Requests-(PR))
+
+## Contributors
+
+Found [here](https://github.com/csdoris/Group-7-Lilac-Lion/wiki/Contributors)
