@@ -1,5 +1,5 @@
 .table {
-	height: 90%;
+	height: 85%;
 	overflow: scroll;
 
 	.table-row {
@@ -73,5 +73,17 @@
 		font-weight: 600;
 		letter-spacing: 1px;
 		text-transform: uppercase;
+	}
+}
+
+@media (max-width: 1080px) {
+	.table {
+		height: 77.5%;
+	}
+}
+
+@media (max-width: 768px) {
+	.table {
+		height: 70%;
 	}
 }
